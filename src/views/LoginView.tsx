@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import logo from "/buzzsnap-logo.png";
 import background from "../assets/images/background.jpg";
 import { useNavigate } from "react-router-dom";
@@ -6,10 +6,16 @@ import { useNavigate } from "react-router-dom";
 const Login: React.FC = () => {
   const navigate = useNavigate();
 
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
   const handleLogin = (event: React.FormEvent) => {
     event.preventDefault();
-    
-    navigate("/home");
+    if (username === "admin" && password === "admin") {
+      navigate("/home");
+    } else {
+      alert("Credenciales incorrectas");
+    }
   };
 
   const styles = {
@@ -42,12 +48,28 @@ const Login: React.FC = () => {
       <form style={styles.form} onSubmit={handleLogin}>
         <div className="mb-3">
           <label className="form-label">Usuario</label>
-          <input type="text" id="username" className="form-control" style={styles.input} placeholder="Introduzca su usuario" required />
+          <input 
+            type="text" 
+            id="username" 
+            className="form-control" 
+            style={styles.input} 
+            placeholder="Introduzca su usuario" 
+            value={username} 
+            onChange={(e) => setUsername(e.target.value)} 
+            required />
         </div>
 
         <div className="mb-3">
           <label className="form-label">Contraseña</label>
-          <input type="password" id="password" className="form-control" style={styles.input} placeholder="Introduzca su contraseña" required />
+          <input 
+            type="password" 
+            id="password" 
+            className="form-control" 
+            style={styles.input} 
+            placeholder="Introduzca su contraseña" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+            required />
         </div>
 
         <button type="submit" className="btn w-100" style={styles.button}>Entrar</button>
