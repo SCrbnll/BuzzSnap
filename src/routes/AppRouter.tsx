@@ -5,6 +5,7 @@ import Login from '../views/LoginView';
 import Register from '../views/RegisterView';
 import HomeView from '../views/HomeView';
 import NotFound from '../views/NotFoundView';
+import MainLayout from '../layouts/MainLayout';
 
 const AppRouter: React.FC = () => {
   return (
@@ -19,8 +20,15 @@ const AppRouter: React.FC = () => {
         {/* Ruta para el registro */}
         <Route path="/register" element={<Register />} />
         
-        {/* Ruta para el home */}
-        <Route path="/home" element={<HomeView />} />
+         {/* Rutas con Layout */}
+         <Route
+          path="/home"
+          element={
+            <MainLayout>
+              <HomeView />
+            </MainLayout>
+          }
+        />
 
         {/* Ruta para errores 404 */}
         <Route path="*" element={<NotFound />} />
