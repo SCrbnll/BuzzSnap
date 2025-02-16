@@ -50,7 +50,6 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       flexDirection: "column",
       alignItems: "center",
       scrollbarWidth: "none", 
-      msOverflowStyle: "none",
     },
     separator: {
       width: "50%",
