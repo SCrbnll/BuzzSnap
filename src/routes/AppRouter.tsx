@@ -1,11 +1,11 @@
 // src/routes/AppRouter.tsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from '../views/LoginView';
-import Register from '../views/RegisterView';
-import HomeView from '../views/HomeView';
-import NotFound from '../views/NotFoundView';
-import MainLayout from '../layouts/MainLayout';
+import Login from '@/views/LoginView';
+import Register from '@/views/RegisterView';
+import HomeView from '@/views/HomeView';
+import NotFound from '@/views/NotFoundView';
+import MainLayout from '@/layouts/MainLayout';
 
 const AppRouter: React.FC = () => {
   return (
