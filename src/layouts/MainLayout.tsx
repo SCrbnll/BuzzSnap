@@ -1,13 +1,27 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { loadGroups } from "@/context/store";  // Asegúrate de importar correctamente
+import { RootState, AppDispatch } from "@/context/store";  // Asegúrate de importar AppDispatch
+
 import logo from "/buzzsnap-recorte.png";
 import sv from "/SCrbnll.png";
 
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const dispatch = useDispatch<AppDispatch>();  // Asegúrate de usar el tipo correcto de dispatch
+  const groups = useSelector((state: RootState) => state.app.groups);  // Accede a los grupos desde el store
+
+  useEffect(() => {
+    dispatch(loadGroups()); 
+  }, [dispatch]);
 
   const handleButtonClick = () => {
     alert("¡Botón presionado!");
+  };
+
+  const handleGroupClick = (groupId: string) => {
+    alert(`¡Grupo ${groupId} con nombre ${groups.find(group => group.id === groupId)?.name} presionado!`); 
   };
 
   const styles: { [key: string]: React.CSSProperties } = {
@@ -23,6 +37,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     logo: {
       width: "50px",
       borderRadius: "25%",
+      cursor: "pointer",
     },
     button: {
       backgroundColor: "#FFFFFF",
@@ -68,9 +83,20 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <hr style={styles.separator} />
 
         <div style={styles.iconList}>
-          {[...Array(15)].map((_, i) => (
-            <img key={i} src={sv} alt="Icono" style={styles.logo} className="mb-2" />
-          ))}
+        {groups.length > 0 ? (
+            groups.map((group) => (
+              <img
+                key={group.id}
+                src={group.image_url || sv} 
+                alt={group.name}
+                style={styles.logo}
+                className="mb-2"
+                onClick={() => handleGroupClick(group.id || "")}
+              />
+            ))
+          ) : (
+            <p>No hay grupos disponibles</p>  // Mensaje si no hay grupos
+          )}
           <button style={styles.button} onClick={handleButtonClick} className="mb-2">
             <i className="bi bi-plus" style={{ fontSize: "30px" }}></i>
           </button>
