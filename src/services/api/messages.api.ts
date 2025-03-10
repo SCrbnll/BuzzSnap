@@ -23,6 +23,16 @@ export default class MessagesApi {
         return response.data;
     }
 
+    async getMessagesByUserId(userId: number): Promise<Message[]> {
+        const response = await axios.get<Message[]>(`${SERVER}/messages/user/${userId}`);
+        return response.data;
+    }
+
+    async getMessagesByGroupId(groupId: number): Promise<Message[]> {
+        const response = await axios.get<Message[]>(`${SERVER}/messages/group/${groupId}`);
+        return response.data;
+    }
+
     async addMessage(message: Message): Promise<Message> {
         const response = await axios.post<Message>(`${SERVER}/messages`, message);
         return response.data;
@@ -30,7 +40,7 @@ export default class MessagesApi {
 
     async updateMessage(message: Message): Promise<Message> {
         if (!message.id) throw new Error("El mensaje debe tener un ID.");
-        const response = await axios.put<Message>(`${SERVER}/messages/${message.id}`, message);
+        const response = await axios.put<Message>(`${SERVER}/messages/send/${message.id}`, message);
         return response.data;
     }
 

@@ -23,14 +23,18 @@ export default class GroupsApi {
         return response.data;
     }
 
+    async getGroupsByUserId(userId: number): Promise<Group[]> {
+        const response = await axios.get<Group[]>(`${SERVER}/groups/user/${userId}`);
+        return response.data;
+    }
+
     async addGroup(group: Group): Promise<Group> {
         const response = await axios.post<Group>(`${SERVER}/groups`, group);
         return response.data;
     }
 
     async updateGroup(group: Group): Promise<Group> {
-        if (!group.id) throw new Error("El grupo debe tener un ID.");
-        const response = await axios.put<Group>(`${SERVER}/groups/${group.id}`, group);
+        const response = await axios.put<Group>(`${SERVER}/groups/change/${group.id}`, group);
         return response.data;
     }
 
