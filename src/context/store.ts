@@ -52,19 +52,19 @@ const appSlice = createSlice({
     addFriend: (state, action: PayloadAction<Friend>) => {
       state.friends.push(action.payload);
     },
-    deleteFriend: (state, action: PayloadAction<string>) => {  // Fixed: id is a string
+    deleteFriend: (state, action: PayloadAction<number>) => {  
       state.friends = state.friends.filter(friend => friend.id !== action.payload);
     },
     addGroup: (state, action: PayloadAction<Group>) => {
       state.groups.push(action.payload);
     },
-    deleteGroup: (state, action: PayloadAction<string>) => {  // Fixed: id is a string
+    deleteGroup: (state, action: PayloadAction<number>) => {  
       state.groups = state.groups.filter(group => group.id !== action.payload);
     },
     addMessage: (state, action: PayloadAction<Message>) => {
       state.messages.push(action.payload);
     },
-    deleteMessage: (state, action: PayloadAction<string>) => {
+    deleteMessage: (state, action: PayloadAction<number>) => {
       state.messages = state.messages.filter(message => message.id !== action.payload);
     },
   },
@@ -96,7 +96,7 @@ export const store = configureStore({
 export const loadUsers = () => async (dispatch: any) => {
   try {
     const users = await usersApi.getUsers();
-    dispatch(setUsers(users as User[]));  // Ensure that users is typed correctly as User[]
+    dispatch(setUsers(users as User[]));  
   } catch (error) {
     console.error('Error al cargar usuarios:', error);
   }
@@ -105,7 +105,7 @@ export const loadUsers = () => async (dispatch: any) => {
 export const loadFriends = () => async (dispatch: any) => {
   try {
     const friends = await friendsApi.getFriends();
-    dispatch(setFriends(friends as Friend[]));  // Ensure that friends is typed correctly as Friend[]
+    dispatch(setFriends(friends as Friend[]));  
   } catch (error) {
     console.error('Error al cargar amigos:', error);
   }
@@ -114,7 +114,7 @@ export const loadFriends = () => async (dispatch: any) => {
 export const loadGroups = () => async (dispatch: AppDispatch) => {
   try {
     const groups = await groupsApi.getGroups();
-    dispatch(setGroups(groups as Group[]));  // Dispatch de la acción con los grupos
+    dispatch(setGroups(groups as Group[]));  
   } catch (error) {
     console.error("Error al cargar grupos:", error);
   }
@@ -123,7 +123,7 @@ export const loadGroups = () => async (dispatch: AppDispatch) => {
 export const loadGroupMembers = () => async (dispatch: any) => {
   try {
     const groupMembers = await groupMembersApi.getGroupMembers();
-    dispatch(setGroupMembers(groupMembers as GroupMember[]));  // Ensure that groupMembers is typed correctly as GroupMember[]
+    dispatch(setGroupMembers(groupMembers as GroupMember[]));  
   } catch (error) {
     console.error('Error al cargar miembros de grupos:', error);
   }
@@ -132,7 +132,7 @@ export const loadGroupMembers = () => async (dispatch: any) => {
 export const loadMessages = () => async (dispatch: any) => {
   try {
     const messages = await messagesApi.getMessages();
-    dispatch(setMessages(messages as Message[]));  // Ensure that messages is typed correctly as Message[]
+    dispatch(setMessages(messages as Message[])); 
   } catch (error) {
     console.error('Error al cargar mensajes:', error);
   }
