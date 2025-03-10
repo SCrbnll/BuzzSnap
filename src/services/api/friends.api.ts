@@ -1,14 +1,8 @@
 import axios from 'axios';
+import { Friend } from './types';
 
 const SERVER = import.meta.env.VITE_URL_API;
-
-export interface Friend {
-    id?: number;
-    user_id: number;
-    friend_id: number;
-    status: 'pending' | 'accepted' | 'canceled';
-    created_at?: string;
-}
+axios.defaults.baseURL = SERVER;
 
 export default class FriendsApi {
     async getFriends(): Promise<Friend[]> {

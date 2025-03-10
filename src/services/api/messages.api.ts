@@ -1,16 +1,8 @@
 import axios from 'axios';
+import { Message } from './types';
 
 const SERVER = import.meta.env.VITE_URL_API;
-
-export interface Message {
-    id?: number;
-    sender_id: number;
-    group_id?: number | null;
-    receiver_id?: number | null;
-    message_type: 'text' | 'image' | 'video' | 'audio';
-    content: string;
-    created_at?: string;
-}
+axios.defaults.baseURL = SERVER;
 
 export default class MessagesApi {
     async getMessages(): Promise<Message[]> {

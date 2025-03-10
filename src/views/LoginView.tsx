@@ -2,21 +2,31 @@ import React, { useState } from "react";
 import logo from "/buzzsnap-logo.png";
 import background from "@/assets/images/background.jpg";
 import { useNavigate } from "react-router-dom";
+import { useApiManager } from "@/layouts/ApiContext";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const apiManager = useApiManager();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (event: React.FormEvent) => {
+  const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (username === "admin" && password === "admin") {
-      navigate("/home");
-    } else {
-      alert("Credenciales incorrectas");
+
+    try {
+      const user = await apiManager.loginUser(username, password);
+
+      if (user) {
+        navigate("/home");
+      }
+    } catch (err) {
+      console.error("Credenciales incorrectas o hubo un error en el servidor.");
+    } finally {
     }
   };
+
+  
 
   const styles = {
     container: {

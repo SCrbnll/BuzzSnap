@@ -1,19 +1,8 @@
 import axios from 'axios';
+import { User } from './types';
 
 const SERVER = import.meta.env.VITE_URL_API;
-
-export interface User {
-    id?: number;
-    name: string;
-    email: string;
-    password: string;
-    avatar_url?: string;
-    description?: string;
-    theme?: 'light' | 'dark';
-    last_login?: string;
-    created_at?: string;
-    closed?: boolean;
-}
+axios.defaults.baseURL = SERVER;
 
 export default class UsersApi {
     async getUsers(): Promise<User[]> {

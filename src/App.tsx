@@ -1,13 +1,15 @@
 import React from "react";
-import { Provider } from "react-redux"; 
-import AppRouter from "./routes/AppRouter"; 
+import { Provider } from "react-redux";
+import AppRouter from "./routes/AppRouter";
 import { store } from "@/context/store";
+import { ApiManagerProvider } from "@/layouts/ApiContext"; 
 
 const App: React.FC = () => {
   return (
-    // Envuelves tu aplicación con el Provider y pasas el store
     <Provider store={store}>
-      <AppRouter />
+      <ApiManagerProvider>
+        <AppRouter />
+      </ApiManagerProvider>
     </Provider>
   );
 };

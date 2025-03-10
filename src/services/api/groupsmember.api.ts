@@ -1,14 +1,8 @@
 import axios from 'axios';
+import { GroupMember } from './types';
 
 const SERVER = import.meta.env.VITE_URL_API;
-
-export interface GroupMember {
-    id?: number;
-    group_id: number;
-    user_id: number;
-    role: 'admin' | 'member';
-    joined_at?: string;
-}
+axios.defaults.baseURL = SERVER;
 
 export default class GroupMembersApi {
     async getGroupMembers(): Promise<GroupMember[]> {

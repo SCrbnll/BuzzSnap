@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loadGroups } from "@/context/store";  // Asegúrate de importar correctamente
-import { RootState, AppDispatch } from "@/context/store";  // Asegúrate de importar AppDispatch
+import { loadFriends, loadGroups, loadGroupMembers } from "@/context/store"; // Asegúrate de importar correctamente
+import { RootState, AppDispatch } from "@/context/store"; // Asegúrate de importar AppDispatch
 
 import logo from "/buzzsnap-recorte.png";
 import sv from "/SCrbnll.png";
@@ -9,19 +9,60 @@ import sv from "/SCrbnll.png";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const dispatch = useDispatch<AppDispatch>();  // Asegúrate de usar el tipo correcto de dispatch
-  const groups = useSelector((state: RootState) => state.app.groups);  // Accede a los grupos desde el store
+  const POLL_INTERVAL = 10000; // 10 segundos
+  const dispatch = useDispatch<AppDispatch>();
+  const groups = useSelector((state: RootState) => state.app.groups);
+  const friends = useSelector((state: RootState) => state.app.friends);
+  const groupsMembers = useSelector((state: RootState) => state.app.friends);
+
+  const hasSynced = useRef(false); 
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Función para sincronizar los datos
+  const syncData = () => {
+    dispatch(loadFriends());
+    dispatch(loadGroups());
+    dispatch(loadGroupMembers());
+    console.log("Datos sincronizados");
+    console.log(groups);
+    console.log(friends);
+    console.log(groupsMembers);
+  };
+
+  // Iniciar la sincronización periódica
+  const syncDataPeriodically = () => {
+    syncData(); // Carga inicial de datos
+
+    // Configurar la sincronización periódica
+    if (!intervalRef.current) {
+      intervalRef.current = setInterval(() => {
+        syncData(); 
+      }, POLL_INTERVAL);
+    }
+  };
 
   useEffect(() => {
-    dispatch(loadGroups()); 
-  }, [dispatch]);
+    const user = localStorage.getItem("user");
+
+    if (user && !hasSynced.current) {
+      syncDataPeriodically(); 
+      hasSynced.current = true; 
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current); 
+        intervalRef.current = null;
+      }
+    };
+  }, [dispatch]); 
 
   const handleButtonClick = () => {
     alert("¡Botón presionado!");
   };
 
-  const handleGroupClick = (groupId: string) => {
-    alert(`¡Grupo ${groupId} con nombre ${groups.find(group => group.id === groupId)?.name} presionado!`); 
+  const handleGroupClick = (groupId: number) => {
+    alert(`¡Grupo ${groupId} con nombre ${groups.find(group => group.id == groupId)?.name} presionado!`);
   };
 
   const styles: { [key: string]: React.CSSProperties } = {
@@ -72,7 +113,6 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       margin: "10px 0",
     },
   };
-  
 
   return (
     <div className="d-flex vh-100">
@@ -83,15 +123,15 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <hr style={styles.separator} />
 
         <div style={styles.iconList}>
-        {groups.length > 0 ? (
+          {groups.length > 0 ? (
             groups.map((group) => (
               <img
                 key={group.id}
-                src={group.image_url || sv} 
+                src={group.image_url || sv}
                 alt={group.name}
                 style={styles.logo}
                 className="mb-2"
-                onClick={() => handleGroupClick(group.id || "")}
+                onClick={() => handleGroupClick(group.id)}
               />
             ))
           ) : (
@@ -102,7 +142,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </button>
         </div>
 
-          <img onClick={handleButtonClick} src={sv} alt="Perfil" style={styles.profile} />
+        <img onClick={handleButtonClick} src={sv} alt="Perfil" style={styles.profile} />
       </aside>
 
       <div style={{ flex: 1, padding: "20px" }}>

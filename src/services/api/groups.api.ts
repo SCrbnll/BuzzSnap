@@ -1,16 +1,8 @@
 import axios from 'axios';
+import { Group } from './types';
 
 const SERVER = import.meta.env.VITE_URL_API;
-
-export interface Group {
-    id?: number;
-    name: string;
-    image_url?: string;
-    description?: string;
-    created_by: number;
-    invite_code: string;
-    created_at?: string;
-}
+axios.defaults.baseURL = SERVER;
 
 export default class GroupsApi {
     async getGroups(): Promise<Group[]> {
