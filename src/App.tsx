@@ -6,11 +6,13 @@ import { ApiManagerProvider } from "@/layouts/ApiContext";
 
 const App: React.FC = () => {
   return (
-    <Provider store={store}>
-      <ApiManagerProvider>
-        <AppRouter />
-      </ApiManagerProvider>
-    </Provider>
+    <React.StrictMode>
+      <Provider store={store}>
+        <ApiManagerProvider>
+          <AppRouter />
+        </ApiManagerProvider>
+      </Provider>
+    </React.StrictMode>
   );
 };
 

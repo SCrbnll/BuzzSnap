@@ -12,7 +12,6 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const POLL_INTERVAL = 300000; // 5 minutos en milisegundos
   const dispatch = useDispatch<AppDispatch>();
 
-  // Usamos `groupMembers` para acceder a los grupos
   const groupMembers = useSelector((state: RootState) => state.app.groupMembers);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -78,9 +77,9 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           {groupMembers.length > 0 ? (
             groupMembers.map((groupMember) => (
               <img
-                key={groupMember.id}  // Usamos `groupMember.id` en lugar de `group.id`
-                src={groupMember.group?.image_url || sv}  // Aseguramos que accedemos al `group` correctamente
-                alt={groupMember.group?.name}  // Aseguramos que accedemos al `group` correctamente
+                key={groupMember.id}  
+                src={groupMember.group?.image_url || sv}  
+                alt={groupMember.group?.name} 
                 style={{
                   width: "50px",
                   borderRadius: "25%",

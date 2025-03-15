@@ -3,21 +3,22 @@ export interface User {
   name: string;
   email: string;
   password?: string; // En respuestas de la API, usualmente no se devuelve la contraseña
-  avatar_url?: string; // Puede ser opcional si no siempre se envía
+  avatarUrl?: string; // Puede ser opcional si no siempre se envía
   description?: string; // Puede ser opcional si no siempre se envía
   theme: string;
-  last_login: string; // Fecha en formato ISO
-  created_at: string; // Fecha en formato ISO
+  lastLogin: string; // Fecha en formato ISO
+  createdAt: string; // Fecha en formato ISO
   closed: boolean;
 }
 
 export interface Friend {
-  id: number; // ID como string
-  user_id: number; // Cambiado a string para coincidir con User.id
-  friend_id: number; // Cambiado a string para coincidir con User.id
-  status: "accepted" | "pending"; // Puede ser "accepted" o "pending"
-  created_at: string; // Fecha en formato ISO
+  id: number; // ID de la relación de amistad (no es string)
+  user: User; // El usuario que está pidiendo la amistad
+  friend: User; // El amigo del usuario
+  status: "accepted" | "pending"; // Estado de la amistad: aceptado o pendiente
+  createdAt: string; // Fecha de creación de la amistad (en formato ISO)
 }
+
 
 export interface Group {
   id: number;
