@@ -1,22 +1,18 @@
 import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Friend, Group, GroupMember } from "@/services/api/types";
+import { Friend, GroupMember } from "@/services/api/types";
 import FriendsApi from "@/services/api/friends.api";
-import GroupsApi from "@/services/api/groups.api";
 import GroupMembersApi from "@/services/api/groupsmember.api";
 
 const friendsApi = new FriendsApi();
-const groupsApi = new GroupsApi();
 const groupMembersApi = new GroupMembersApi();
 
 interface AppState {
   friends: Friend[];
-  groups: Group[];
   groupMembers: GroupMember[];
 }
 
 const initialState: AppState = {
   friends: [],
-  groups: [],
   groupMembers: [],
 };
 
@@ -26,10 +22,9 @@ const appSlice = createSlice({
   reducers: {
     setAllData: (
       state,
-      action: PayloadAction<{ friends: Friend[]; groups: Group[]; groupMembers: GroupMember[] }>
+      action: PayloadAction<{ friends: Friend[]; groupMembers: GroupMember[] }>
     ) => {
       state.friends = action.payload.friends;
-      state.groups = action.payload.groups;
       state.groupMembers = action.payload.groupMembers;
     },
   },
@@ -47,24 +42,23 @@ export const store = configureStore({
 export const syncAllData = () => async (dispatch: any) => {
   try {
     console.log("🔄 Sincronizando datos...");
+    const userLocalStorage = localStorage.getItem("user");
+    if (userLocalStorage) {
+      const userId = JSON.parse(userLocalStorage).id;
+      const [friends, groupMembers] = await Promise.all([
+        friendsApi.getFriendsByUserId(userId),
+        groupMembersApi.getGroupMembersByUserId(userId),
+      ]);
 
-    const [friends, groups, groupMembers] = await Promise.all([
-      friendsApi.getFriends(),
-      groupsApi.getGroups(),
-      groupMembersApi.getGroupMembers(),
-    ]);
-    console.log("✅ Datos obtenidos:", { friends, groups, groupMembers }); 
-
-
-    dispatch(
-      setAllData({
-        friends: friends as Friend[],
-        groups: groups as Group[],
-        groupMembers: groupMembers as GroupMember[],
-      })
-    );
-    console.log("📦 Store actualizado con los nuevos datos."); 
-
+      console.log("✅ Datos obtenidos:", { friends, groupMembers }); 
+      dispatch(
+        setAllData({
+          friends: friends as Friend[],
+          groupMembers: groupMembers as GroupMember[],
+        })
+      );
+      console.log("📦 Store actualizado con los nuevos datos."); 
+    }
   } catch (error) {
     console.error("Error al sincronizar datos:", error);
   }

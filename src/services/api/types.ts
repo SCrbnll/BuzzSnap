@@ -31,10 +31,11 @@ export interface Group {
 
 export interface GroupMember {
   id: number;
-  group_id: number; // ID en string para coincidir con la API
-  user_id: number; // ID en string
-  role: "admin" | "member"; // Puede ser "admin" o "member"
-  joined_at: string; // Fecha en formato ISO
+  group_id: number; // ID del grupo
+  user_id: number; // ID del usuario
+  role: "admin" | "member"; // Rol en el grupo
+  joined_at: string; // Fecha de unión
+  group?: Group; // Esto es opcional, ya que no siempre tendrás el objeto completo del grupo aquí
 }
 
 export interface Message {
