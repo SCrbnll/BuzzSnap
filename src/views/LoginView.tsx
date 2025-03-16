@@ -3,6 +3,7 @@ import logo from "/buzzsnap-logo.png";
 import background from "@/assets/images/background.jpg";
 import { useNavigate } from "react-router-dom";
 import { useApiManager } from "@/layouts/ApiContext";
+import { notifyPromise } from "@/components/NotificationProvider";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -13,76 +14,54 @@ const Login: React.FC = () => {
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
-
-    try {
-      const user = await apiManager.loginUser(username, password);
-
-      if (user) {
-        navigate("/home");
-      }
-    } catch (err) {
-      console.error("Credenciales incorrectas o hubo un error en el servidor.");
-    } finally {
-    }
-  };
-
   
-
-  const styles = {
-    container: {
-      backgroundImage: `url(${background})`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      padding: "250px",
-    },
-    logo : {
-      width: "350px"
-    },
-    form : {
-      width: "350px",
-    },
-    input: {
-      backgroundColor: "#FFEBC6",
-    },
-    button : {
-      backgroundColor: "#FFA600",
-      color: "#000000"
-    }
+    const user = await notifyPromise(
+      () => apiManager.loginUser(username, password),
+      {
+        loading: "Iniciando sesión...",
+        success: (user) => `Bienvenido, ${user.name}!`,
+        error: "Credenciales incorrectas o error en el servidor.",
+      }
+    );
+  
+    if (user) navigate("/home");
   };
 
   return (
-    <div className="d-flex flex-column align-items-start justify-content-center vh-100" style={styles.container}>
-      <img src={logo} alt="Buzzsnap Logo" style={styles.logo} className="mb-5" />
+    <div className="d-flex flex-column align-items-start justify-content-center vh-100" 
+      style={{ backgroundImage: `url(${background})`, backgroundSize: "cover", padding: "250px" }}
+    >
+      <img src={logo} alt="Buzzsnap Logo" style={{ width: "350px" }} className="mb-5" />
       <h1 className="mb-4">Inicio de sesión</h1>
 
-      <form style={styles.form} onSubmit={handleLogin}>
+      <form style={{ width: "350px" }} onSubmit={handleLogin}>
         <div className="mb-3">
           <label className="form-label">Usuario</label>
           <input 
             type="text" 
-            id="username" 
-            className="form-control" 
-            style={styles.input} 
+            className="form-control"
             placeholder="Introduzca su usuario" 
             value={username} 
             onChange={(e) => setUsername(e.target.value)} 
-            required />
+            required
+          />
         </div>
 
         <div className="mb-3">
           <label className="form-label">Contraseña</label>
           <input 
             type="password" 
-            id="password" 
             className="form-control" 
-            style={styles.input} 
             placeholder="Introduzca su contraseña" 
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
-            required />
+            required
+          />
         </div>
 
-        <button type="submit" className="btn w-100" style={styles.button}>Entrar</button>
+        <button type="submit" className="btn w-100" style={{ backgroundColor: "#FFA600", color: "#000000" }}>
+          Entrar
+        </button>
 
         <p className="mt-3">
           ¿No tienes una cuenta? <a href="/register" className="text-primary">Regístrate</a>
