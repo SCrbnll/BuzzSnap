@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { syncAllData } from "@/context/store";
 import { RootState, AppDispatch } from "@/context/store";
@@ -7,19 +7,24 @@ import logo from "/buzzsnap-recorte.png";
 import sv from "/SCrbnll.png";
 
 import "bootstrap-icons/font/bootstrap-icons.css";
+import { useNavigate } from "react-router-dom";
 
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const POLL_INTERVAL = 60000; // 5 minutos en milisegundos
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();  
 
   const groupMembers = useSelector((state: RootState) => state.app.groupMembers);
+  const [userInfo, setUserInfo] = useState<any>(); 
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const user = localStorage.getItem("user");
-
-    if (user) {
+    if (!user) {
+      navigate("/login");
+    } else {
+      setUserInfo(JSON.parse(user));
       console.log("🔄 Ejecutando dispatch(syncAllData())...");
       dispatch(syncAllData());
 
@@ -37,54 +42,90 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     };
   }, [dispatch]);
 
+  const styles: { [key: string]: React.CSSProperties } = {
+    container: {
+      display: "flex",
+      height: "100vh",
+    },
+    aside: {
+      backgroundColor: "#8A8A8A",
+      width: "90px",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      height: "100vh",
+      padding: "10px",
+    },
+    title: {
+      fontSize: "12px",
+      fontWeight: "bold",
+      marginBottom: "5px",
+    },
+    logo: {
+      width: "50px",
+      borderRadius: "25%",
+      cursor: "pointer",
+    },
+    hr: {
+      width: "50%",
+      border: "1px solid white",
+      margin: "10px 0",
+    },
+    groupContainer: {
+      flex: 1,
+      overflowY: "auto",
+      width: "100%",
+      marginBottom: "10px",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+    },
+    groupImage: {
+      width: "50px",
+      borderRadius: "25%",
+      cursor: "pointer",
+    },
+    button: {
+      backgroundColor: "#FFFFFF",
+      borderColor: "#000000",
+      borderRadius: "25%",
+      width: "50px",
+      height: "50px",
+      cursor: "pointer",
+    },
+    plusIcon: {
+      fontSize: "30px",
+    },
+    profileImage: {
+      width: "50px",
+      height: "50px",
+      cursor: "pointer",
+      border: "2px solid white",
+      borderRadius: "50%",
+      marginTop: "auto",
+    },
+    mainContent: {
+      flex: 1,
+      padding: "20px",
+    },
+  };
+
   return (
-    <div className="d-flex vh-100">
-      <aside
-        style={{
-          backgroundColor: "#8A8A8A",
-          width: "90px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          height: "100vh",
-          padding: "10px",
-        }}
-      >
-        <p style={{ fontSize: "12px", fontWeight: "bold", marginBottom: "5px" }}>
-          BuzzSnap
-        </p>
-        <img
-          src={logo}
-          alt="Buzzsnap Logo"
-          style={{ width: "50px", borderRadius: "25%", cursor: "pointer" }}
-        />
+    <div style={styles.container}>
+      <aside style={styles.aside}>
+        <p style={styles.title}>BuzzSnap</p>
+        <img src={logo} alt="Buzzsnap Logo" style={styles.logo} />
 
-        <hr
-          style={{ width: "50%", border: "1px solid white", margin: "10px 0" }}
-        />
+        <hr style={styles.hr} />
 
-        <div
-          style={{
-            flex: 1,
-            overflowY: "auto",
-            width: "100%",
-            marginBottom: "10px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
+        <div style={styles.groupContainer}>
           {groupMembers.length > 0 ? (
             groupMembers.map((groupMember) => (
               <img
-                key={groupMember.id}  
-                src={groupMember.group?.image_url || sv}  
-                alt={groupMember.group?.name} 
-                style={{
-                  width: "50px",
-                  borderRadius: "25%",
-                  cursor: "pointer",
-                }}
+                key={groupMember.id}
+                src={groupMember.group?.image_url || sv}
+                alt={groupMember.group?.name}
+                style={styles.groupImage}
                 className="mb-2"
                 onClick={() =>
                   alert(
@@ -94,40 +135,30 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               />
             ))
           ) : (
-            <p>No hay grupos disponibles</p>
+            <> </>
           )}
           <button
-            style={{
-              backgroundColor: "#FFFFFF",
-              borderColor: "#000000",
-              borderRadius: "25%",
-              width: "50px",
-              height: "50px",
-              cursor: "pointer",
-            }}
+            style={styles.button}
             onClick={() => alert("¡Botón presionado!")}
             className="mb-2"
           >
-            <i className="bi bi-plus" style={{ fontSize: "30px" }}></i>
+            <i className="bi bi-plus" style={styles.plusIcon}></i>
           </button>
         </div>
 
-        <img
-          onClick={() => alert("¡Perfil presionado!")}
-          src={sv}
-          alt="Perfil"
-          style={{
-            width: "50px",
-            height: "50px",
-            cursor: "pointer",
-            border: "2px solid white",
-            borderRadius: "50%",
-            marginTop: "auto",
-          }}
-        />
+        {userInfo && userInfo.avatarUrl ? (
+          <img
+            onClick={() => alert("¡Perfil presionado!")}
+            src={userInfo.avatarUrl}
+            alt="Perfil"
+            style={styles.profileImage}
+          />
+        ) : (
+          <></>
+        )}
       </aside>
 
-      <div style={{ flex: 1, padding: "20px" }}>
+      <div style={styles.mainContent}>
         <main>{children}</main>
       </div>
     </div>
