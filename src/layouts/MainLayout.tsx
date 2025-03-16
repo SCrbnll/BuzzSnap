@@ -9,7 +9,7 @@ import sv from "/SCrbnll.png";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const POLL_INTERVAL = 300000; // 5 minutos en milisegundos
+  const POLL_INTERVAL = 60000; // 5 minutos en milisegundos
   const dispatch = useDispatch<AppDispatch>();
 
   const groupMembers = useSelector((state: RootState) => state.app.groupMembers);

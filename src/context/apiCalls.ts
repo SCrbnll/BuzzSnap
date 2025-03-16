@@ -29,6 +29,10 @@ export default class ApiManager {
         return this.friendsApi.getFriend(id);
     }
 
+    async getFriendsByUserId(userId: number): Promise<Friend[]> {
+        return this.friendsApi.getFriendsByUserId(userId);
+    }
+
     async addFriend(friend: Friend): Promise<Friend> {
         return this.friendsApi.addFriend(friend);
     }
@@ -123,7 +127,7 @@ export default class ApiManager {
     }
 
     async deleteUser(id: number): Promise<void> {
-        const user = await this.usersApi.getUser(id); // Obtener el usuario antes de eliminarlo
+        const user = await this.usersApi.getUser(id); 
         return this.usersApi.deleteUser(user);
     }
 

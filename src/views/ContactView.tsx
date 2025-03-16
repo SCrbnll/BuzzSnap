@@ -1,24 +1,14 @@
-import React, { useEffect, useState } from "react";
-import ApiManager from "@/context/apiCalls";
-import { Friend } from "@/services/api/types";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState, syncAllData } from "@/context/store";
 
 const ContactView: React.FC = () => {
-    const [friends, setFriends] = useState<Friend[]>([]);
+    const dispatch = useDispatch<AppDispatch>();
+    const friends = useSelector((state: RootState) => state.app.friends);
 
     useEffect(() => {
-        const fetchFriends = async () => {
-            try {
-                const apiManager = new ApiManager();
-                const friendList = await apiManager.getFriends();
-                setFriends(friendList);
-                console.log("Amigos del usuario:", friendList);
-            } catch (error) {
-                console.error("Error al obtener los amigos:", error);
-            }
-        };
-
-        fetchFriends();
-    }, []);
+        dispatch(syncAllData());
+    }, [dispatch]);
 
     const styles: { [key: string]: React.CSSProperties } = {
         separator: {
@@ -140,13 +130,13 @@ const ContactView: React.FC = () => {
                         <div key={friend.id} style={styles.friendCard}>
                             <div style={styles.friendInfo}>
                                 <img
-                                    src={friend.user.avatarUrl}
-                                    alt={friend.user.name}
+                                    src={friend.friend.avatarUrl}
+                                    alt={friend.friend.name}
                                     style={styles.avatar}
                                 />
                                 <div style={styles.textContainer}>
-                                    <p style={styles.friendName}>{friend.user.name}</p>
-                                    <p style={styles.friendDescription}>{friend.user.description}</p>
+                                    <p style={styles.friendName}>{friend.friend.name}</p>
+                                    <p style={styles.friendDescription}>{friend.friend.description}</p>
                                 </div>
                             </div>
                             <div style={styles.buttonContainer}>
