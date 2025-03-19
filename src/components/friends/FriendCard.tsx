@@ -2,10 +2,10 @@ import React from "react";
 
 interface FriendCardProps {
   friend: any;
-  onSendMessage?: () => void; // Acción al hacer click en "Enviar mensaje"
-  onOptionsClick?: () => void; // Acción al hacer click en "Opciones"
-  onDeleteClick?: () => void; // Acción al hacer click en "Eliminar"
-  isActive?: boolean; // Si el usuario está activo (conectado o no)
+  onSendMessage?: () => void; 
+  onOptionsClick?: () => void;
+  onDeleteClick?: () => void;
+  isActive?: boolean; 
 }
 
 const FriendCard: React.FC<FriendCardProps> = ({

@@ -1,4 +1,5 @@
 import FriendCard from "@/components/friends/FriendCard";
+import UserInfoModal from "@/components/UserInfoModal";
 import { AppDispatch, RootState, syncAllData } from "@/context/store";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,6 +9,9 @@ const ContactView: React.FC = () => {
   const friends = useSelector((state: RootState) => state.app.friends);
 
   const [activeFilter, setActiveFilter] = useState<string>("activos");
+  const [selectedUser, setSelectedUser] = useState<any | null>(null); 
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+
 
   useEffect(() => {
     dispatch(syncAllData());
@@ -25,6 +29,16 @@ const ContactView: React.FC = () => {
         return true;
     }
   });
+
+  const handleOpenModal = (friend: any) => {
+    setSelectedUser(friend.friend);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedUser(null);
+  };
 
   const styles: { [key: string]: React.CSSProperties } = {
     separator: {
@@ -121,18 +135,28 @@ const ContactView: React.FC = () => {
               friend={friend}
               isActive={!friend.friend.lastLogin}
               onDeleteClick={
-                activeFilter === "solicitudes" ? () => alert("Eliminar solicitud") : undefined
+                activeFilter === "solicitudes" ? () => alert("Eliminar solicitud"): undefined
               }
               onOptionsClick={
-                activeFilter !== "solicitudes" ? () => alert("Opciones") : undefined
+                activeFilter !== "solicitudes" ? () => handleOpenModal(friend): undefined
               }
               onSendMessage={
-                activeFilter !== "solicitudes" ? () => alert("Enviar mensaje") : undefined
+                activeFilter !== "solicitudes" ? () => alert("Enviar mensaje"): undefined
               }
             />
           ))}
         </div>
       </div>
+      {selectedUser && (
+        <UserInfoModal
+          show={modalOpen}
+          handleClose={handleCloseModal}
+          user={selectedUser}
+          onSendMessage={() => alert(`Enviar mensaje a ${selectedUser.name}`)}
+          onRequestClick={() => alert(`Solicitar conexión con ${selectedUser.name}`)}
+          onDeleteClick={() => alert(`Eliminar a ${selectedUser.name}`)}
+        />
+      )}
     </div>
   );
 };

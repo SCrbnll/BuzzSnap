@@ -38,7 +38,7 @@ const Login: React.FC = () => {
         <div className="mb-3">
           <label className="form-label">Usuario</label>
           <input 
-            type="text" 
+            type="email" 
             className="form-control"
             placeholder="Introduzca su usuario" 
             value={username} 
