@@ -9,7 +9,7 @@ const ContactView: React.FC = () => {
   const friends = useSelector((state: RootState) => state.app.friends);
 
   const [activeFilter, setActiveFilter] = useState<string>("activos");
-  const [selectedUser, setSelectedUser] = useState<any | null>(null); 
+  const [selectedUser, setSelectedUser] = useState<any | null>(null);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
 
@@ -22,9 +22,9 @@ const ContactView: React.FC = () => {
       case "activos":
         return friend.friend.lastLogin === null && friend.status === "accepted";
       case "todos":
-        return friend.status === "accepted"; 
+        return friend.status === "accepted";
       case "solicitudes":
-        return friend.status === "pending"; 
+        return friend.status === "pending";
       default:
         return true;
     }
@@ -54,14 +54,10 @@ const ContactView: React.FC = () => {
       marginTop: "50px",
     },
     button: {
-      backgroundColor: "#ccc",
       width: "100px",
       borderRadius: "5px",
       border: "none",
       cursor: "pointer",
-    },
-    buttonActive: {
-      backgroundColor: "#FFA600",
     },
     buttonsContainer: {
       display: "flex",
@@ -94,34 +90,29 @@ const ContactView: React.FC = () => {
       <nav style={styles.nav} className="d-flex flex-row align-items-center">
         <div style={styles.buttonsContainer}>
           <button
-            style={{
-              ...styles.button,
-              ...(activeFilter === "activos" ? styles.buttonActive : {}),
-            }}
+            className={`button ${activeFilter === "activos" ? "button-active-filter" : ""}`}
+            style={styles.button}
             onClick={() => setActiveFilter("activos")}
           >
             Activos
           </button>
           <button
-            style={{
-              ...styles.button,
-              ...(activeFilter === "todos" ? styles.buttonActive : {}),
-            }}
+            className={`button ${activeFilter === "todos" ? "button-active-filter" : ""}`}
+            style={styles.button}
             onClick={() => setActiveFilter("todos")}
           >
             Todos
           </button>
           <button
-            style={{
-              ...styles.button,
-              ...(activeFilter === "solicitudes" ? styles.buttonActive : {}),
-            }}
+            className={`button ${activeFilter === "solicitudes" ? "button-active-filter" : ""}`}
+            style={styles.button}
             onClick={() => setActiveFilter("solicitudes")}
           >
             Solicitudes
           </button>
         </div>
-        <button style={{ ...styles.button, ...styles.addButton }}>
+
+        <button className="button" style={{ ...styles.button, ...styles.addButton }}>
           Añadir
         </button>
       </nav>
@@ -135,13 +126,13 @@ const ContactView: React.FC = () => {
               friend={friend}
               isActive={!friend.friend.lastLogin}
               onDeleteClick={
-                activeFilter === "solicitudes" ? () => alert("Eliminar solicitud"): undefined
+                activeFilter === "solicitudes" ? () => alert("Eliminar solicitud") : undefined
               }
               onOptionsClick={
-                activeFilter !== "solicitudes" ? () => handleOpenModal(friend): undefined
+                activeFilter !== "solicitudes" ? () => handleOpenModal(friend) : undefined
               }
               onSendMessage={
-                activeFilter !== "solicitudes" ? () => alert("Enviar mensaje"): undefined
+                activeFilter !== "solicitudes" ? () => alert("Enviar mensaje") : undefined
               }
             />
           ))}

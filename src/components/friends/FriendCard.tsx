@@ -17,7 +17,6 @@ const FriendCard: React.FC<FriendCardProps> = ({
 }) => {
   const styles: { [key: string]: React.CSSProperties } = {
     friendCard: {
-      backgroundColor: "#8A8A8A",
       padding: "10px",
       display: "flex",
       borderRadius: "8px",
@@ -73,7 +72,7 @@ const FriendCard: React.FC<FriendCardProps> = ({
   };
 
   return (
-    <div style={styles.friendCard}>
+    <div style={styles.friendCard} className="friend-card">
       <div style={styles.friendInfo}>
         <div style={styles.avatarWrapper}>
           <img

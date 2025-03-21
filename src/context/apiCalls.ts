@@ -135,6 +135,7 @@ export default class ApiManager {
         const user = await this.usersApi.loginUser(email, password);
         console.log(user);
         localStorage.setItem('user', JSON.stringify(user));
+        document.body.setAttribute("data-theme", user.theme);
         return user;
     }
 

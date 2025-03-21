@@ -1,4 +1,385 @@
-html, body {
+html,
+body {
   overflow: hidden;
   height: 100%;
+}
+
+
+:root {
+  /* THEME GREEN */
+  --background-green: #031716;
+  --aside-background-green: #0A7075;
+  --aside-button-background-green: #274D60;
+  --aside-button-color-green: #F1F1F1;
+  --aside-button-border-green: #ffffff;
+  /* MENU RESPONSIVE GREEN*/
+  --responsive-menu-father-background-green: #002121;
+  --responsive-menu-father-color-green: #FFFFFF;
+  --responsive-menu-child-background-green: #274D60;
+  --responsive-menu-child-color-green: #FFFFFF;
+  /* GLOBAL GREEN*/
+  --button-background-green: #8CC494;
+  --button-color-green: #000000;
+  --button-active-filter-background-green: #6BA3BE;
+  /* MODAL GREEN*/
+  --modal-content-background-color-green: #002121;
+  --modal-content-color-green: #FFFFFF;
+  --modal-button-color-green: #000000;
+  --modal-button-border-green: 8px solid #8CC494;
+  /* FRIEND CARD GREEN*/
+  --friend-card-background-green: #002121;
+  --friend-card-text-green: #FFFFFF;
+  /* CHAT CARD GREEN*/
+  --chat-card-active-background-green: #6BA3BE;
+  --chat-card-inactive-background-green: #D9D9D9;
+  --chat-card-text-green: #000000;
+  --chat-card-notification-background-green: #C1E3B1;
+  --chat-card-notification-ball-background-green: #00B2FF;
+  --chat-card-notification-ball-color-green: #000000;
+  /* CHAT BOX GREEN*/
+  --chat-box-background-green: #002121;
+  --chat-box-message-background-green: #274D60;
+  --chat-box-message-color-green: #FFFFFF;
+  --chat-box-input-text-background-green: #FFFFFF;
+  --chat-box-input-text-text-green: #972D2D;
+  --chat-box-input-button-background-green: #D7D7D7;
+  --chat-box-input-button-color-green: #000000;
+
+  /* =============================================================== */
+
+  /* THEME PURPLE */
+  --background-purple: #150016;
+  --aside-background-purple: #522C5D;
+  --aside-button-background-purple: #845162;
+  --aside-button-color-purple: #F1F1F1;
+  --aside-button-border-purple: #ffffff;
+  /* MENU RESPONSIVE PURPLE*/
+  --responsive-menu-father-background-purple: #1A0021;
+  --responsive-menu-father-color-purple: #FFFFFF;
+  --responsive-menu-child-background-purple: #A96BBE;
+  --responsive-menu-child-color-purple: #000000;
+  /* GLOBAL PURPLE*/
+  --button-background-purple: #D4AFC8;
+  --button-color-purple: #000000;
+  --button-active-filter-background-purple: #A96BBE;
+  /* MODAL PURPLE*/
+  --modal-content-background-color-purple: #1A0021;
+  --modal-content-color-purple: #FFFFFF;
+  --modal-button-color-purple: #000000;
+  --modal-button-border-purple: 8px solid #D4AFC8;
+  /* FRIEND CARD PURPLE*/
+  --friend-card-background-purple: #1A0021;
+  --friend-card-text-purple: #FFFFFF;
+  /* CHAT CARD PURPLE*/
+  --chat-card-active-background-purple: #A96BBE;
+  --chat-card-inactive-background-purple: #D9D9D9;  
+  --chat-card-text-purple: #000000;
+  --chat-card-notification-background-purple: #E3B6B1;
+  --chat-card-notification-ball-background-purple: #FF00A6;
+  --chat-card-notification-ball-color-purple: #000000;
+  /* CHAT BOX PURPLE*/
+  --chat-box-background-purple: #002121;
+  --chat-box-message-background-purple: #845162;
+  --chat-box-message-color-purple: #FFFFFF;
+  --chat-box-input-text-background-purple: #FFFFFF;
+  --chat-box-input-text-text-purple: #972D2D;
+  --chat-box-input-button-background-purple: #D7D7D7;
+  --chat-box-input-button-color-purple: #000000;
+
+  /* =============================================================== */
+
+  /* THEME BLUE */
+  --background-blue: #0D1E4C;
+  --aside-background-blue: #83A6CE;
+  --aside-button-background-blue: #E5C9D7;
+  --aside-button-color-blue: #000000;
+  --aside-button-border-blue: #101010;
+  /* MENU RESPONSIVE BLUE*/
+  --responsive-menu-father-background-blue: #0B1B32;
+  --responsive-menu-father-color-blue: #FFFFFF;
+  --responsive-menu-child-background-blue: #26415E;
+  --responsive-menu-child-color-blue: #FFFFFF;
+  /* GLOBAL BLUE*/
+  --button-background-blue: #C48CB3;
+  --button-color-blue: #000000;
+  --button-active-filter-background-blue: #26415E;
+  --button-active-filter-color-blue: #FFFFFF;
+  /* MODAL BLUE*/
+  --modal-content-background-color-blue: #0B1B32;
+  --modal-content-color-blue: #FFFFFF;
+  --modal-button-color-blue: #000000;
+  --modal-button-border-blue: 8px solid #C48CB3;
+  /* FRIEND CARD BLUE*/
+  --friend-card-background-blue: #0B1B32;
+  --friend-card-text-blue: #FFFFFF;
+  /* CHAT CARD BLUE*/
+  --chat-card-active-background-blue: #26415E;
+  --chat-card-inactive-background-blue: #D9D9D9;  
+  --chat-card-text-blue: #000000;
+  --chat-card--active-text-blue: #FFFFFF;
+  --chat-card-notification-background-blue: #B1D4E3;
+  --chat-card-notification-ball-background-blue: #0048FF;
+  --chat-card-notification-ball-color-blue: #000000;
+  /* CHAT BOX BLUE*/
+  --chat-box-background-blue: #0B1B32;
+  --chat-box-message-background-blue: #E5C9D7;
+  --chat-box-message-color-blue: #000000;
+  --chat-box-input-text-background-blue: #FFFFFF;
+  --chat-box-input-text-text-blue: #972D2D;
+  --chat-box-input-button-background-blue: #D7D7D7;
+  --chat-box-input-button-color-blue: #000000;
+
+}
+
+body[data-theme="green"] {
+  background: var(--background-green);
+
+  /* ASIDE */
+  aside {
+    background: var(--aside-background-green);
+  }
+  .aside-button {
+    background: var(--aside-button-background-green);
+    color: var(--aside-button-color-green);
+    border-color: var(--aside-button-border-green);
+  }
+
+  /* MENU RESPONSIVE */
+  .responsive-menu-father {
+    background: var(--responsive-menu-father-background-green);
+    color: var(--responsive-menu-father-color-green);
+  }
+  .responsive-menu-child {
+    background: var(--responsive-menu-child-background-green);
+    color: var(--responsive-menu-child-color-green);
+  }
+
+  /* MODAL */
+  .modal-content {
+    background: var(--modal-content-background-color-green);
+    color: var(--modal-content-color-green);
+  }
+  .button-modal {
+    background: var(--button-background-green);
+    color: var(--button-color-green);
+    border: none;
+  }
+
+  /* FRIEND CARD */
+  .friend-card {
+    background: var(--friend-card-background-green);
+    color: var(--friend-card-text-green);
+  }
+
+  /* CHAT CARD */
+  .chat-card {
+    background: var(--chat-card-inactive-background-green);
+    color: var(--chat-card-text-green);
+  }
+  .chat-card.active {
+    background: var(--chat-card-active-background-green);
+  }
+  .chat-card-notification {
+    background: var(--chat-card-notification-background-green);
+  }
+  .chat-card-notification-ball {
+    background: var(--chat-card-notification-ball-background-green);
+    color: var(--chat-card-notification-ball-color-green);
+  }
+
+  /* CHAT BOX */
+  .chat-box {
+    background: var(--chat-box-background-green);
+  }
+  .chat-box-message {
+    background: var(--chat-box-message-background-green);
+    color: var(--chat-box-message-color-green);
+  }
+  .chat-box-input-text {
+    background: var(--chat-box-input-text-background-green);
+    color: var(--chat-box-input-text-text-green);
+  }
+  .chat-box-input-button {
+    background: var(--chat-box-input-button-background-green);
+    color: var(--chat-box-input-button-color-green);
+  }
+
+  /* BOTONES */
+  .button {
+    background: var(--button-background-green);
+    color: var(--button-color-green);
+  }
+  .button-active-filter {
+    background: var(--button-active-filter-background-green);
+    color: var(--button-color-green);
+  }
+}
+
+body[data-theme="purple"] {
+  background: var(--background-purple);
+
+  /* ASIDE */
+  aside {
+    background: var(--aside-background-purple);
+  }
+  .aside-button {
+    background: var(--aside-button-background-purple);
+    color: var(--aside-button-color-purple);
+    border-color: var(--aside-button-border-purple);
+  }
+
+  /* MENU RESPONSIVE */
+  .responsive-menu-father {
+    background: var(--responsive-menu-father-background-purple);
+    color: var(--responsive-menu-father-color-purple);
+  }
+  .responsive-menu-child {
+    background: var(--responsive-menu-child-background-purple);
+    color: var(--responsive-menu-child-color-purple);
+  }
+
+  /* MODAL */
+  .modal-content {
+    background: var(--modal-content-background-color-purple);
+    color: var(--modal-content-color-purple);
+  }
+  .button-modal {
+    background: var(--button-background-purple);
+    color: var(--button-color-purple);
+    border: none;
+  }
+
+  /* FRIEND CARD */
+  .friend-card {
+    background: var(--friend-card-background-purple);
+    color: var(--friend-card-text-purple);
+  }
+
+  /* CHAT CARD */
+  .chat-card {
+    background: var(--chat-card-inactive-background-purple);
+    color: var(--chat-card-text-purple);
+  }
+  .chat-card.active {
+    background: var(--chat-card-active-background-purple);
+  }
+  .chat-card-notification {
+    background: var(--chat-card-notification-background-purple);
+  }
+  .chat-card-notification-ball {
+    background: var(--chat-card-notification-ball-background-purple);
+    color: var(--chat-card-notification-ball-color-purple);
+  }
+
+  /* CHAT BOX */
+  .chat-box {
+    background: var(--chat-box-background-purple);
+  }
+  .chat-box-message {
+    background: var(--chat-box-message-background-purple);
+    color: var(--chat-box-message-color-purple);
+  }
+  .chat-box-input-text {
+    background: var(--chat-box-input-text-background-purple);
+    color: var(--chat-box-input-text-text-purple);
+  }
+  .chat-box-input-button {
+    background: var(--chat-box-input-button-background-purple);
+    color: var(--chat-box-input-button-color-purple);
+  }
+
+  /* BOTONES */
+  .button {
+    background: var(--button-background-purple);
+    color: var(--button-color-purple);
+  }
+  .button-active-filter {
+    background: var(--button-active-filter-background-purple);
+    color: var(--button-color-purple);
+  }
+}
+
+body[data-theme="blue"] {
+  background: var(--background-blue);
+
+  /* ASIDE */
+  aside {
+    background: var(--aside-background-blue);
+  }
+  .aside-button {
+    background: var(--aside-button-background-blue);
+    color: var(--aside-button-color-blue);
+    border-color: var(--aside-button-border-blue);
+  }
+
+  /* MENU RESPONSIVE */
+  .responsive-menu-father {
+    background: var(--responsive-menu-father-background-blue);
+    color: var(--responsive-menu-father-color-blue);
+  }
+  .responsive-menu-child {
+    background: var(--responsive-menu-child-background-blue);
+    color: var(--responsive-menu-child-color-blue);
+  }
+
+  /* MODAL */
+  .modal-content {
+    background: var(--modal-content-background-color-blue);
+    color: var(--modal-content-color-blue);
+  }
+  .button-modal {
+    background: var(--button-background-blue);
+    color: var(--button-color-blue);
+    border: none;
+  }
+
+  /* FRIEND CARD */
+  .friend-card {
+    background: var(--friend-card-background-blue);
+    color: var(--friend-card-text-blue);
+  }
+
+  /* CHAT CARD */
+  .chat-card {
+    background: var(--chat-card-inactive-background-blue);
+    color: var(--chat-card-text-blue);
+  }
+  .chat-card.active {
+    background: var(--chat-card-active-background-blue);
+    color: var(--chat-card--active-text-blue);
+  }
+  .chat-card-notification {
+    background: var(--chat-card-notification-background-blue);
+  }
+  .chat-card-notification-ball {
+    background: var(--chat-card-notification-ball-background-blue);
+    color: var(--chat-card-notification-ball-color-blue);
+  }
+
+  /* CHAT BOX */
+  .chat-box {
+    background: var(--chat-box-background-blue);
+  }
+  .chat-box-message {
+    background: var(--chat-box-message-background-blue);
+    color: var(--chat-box-message-color-blue);
+  }
+  .chat-box-input-text {
+    background: var(--chat-box-input-text-background-blue);
+    color: var(--chat-box-input-text-text-blue);
+  }
+  .chat-box-input-button {
+    background: var(--chat-box-input-button-background-blue);
+    color: var(--chat-box-input-button-color-blue);
+  }
+
+  /* BOTONES */
+  .button {
+    background: var(--button-background-blue);
+    color: var(--button-color-blue);
+  }
+  .button-active-filter {
+    background: var(--button-active-filter-background-blue);
+    color: var(--button-active-filter-color-blue);
+  }
 }

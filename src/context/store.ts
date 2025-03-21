@@ -49,8 +49,6 @@ export const syncAllData = () => async (dispatch: any) => {
         friendsApi.getFriendsByUserId(userId),
         groupMembersApi.getGroupMembersByUserId(userId),
       ]);
-
-      console.log("✅ Datos obtenidos:", { friends, groupMembers }); 
       dispatch(
         setAllData({
           friends: friends as Friend[],

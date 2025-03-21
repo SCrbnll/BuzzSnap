@@ -48,7 +48,6 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       height: "100vh",
     },
     aside: {
-      backgroundColor: "#8A8A8A",
       width: "90px",
       display: "flex",
       flexDirection: "column",
@@ -86,8 +85,6 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       cursor: "pointer",
     },
     button: {
-      backgroundColor: "#FFFFFF",
-      borderColor: "#000000",
       borderRadius: "25%",
       width: "50px",
       height: "50px",
@@ -139,8 +136,8 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           )}
           <button
             style={styles.button}
+            className="aside-button mb-2"
             onClick={() => alert("¡Botón presionado!")}
-            className="mb-2"
           >
             <i className="bi bi-plus" style={styles.plusIcon}></i>
           </button>
