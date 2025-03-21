@@ -28,13 +28,6 @@ const Register: React.FC = () => {
     form : {
       width: "350px",
     },
-    input: {
-      backgroundColor: "#FFEBC6",
-    },
-    button : {
-      backgroundColor: "#FFA600",
-      color: "#000000"
-    }
   };
 
   return (
@@ -48,8 +41,7 @@ const Register: React.FC = () => {
           <input 
             type="text" 
             id="username" 
-            className="form-control" 
-            style={styles.input} 
+            className="form-control input-login" 
             placeholder="Introduzca su usuario" 
             value={username} 
             onChange={(e) => setUsername(e.target.value)} 
@@ -61,8 +53,7 @@ const Register: React.FC = () => {
           <input 
             type="email" 
             id="email" 
-            className="form-control" 
-            style={styles.input} 
+            className="form-control input-login" 
             placeholder="Introduzca su email" 
             value={email} 
             onChange={(e) => setEmail(e.target.value)} 
@@ -74,15 +65,14 @@ const Register: React.FC = () => {
           <input 
             type="password" 
             id="password" 
-            className="form-control" 
-            style={styles.input} 
+            className="form-control input-login" 
             placeholder="Introduzca su contraseña" 
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
             required />
         </div>
 
-        <button type="submit" className="btn w-100" style={styles.button}>Crear cuenta</button>
+        <button type="submit" className="btn w-100 button-login">Crear cuenta</button>
 
         <p className="mt-3">
           ¿Ya una cuenta? <a href="/login" className="text-primary">Inicia sesión</a>

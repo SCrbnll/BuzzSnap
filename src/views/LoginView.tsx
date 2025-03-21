@@ -39,7 +39,7 @@ const Login: React.FC = () => {
           <label className="form-label">Usuario</label>
           <input 
             type="email" 
-            className="form-control"
+            className="form-control input-login"
             placeholder="Introduzca su usuario" 
             value={username} 
             onChange={(e) => setUsername(e.target.value)} 
@@ -51,7 +51,7 @@ const Login: React.FC = () => {
           <label className="form-label">Contraseña</label>
           <input 
             type="password" 
-            className="form-control" 
+            className="form-control input-login" 
             placeholder="Introduzca su contraseña" 
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
@@ -59,7 +59,7 @@ const Login: React.FC = () => {
           />
         </div>
 
-        <button type="submit" className="btn w-100" style={{ backgroundColor: "#FFA600", color: "#000000" }}>
+        <button type="submit" className="btn w-100 button-login">
           Entrar
         </button>
 
