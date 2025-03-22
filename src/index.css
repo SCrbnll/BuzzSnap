@@ -24,7 +24,7 @@ body {
   --modal-content-background-color-green: #002121;
   --modal-content-color-green: #FFFFFF;
   --modal-button-color-green: #000000;
-  --modal-button-border-green: 8px solid #8CC494;
+  --modal-button-border-green: 6px solid #8CC494;
   /* FRIEND CARD GREEN*/
   --friend-card-background-green: #002121;
   --friend-card-text-green: #FFFFFF;
@@ -65,7 +65,7 @@ body {
   --modal-content-background-color-purple: #1A0021;
   --modal-content-color-purple: #FFFFFF;
   --modal-button-color-purple: #000000;
-  --modal-button-border-purple: 8px solid #D4AFC8;
+  --modal-button-border-purple: 6px solid #D4AFC8;
   /* FRIEND CARD PURPLE*/
   --friend-card-background-purple: #1A0021;
   --friend-card-text-purple: #FFFFFF;
@@ -107,7 +107,7 @@ body {
   --modal-content-background-color-blue: #0B1B32;
   --modal-content-color-blue: #FFFFFF;
   --modal-button-color-blue: #000000;
-  --modal-button-border-blue: 8px solid #C48CB3;
+  --modal-button-border-blue: 6px solid #C48CB3;
   /* FRIEND CARD BLUE*/
   --friend-card-background-blue: #0B1B32;
   --friend-card-text-blue: #FFFFFF;
@@ -162,6 +162,9 @@ body[data-theme="green"] {
     background: var(--button-background-green);
     color: var(--button-color-green);
     border: none;
+  }
+  .button-modal-border {
+    border: var(--modal-button-border-green);
   }
 
   /* FRIEND CARD */
@@ -247,6 +250,9 @@ body[data-theme="purple"] {
     color: var(--button-color-purple);
     border: none;
   }
+  .button-modal-border {
+    border: var(--modal-button-border-purple);
+  }
 
   /* FRIEND CARD */
   .friend-card {
@@ -330,6 +336,9 @@ body[data-theme="blue"] {
     background: var(--button-background-blue);
     color: var(--button-color-blue);
     border: none;
+  }
+  .button-modal-border {
+    border: var(--modal-button-border-blue);
   }
 
   /* FRIEND CARD */

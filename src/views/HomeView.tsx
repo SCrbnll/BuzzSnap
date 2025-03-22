@@ -1,7 +1,13 @@
-import React from "react";
+import React, {  useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
+import SettingsModal from "@/components/settings/SettingsModal";
 
 const HomeView: React.FC = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const handleOpenModal = () => setModalOpen(true); 
+  const handleCloseModal = () => setModalOpen(false); 
+
   const styles = {
     nav: {
       fontSize: "18px",
@@ -25,21 +31,40 @@ const HomeView: React.FC = () => {
     <div>
       <nav style={styles.nav}>
         <ul className="d-flex flex-row align-items-center gap-4">
-          <NavLink to="/home/chats" className="nav-link" style={({ isActive }) => (isActive ? styles.activeLink : undefined)}>
-              Chats
+          <NavLink
+            to="/home/chats"
+            className="nav-link"
+            style={({ isActive }) => (isActive ? styles.activeLink : undefined)}
+          >
+            Chats
           </NavLink>
           <hr style={styles.separatorVertical} />
-          <NavLink  to="/home/contacts" className="nav-link" style={({ isActive }) => (isActive ? styles.activeLink : undefined)}>
-              Contactos
+          <NavLink
+            to="/home/contacts"
+            className="nav-link"
+            style={({ isActive }) => (isActive ? styles.activeLink : undefined)}
+          >
+            Contactos
           </NavLink>
-          <i className="mx-3 ms-auto bi bi-gear" style={{ fontSize: "20px", cursor: "pointer" }} />
+          <i
+            className="mx-3 ms-auto bi bi-gear"
+            style={{ fontSize: "20px", cursor: "pointer" }}
+            onClick={handleOpenModal}
+          />
         </ul>
       </nav>
       <hr style={styles.separator} />
-      
+
       <section>
         <Outlet />
       </section>
+      <SettingsModal
+        show={modalOpen}
+        handleClose={handleCloseModal}
+        onChangeEmail={() => alert(`Cambiar email`)}
+        onChangePassword={() => alert(`Cambiar password`)}
+        onLogOut={() => alert(`Cerrar sesión`)}
+      />
     </div>
   );
 };

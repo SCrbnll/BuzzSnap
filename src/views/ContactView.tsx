@@ -1,5 +1,5 @@
 import FriendCard from "@/components/friends/FriendCard";
-import UserInfoModal from "@/components/UserInfoModal";
+import UserInfoModal from "@/components/users/UserInfoModal";
 import { AppDispatch, RootState, syncAllData } from "@/context/store";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
