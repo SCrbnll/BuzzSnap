@@ -8,6 +8,7 @@ import NotFound from '@/views/NotFoundView';
 import MainLayout from '@/layouts/MainLayout';
 import ChatView from '@/views/ChatView';
 import ContactView from '@/views/ContactView';
+import GroupView from '@/views/GroupView';
 
 const AppRouter: React.FC = () => {
   return (
@@ -26,8 +27,9 @@ const AppRouter: React.FC = () => {
          <Route path="/home" element={<MainLayout> <HomeView /> </MainLayout>}>
           <Route index element={<p className='text-center fs-4 d-flex align-items-center justify-content-center vh-100'>¿Listo para chatear?</p>} />
           <Route path="chats" element={<ChatView />} />
-          <Route path="contactos" element={<ContactView />} />
+          <Route path="contacts" element={<ContactView />} />
          </Route>
+         <Route path="groups/:id" element={<MainLayout><GroupView /> </MainLayout>} />
         
 
         {/* Ruta para errores 404 */}

@@ -109,9 +109,9 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <div style={styles.container}>
-      <aside style={styles.aside}>
+      <aside style={styles.aside} className="aside-layout">
         <p style={styles.title}>BuzzSnap</p>
-        <img src={logo} alt="Buzzsnap Logo" style={styles.logo} />
+        <img src={logo} alt="Buzzsnap Logo" style={styles.logo} onClick={() => navigate("/home")}/>
 
         <hr style={styles.hr} />
 
@@ -125,9 +125,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 style={styles.groupImage}
                 className="mb-2"
                 onClick={() =>
-                  alert(
-                    `¡Grupo ${groupMember.group?.id} con nombre ${groupMember.group?.name} presionado!`
-                  )
+                  navigate(`/groups/${groupMember.group?.id}`)
                 }
               />
             ))

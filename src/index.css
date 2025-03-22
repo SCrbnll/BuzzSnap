@@ -134,7 +134,7 @@ body[data-theme="green"] {
   background: var(--background-green);
 
   /* ASIDE */
-  aside {
+  .aside-layout {
     background: var(--aside-background-green);
   }
   .aside-button {
@@ -218,7 +218,7 @@ body[data-theme="purple"] {
   background: var(--background-purple);
 
   /* ASIDE */
-  aside {
+  .aside-layout {
     background: var(--aside-background-purple);
   }
   .aside-button {
@@ -302,7 +302,7 @@ body[data-theme="blue"] {
   background: var(--background-blue);
 
   /* ASIDE */
-  aside {
+  .aside-layout {
     background: var(--aside-background-blue);
   }
   .aside-button {

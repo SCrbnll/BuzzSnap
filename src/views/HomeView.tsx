@@ -29,7 +29,7 @@ const HomeView: React.FC = () => {
               Chats
           </NavLink>
           <hr style={styles.separatorVertical} />
-          <NavLink  to="/home/contactos" className="nav-link" style={({ isActive }) => (isActive ? styles.activeLink : undefined)}>
+          <NavLink  to="/home/contacts" className="nav-link" style={({ isActive }) => (isActive ? styles.activeLink : undefined)}>
               Contactos
           </NavLink>
           <i className="mx-3 ms-auto bi bi-gear" style={{ fontSize: "20px", cursor: "pointer" }} />
