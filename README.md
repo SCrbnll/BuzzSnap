@@ -9,7 +9,7 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,     -- Contraseña cifrada
     avatar_url VARCHAR(255) DEFAULT 'https://media.discordapp.net/attachments/1350894316767416412/1350897517507903559/2301-default-2.png?ex=67d868da&is=67d7175a&hm=7cf1b8c93ccdb5b4091dedd02f9ecfc665ac2a779e2440413781caf05e343839&=&format=webp&quality=lossless',            -- URL del avatar (puede ser almacenado en un S3)
     description VARCHAR(255),			-- Descripción personaizada del usuario
-    theme VARCHAR(50) DEFAULT 'light',  -- Tema seleccionado (por ejemplo 'light' o 'dark')
+    theme enum('green','blue','purple') DEFAULT 'purple',  -- Tema seleccionado (por ejemplo 'light' o 'dark')
     last_login TIMESTAMP NULL DEFAULT NULL,  -- Última vez que el usuario estuvo en línea
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Fecha de creación de la cuenta
     closed BOOLEAN DEFAULT false        -- Estado de la cuenta (borrada o no borrada)
@@ -62,7 +62,6 @@ CREATE TABLE messages (
     FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE, 
     FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE 
 );
-
 ```
 
 ### Compilar el Proyecto
