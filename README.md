@@ -49,18 +49,31 @@ CREATE TABLE group_members (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE    
 );
 
--- 5. Tabla de Mensajes
+-- 5. Tabla de Chats
+CREATE TABLE chats (
+    id INT AUTO_INCREMENT PRIMARY KEY,          -- ID único del chat
+    user1_id INT NOT NULL,                      -- ID del primer usuario
+    user2_id INT NOT NULL,                      -- ID del segundo usuario
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Fecha de creación del chat
+    -- Columna calculada que almacena el menor de los dos IDs y el mayor
+    users_order VARCHAR(255) GENERATED ALWAYS AS (CONCAT(LEAST(user1_id, user2_id), '-', GREATEST(user1_id, user2_id))) STORED,
+    UNIQUE KEY unique_chat (users_order),  -- Constraint para asegurar que no haya duplicados
+    FOREIGN KEY (user1_id) REFERENCES users(id) ON DELETE CASCADE, -- Relación con la tabla 'users'
+    FOREIGN KEY (user2_id) REFERENCES users(id) ON DELETE CASCADE  -- Relación con la tabla 'users'
+);
+
+-- 6. Tabla de Mensajes
 CREATE TABLE messages (
     id INT AUTO_INCREMENT PRIMARY KEY,       -- ID único del mensaje
     sender_id INT NOT NULL,                  -- ID del usuario que envió el mensaje
+    chat_id INT DEFAULT NULL,               -- ID del grupo (si es mensaje de chat)
     group_id INT DEFAULT NULL,               -- ID del grupo (si es mensaje de grupo)
-    receiver_id INT DEFAULT NULL,            -- ID del receptor (si es mensaje privado)
     message_type ENUM('text', 'image', 'video', 'audio') NOT NULL, -- Tipo de mensaje (texto o multimedia)
     content TEXT NOT NULL,                   -- Contenido del mensaje
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Fecha de creación del mensaje
     FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE, 
-    FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE, 
-    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE 
+    FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE,
+    FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE
 );
 ```
 
