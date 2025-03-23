@@ -32,6 +32,9 @@ public class MessagesService {
 	public List<Messages> getMessagesBySender(Integer userId) {
 		return messagesRepository.findBySender(userId);
 	}
+	public List<Messages> getMessagesByChat(Integer chatId) {
+		return messagesRepository.findByChat(chatId);
+	}
 	public List<Messages> getMessagesByGroup(Integer groupId) {
 		return messagesRepository.findByGroup(groupId);
 	}

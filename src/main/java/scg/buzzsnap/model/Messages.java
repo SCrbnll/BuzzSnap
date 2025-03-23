@@ -27,7 +27,7 @@ public class Messages implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private Users sender;
-	private Users receiver;
+	private Chats chat;
 	private Groups group;
 	private String message_type;
 	private String content;
@@ -36,10 +36,10 @@ public class Messages implements java.io.Serializable {
 	public Messages() {
 	}
 
-	public Messages(Users senderId, Users receiverId, String messageType, String content,
+	public Messages(Users senderId, Chats chatId, String messageType, String content,
 			Date createdAt) {
 		this.sender = senderId;
-		this.receiver = receiverId;
+		this.chat = chatId;
 		this.message_type = messageType;
 		this.content = content;
 		this.created_at = createdAt;
@@ -77,13 +77,13 @@ public class Messages implements java.io.Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "receiver_id")
-	public Users getReceiver() {
-		return this.receiver;
+	@JoinColumn(name = "chat_id")
+	public Chats getChat() {
+		return this.chat;
 	}
 
-	public void setReceiver(Users receiverId) {
-		this.receiver = receiverId;
+	public void setChat(Chats chatId) {
+		this.chat = chatId;
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)

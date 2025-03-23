@@ -40,9 +40,14 @@ public class MessagesController {
 		}
 	}
 	
-	@GetMapping("/user/{userId}")
+	@GetMapping("/sender/{userId}")
 	public List<Messages> getByUser (@PathVariable Integer userId) {
 		return messagesService.getMessagesBySender(userId);	
+	}
+	
+	@GetMapping("/chat/{chatId}")
+	public List<Messages> getByChat (@PathVariable Integer chatId) {
+		return messagesService.getMessagesByChat(chatId);	
 	}
 	
 	@GetMapping("/group/{groupId}")
