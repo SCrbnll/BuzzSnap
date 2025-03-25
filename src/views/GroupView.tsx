@@ -1,12 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "/SCrbnll.png";
 import { useParams } from "react-router-dom";
 import ApiManager from "@/context/apiCalls";
 import { Group } from "@/services/api/types";
+import GroupModal from "@/components/groups/GroupModal";
 
 const GroupView: React.FC = () => {
     const { id } = useParams<{ id: string }>(); 
     const [group, setGroup] = React.useState<Group | null>(null);
+     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const apiCalls = new ApiManager();
 
     useEffect(() => {
@@ -23,7 +25,15 @@ const GroupView: React.FC = () => {
         };
     
         getGroupInfo();
-      }, [id]); // Se ejecuta cuando cambia el ID
+      }, [id]);
+
+      const handleOpenModal = () => {
+        setModalOpen(true);
+      };
+    
+      const handleCloseModal = () => {
+        setModalOpen(false);
+      };
 
   const styles: { [key: string]: React.CSSProperties } = {
     aside: {
@@ -65,7 +75,7 @@ const GroupView: React.FC = () => {
     <div>
         <nav style={styles.nav}>
         <ul className="d-flex flex-row align-items-center gap-4">
-          <p> {group?.name} </p>
+          <p onClick={() => handleOpenModal()}> {group?.name} </p>
           <i className="mx-3 ms-auto bi bi-gear" style={{ fontSize: "20px", cursor: "pointer" }} />
         
         </ul>
@@ -89,6 +99,16 @@ const GroupView: React.FC = () => {
         </div>
 
       </section>
+      {group && (
+        <GroupModal
+          show={modalOpen}
+          handleClose={handleCloseModal}
+          group={group}
+          onLeftGroup={() => alert(`Has abandonado el grupo: ${group.name}`)}
+          onEditGroup={() => alert(`Editando grupo: ${group.name}`)}
+          onInviteGroup={() => alert(`Invitando usuarios al grupo: ${group.name}`)}
+        />
+      )}
     </div>
   );
 };

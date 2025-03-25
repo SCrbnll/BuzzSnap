@@ -120,7 +120,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             groupMembers.map((groupMember) => (
               <img
                 key={groupMember.id}
-                src={groupMember.group?.image_url || sv}
+                src={groupMember.group?.imageUrl || sv}
                 alt={groupMember.group?.name}
                 style={styles.groupImage}
                 className="mb-2"

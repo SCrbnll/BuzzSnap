@@ -23,28 +23,28 @@ export interface Friend {
 export interface Group {
   id: number;
   name: string;
-  image_url?: string; // Puede ser opcional
+  imageUrl?: string; // Puede ser opcional
   description?: string;
-  created_by: number; // ID del creador en string
-  invite_code: string;
-  created_at: string; // Fecha en formato ISO
+  creator: User; // ID del creador en string
+  inviteCode: string;
+  createdAt: string; // Fecha en formato ISO
 }
 
 export interface GroupMember {
   id: number;
-  group_id: number; // ID del grupo
-  user_id: number; // ID del usuario
+  groupId: number; // ID del grupo
+  userId: number; // ID del usuario
   role: "admin" | "member"; // Rol en el grupo
-  joined_at: string; // Fecha de unión
+  joinedAt: string; // Fecha de unión
   group?: Group; // Esto es opcional, ya que no siempre tendrás el objeto completo del grupo aquí
 }
 
 export interface Message {
   id: number;
-  sender_id: number;
-  group_id?: number | null; // Puede ser null o undefined
-  receiver_id?: string | null; // Puede ser null o undefined
-  message_type: "text"; // Tipo de mensaje (por ahora solo "text")
+  senderId: number;
+  groupId?: number | null; // Puede ser null o undefined
+  receiverId?: string | null; // Puede ser null o undefined
+  messageType: "text"; // Tipo de mensaje (por ahora solo "text")
   content: string;
-  created_at: string; // Fecha en formato ISO
+  createdAt: string; // Fecha en formato ISO
 }
