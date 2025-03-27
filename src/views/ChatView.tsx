@@ -1,7 +1,55 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import logo from "/SCrbnll.png";
+import ApiManager from "@/context/apiCalls";
+import { Chats } from "@/services/api/types";
 
 const ChatView: React.FC = () => {
+  const [chats, setChats] = useState<Chats[]>([]); 
+  const [loading, setLoading] = useState<boolean>(true);
+  const [activeChat, setActiveChat] = useState<number | null>(null);  
+  const [isContentVisible, setIsContentVisible] = useState<boolean>(false);  
+
+  const apiManager = new ApiManager();  
+
+  const fetchChats = async (userId: number) => {
+    try {
+      const chatsData = await apiManager.getChatsByUserId(userId); 
+      setChats(chatsData);  
+      setLoading(false); 
+    } catch (error) {
+      console.error("Error al obtener los chats", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const userLocalStorage = localStorage.getItem("user");
+    if (userLocalStorage) {
+      const userId = JSON.parse(userLocalStorage).id;
+      fetchChats(userId); 
+    }
+  }, []);
+
+  const handleChatClick = (chatId: number) => {
+    setActiveChat(chatId); 
+    setIsContentVisible(true); 
+  };
+
+  const handleKeyPress = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      setIsContentVisible(false);
+      setActiveChat(null); 
+ 
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyPress);
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, []);
+
   const styles: { [key: string]: React.CSSProperties } = {
     aside: {
       width: "325px",
@@ -21,7 +69,6 @@ const ChatView: React.FC = () => {
       cursor: "pointer",
       borderRadius: "10px",
       paddingLeft: "20px",
-      backgroundColor: "#8A8A8A",
       display: "flex",
       alignItems: "center",
     },
@@ -41,19 +88,38 @@ const ChatView: React.FC = () => {
   return (
     <div className="d-flex vh-100 gap-3">
       <aside style={styles.aside} className="d-flex flex-column vh-100">
-        <div style={styles.chatList}>
-          {[...Array(14)].map((_, i) => (
-            <div key={i} style={styles.chat} className="mb-3 gap-3">
-              <img src={logo} alt="Icono" style={styles.logo} />
-              <p style={styles.chatText}>test</p>
-            </div>
-          ))}
+      <div style={styles.chatList}>
+          {loading ? (
+            <p>Cargando chats...</p>  
+          ) : (
+            chats.map((chat) => {
+              const otherUser = JSON.parse(localStorage.getItem("user")!).id === chat.user1.id
+                ? chat.user2
+                : chat.user1;
+
+              const isActive = activeChat === chat.id ? "active" : ""; 
+
+              return (
+                <div
+                  key={chat.id}
+                  style={styles.chat}
+                  className={`mb-3 gap-3 chat-card ${isActive}`} 
+                  onClick={() => handleChatClick(chat.id)} 
+                >
+                  <img src={logo} alt="Icono" style={styles.logo} />
+                  <p style={styles.chatText}>{otherUser.name}</p> 
+                </div>
+              );
+            })
+          )}
         </div>
       </aside>
 
-      <div style={styles.content}>
-        <p>Contenido aquí</p>
-      </div>
+      {isContentVisible && (
+        <div style={styles.content}>
+          <p>Contenido aquí</p>
+        </div>
+      )}
     </div>
   );
 };

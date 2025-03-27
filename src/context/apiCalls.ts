@@ -1,9 +1,10 @@
-import { Friend, Group, GroupMember, Message, User } from '@/services/api/types';  
+import { Friend, Group, GroupMember, Message, User, Chats } from '@/services/api/types';  
 import FriendsApi from '@/services/api/friends.api';
 import GroupsApi from '@/services/api/groups.api';
 import GroupMembersApi from '@/services/api/groupsmember.api';
 import MessagesApi from '@/services/api/messages.api';
 import UsersApi from '@/services/api/users.api';
+import ChatsApi from '@/services/api/chats.api';  // Importa ChatsApi
 
 export default class ApiManager {
     private friendsApi: FriendsApi;
@@ -11,6 +12,7 @@ export default class ApiManager {
     private groupMembersApi: GroupMembersApi;
     private messagesApi: MessagesApi;
     private usersApi: UsersApi;
+    private chatsApi: ChatsApi; // Nueva propiedad para ChatsApi
 
     constructor() {
         this.friendsApi = new FriendsApi();
@@ -18,6 +20,7 @@ export default class ApiManager {
         this.groupMembersApi = new GroupMembersApi();
         this.messagesApi = new MessagesApi();
         this.usersApi = new UsersApi();
+        this.chatsApi = new ChatsApi(); // Inicialización de ChatsApi
     }
 
     // Amigos
@@ -107,6 +110,19 @@ export default class ApiManager {
 
     async deleteMessage(id: number): Promise<void> {
         return this.messagesApi.deleteMessage(id);
+    }
+
+    // Chats
+    async getChat(user1Id: number, user2Id: number): Promise<Chats> {
+        return this.chatsApi.getChat(user1Id, user2Id);
+    }
+
+    async getChatsByUserId(userId: number): Promise<Chats[]> {
+        return this.chatsApi.getChatsByUser(userId);
+    }
+
+    async createChat(user1Id: number, user2Id: number): Promise<Chats> {
+        return this.chatsApi.createChat(user1Id, user2Id);
     }
 
     // Usuarios

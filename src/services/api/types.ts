@@ -48,3 +48,11 @@ export interface Message {
   content: string;
   createdAt: string; // Fecha en formato ISO
 }
+
+export interface Chats {
+  id: number;
+  user1: User; // ID del user1
+  user2: User; // ID del user2
+  usersOrder: string; 
+  createdAt: string; // Fecha en formato ISO
+}
