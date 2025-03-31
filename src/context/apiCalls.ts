@@ -134,6 +134,10 @@ export default class ApiManager {
         return this.usersApi.getUser(id);
     }
 
+    async getUserByDisplayName(displayName: string): Promise<User> {
+        return this.usersApi.getUserByDisplayName(displayName);
+    }
+
     async addUser(user: User): Promise<User> {
         return this.usersApi.addUser(user);
     }

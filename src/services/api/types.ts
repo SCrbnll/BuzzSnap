@@ -1,6 +1,7 @@
 export interface User {
   id: number; // ID como string, no debería ser undefined si proviene de la API
   name: string;
+  display_name: string;
   email: string;
   password?: string; // En respuestas de la API, usualmente no se devuelve la contraseña
   avatarUrl?: string; // Puede ser opcional si no siempre se envía
@@ -12,7 +13,7 @@ export interface User {
 }
 
 export interface Friend {
-  id: number; // ID de la relación de amistad (no es string)
+  id?: number; // ID de la relación de amistad (no es string)
   user: User; // El usuario que está pidiendo la amistad
   friend: User; // El amigo del usuario
   status: "accepted" | "pending"; // Estado de la amistad: aceptado o pendiente
@@ -41,9 +42,9 @@ export interface GroupMember {
 
 export interface Message {
   id: number;
-  senderId: number;
+  sender: User;
   groupId?: number | null; // Puede ser null o undefined
-  receiverId?: string | null; // Puede ser null o undefined
+  chatId?: number | null; // Puede ser null o undefined
   messageType: "text"; // Tipo de mensaje (por ahora solo "text")
   content: string;
   createdAt: string; // Fecha en formato ISO

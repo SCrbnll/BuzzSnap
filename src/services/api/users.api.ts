@@ -15,6 +15,11 @@ export default class UsersApi {
         return response.data;
     }
 
+    async getUserByDisplayName(displayName: string): Promise<User> {
+        const response = await axios.get<User>(`${SERVER}/users/find/${displayName}`);
+        return response.data;
+    }
+
     async loginUser(email: string, password: string): Promise<User> {
         const response = await axios.get<User>(`${SERVER}/users/login/${email}/${password}`);
         return response.data;

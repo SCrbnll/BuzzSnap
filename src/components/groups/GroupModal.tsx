@@ -35,7 +35,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
               style={{ width: "100px", height: "100px", objectFit: "cover" }}
             />
           </div>
-
+  
           <div>
             {group.description && <p><b>Description: </b> {group.description}</p>}
             {group.creator && <p><b>Created By: </b>{group.creator.name}</p>}

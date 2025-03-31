@@ -81,7 +81,6 @@ const ChatView: React.FC = () => {
       marginTop: "10px",
       borderRadius: "10px",
       marginBottom: "100px",
-      backgroundColor: "#8A8A8A",
     },
   };
 
@@ -116,7 +115,7 @@ const ChatView: React.FC = () => {
       </aside>
 
       {isContentVisible && (
-        <div style={styles.content}>
+        <div style={styles.content} className="chat-box">
           <p>Contenido aquí</p>
         </div>
       )}

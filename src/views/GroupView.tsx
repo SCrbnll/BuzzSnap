@@ -8,7 +8,7 @@ import GroupModal from "@/components/groups/GroupModal";
 const GroupView: React.FC = () => {
     const { id } = useParams<{ id: string }>(); 
     const [group, setGroup] = React.useState<Group | null>(null);
-     const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
     const apiCalls = new ApiManager();
 
     useEffect(() => {
