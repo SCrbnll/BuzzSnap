@@ -16,25 +16,39 @@ const ContactView: React.FC = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [showInput, setShowInput] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
-
+  const [pendingFriends, setPendingFriends] = useState<Friend[]>([]);
+  const userFromLocalStorage = JSON.parse(localStorage.getItem("user") || "{}");
+  
   useEffect(() => {
     dispatch(syncAllData());
   }, [dispatch]);
 
-  const userFromLocalStorage = JSON.parse(localStorage.getItem("user") || "{}");
-
-  const filteredFriends = friends.filter((friend) => {
-    switch (activeFilter) {
-      case "activos":
-        return friend.friend.lastLogin === null && friend.status === "accepted";
-      case "todos":
-        return friend.status === "accepted";
-      case "solicitudes":
-        return friend.status === "pending";
-      default:
-        return true;
-    }
-  });
+  useEffect(() => {
+    const fetchPendingFriends = async () => {
+      if (activeFilter === "solicitudes") {
+        try {
+          const pendingFriends = await apiCalls.getFriendsPending(userFromLocalStorage.id);
+          setPendingFriends(pendingFriends);
+        } catch (error) {
+          console.error("Error al obtener solicitudes pendientes", error);
+        }
+      }
+    };
+    fetchPendingFriends();
+  }, [activeFilter, userFromLocalStorage.id]);
+  
+  const filteredFriends = activeFilter === "solicitudes"
+  ? pendingFriends
+  : friends.filter((friend) => {
+      switch (activeFilter) {
+        case "activos":
+          return friend.user.lastLogin === null && friend.status === "accepted";
+        case "todos":
+          return friend.status === "accepted";
+        default:
+          return true;
+      }
+    });
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) return;
@@ -209,28 +223,34 @@ const ContactView: React.FC = () => {
             </div>
           ) : (
             <>
-              {filteredFriends.map((friend) => (
-                <FriendCard
-                  key={friend.id}
-                  friend={friend}
-                  isActive={!friend.friend.lastLogin}
-                  onDeleteClick={
-                    activeFilter === "solicitudes"
-                      ? () => alert("Eliminar solicitud")
-                      : undefined
-                  }
-                  onOptionsClick={
-                    activeFilter !== "solicitudes"
-                      ? () => handleOpenModal(friend)
-                      : undefined
-                  }
-                  onSendMessage={
-                    activeFilter !== "solicitudes"
-                      ? () => alert("Enviar mensaje")
-                      : undefined
-                  }
-                />
-              ))}
+              {filteredFriends.map((friend) => {
+                const displayUser =
+                friend.friend.id === userFromLocalStorage.id ? friend.user : friend.friend;
+              const isActive = displayUser.lastLogin === null;
+                return (
+                  <FriendCard
+                    key={friend.id}
+                    friend={displayUser}
+                    isActive={!isActive}
+                    onDeleteClick={
+                      activeFilter === "solicitudes"
+                        ? () => alert("Eliminar solicitud")
+                        : undefined
+                    }
+                    onOptionsClick={
+                      activeFilter !== "solicitudes"
+                        ? () => handleOpenModal(friend)
+                        : undefined
+                    }
+                    onSendMessage={
+                      activeFilter !== "solicitudes"
+                        ? () => alert("Enviar mensaje")
+                        : undefined
+                    }
+                  />
+                )
+              }
+              )}
             </>
           )}
         </div>

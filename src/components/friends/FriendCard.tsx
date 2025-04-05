@@ -76,15 +76,15 @@ const FriendCard: React.FC<FriendCardProps> = ({
       <div style={styles.friendInfo}>
         <div style={styles.avatarWrapper}>
           <img
-            src={friend.friend.avatarUrl}
-            alt={friend.friend.name}
+            src={friend.avatarUrl}
+            alt={friend.name}
             style={styles.avatar}
           />
           <div style={styles.statusIndicator} />
         </div>
         <div style={styles.textContainer}>
-          <p style={styles.friendName}>{friend.friend.name}</p>
-          <p style={styles.friendDescription}>{friend.friend.description}</p>
+          <p style={styles.friendName}>{friend.name}</p>
+          <p style={styles.friendDescription}>{friend.description}</p>
         </div>
       </div>
 

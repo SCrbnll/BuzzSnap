@@ -36,6 +36,10 @@ export default class ApiManager {
         return this.friendsApi.getFriendsByUserId(userId);
     }
 
+    async getFriendsPending(friendId: number): Promise<Friend[]> {
+        return this.friendsApi.getFriendsPending(friendId);
+    }
+
     async addFriend(friend: Friend): Promise<Friend> {
         return this.friendsApi.addFriend(friend);
     }

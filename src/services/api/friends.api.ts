@@ -20,6 +20,11 @@ export default class FriendsApi {
         return response.data;
     }
 
+    async getFriendsPending(friendId: number): Promise<Friend[]> {
+        const response = await axios.get<Friend[]>(`${SERVER}/friends/pending/${friendId}`);
+        return response.data;
+    }
+
     async addFriend(friend: Friend): Promise<Friend> {
         const response = await axios.post<Friend>(`${SERVER}/friends`, friend);
         return response.data;
