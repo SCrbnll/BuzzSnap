@@ -42,7 +42,7 @@ const ContactView: React.FC = () => {
   : friends.filter((friend) => {
       switch (activeFilter) {
         case "activos":
-          return friend.user.lastLogin === null && friend.status === "accepted";
+          return friend.friend.lastLogin !== null && friend.status === "accepted";
         case "todos":
           return friend.status === "accepted";
         default:
