@@ -1,4 +1,3 @@
-// src/routes/AppRouter.tsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from '@/views/LoginView';
@@ -9,6 +8,7 @@ import MainLayout from '@/layouts/MainLayout';
 import ChatView from '@/views/ChatView';
 import ContactView from '@/views/ContactView';
 import GroupView from '@/views/GroupView';
+import ProtectedRoute from './ProtectedRoute'; 
 
 const AppRouter: React.FC = () => {
   return (
@@ -17,20 +17,43 @@ const AppRouter: React.FC = () => {
         {/* Redirige de '/' a '/login' */}
         <Route path="/" element={<Navigate to="/login" replace />} />
 
-        {/* Ruta para el login */}
+        {/* Rutas públicas */}
         <Route path="/login" element={<Login />} />
-        
-        {/* Ruta para el registro */}
         <Route path="/register" element={<Register />} />
-        
-         {/* Rutas con Layout */}
-         <Route path="/home" element={<MainLayout> <HomeView /> </MainLayout>}>
-          <Route index element={<p className='text-center fs-4 d-flex align-items-center justify-content-center vh-100'>¿Listo para chatear?</p>} />
+
+        {/* Rutas protegidas */}
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <HomeView />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        >
+          <Route
+            index
+            element={
+              <p className="text-center fs-4 d-flex align-items-center justify-content-center vh-100">
+                ¿Listo para chatear?
+              </p>
+            }
+          />
           <Route path="chats" element={<ChatView />} />
           <Route path="contacts" element={<ContactView />} />
-         </Route>
-         <Route path="groups/:id" element={<MainLayout><GroupView /> </MainLayout>} />
-        
+        </Route>
+
+        <Route
+          path="/groups/:id"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <GroupView />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
 
         {/* Ruta para errores 404 */}
         <Route path="*" element={<NotFound />} />

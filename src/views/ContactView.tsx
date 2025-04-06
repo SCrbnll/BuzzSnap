@@ -17,6 +17,8 @@ const ContactView: React.FC = () => {
   const [showInput, setShowInput] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [pendingFriends, setPendingFriends] = useState<Friend[]>([]);
+  const [searchMessage, setSearchMessage] = useState<string>('');
+
   const userFromLocalStorage = JSON.parse(localStorage.getItem("user") || "{}");
   
   useEffect(() => {
@@ -62,11 +64,13 @@ const ContactView: React.FC = () => {
           createdAt: new Date().toISOString(), 
         };
         await apiCalls.addFriend(friendRequest);
-        alert(`Solicitud de amistad enviada a ${user.display_name}`);
+        setSearchMessage(`Solicitud de amistad enviada a ${user.display_name}`);
+        setSearchTerm("");
       } else {
-        alert("Usuario no encontrado");
+        setSearchMessage(`Usuario no encontrado`);
       }
     } catch (error) {
+      setSearchMessage(`Error al buscar usuario o enviar solicitud al usuario`);
       alert("Error al buscar usuario o enviar solicitud");
     }
   };
@@ -220,6 +224,7 @@ const ContactView: React.FC = () => {
               >
                 Buscar
               </button>
+              <p className="mt-2">{searchMessage}</p>
             </div>
           ) : (
             <>

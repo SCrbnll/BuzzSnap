@@ -1,12 +1,18 @@
 import React, {  useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import SettingsModal from "@/components/settings/SettingsModal";
 
 const HomeView: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
+  const navigate = useNavigate();  
 
   const handleOpenModal = () => setModalOpen(true); 
   const handleCloseModal = () => setModalOpen(false); 
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate('/login')
+  }  
 
   const styles = {
     nav: {
@@ -63,7 +69,7 @@ const HomeView: React.FC = () => {
         handleClose={handleCloseModal}
         onChangeEmail={() => alert(`Cambiar email`)}
         onChangePassword={() => alert(`Cambiar password`)}
-        onLogOut={() => alert(`Cerrar sesión`)}
+        onLogOut={() => handleLogout()}
       />
     </div>
   );
