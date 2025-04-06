@@ -26,12 +26,12 @@ export default class FriendsApi {
     }
 
     async addFriend(friend: Friend): Promise<Friend> {
-        const response = await axios.post<Friend>(`${SERVER}/friends`, friend);
+        const response = await axios.post<Friend>(`${SERVER}/friends/create`, friend);
         return response.data;
     }
 
     async updateFriend(id: number, status: string): Promise<Friend> {
-        const response = await axios.put<Friend>(`${SERVER}/friends//changestatus/${id}/${status}`);
+        const response = await axios.put<Friend>(`${SERVER}/friends/changestatus/${id}/${status}`);
         return response.data;
     }
 

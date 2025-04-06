@@ -17,7 +17,7 @@ export interface Friend {
   user: User; // El usuario que está pidiendo la amistad
   friend: User; // El amigo del usuario
   status: "accepted" | "pending"; // Estado de la amistad: aceptado o pendiente
-  createdAt: string; // Fecha de creación de la amistad (en formato ISO)
+  createdAt?: string; // Fecha de creación de la amistad (en formato ISO)
 }
 
 

@@ -56,20 +56,22 @@ const ContactView: React.FC = () => {
     if (!searchTerm.trim()) return;
     try {
       const user = await apiCalls.getUserByDisplayName(searchTerm.trim());
+      if(friends.find((friend) => friend.friend.id === user.id || friend.user.id === user.id)) return setSearchMessage(`El usuario <b>${searchTerm}</b> ya es tu amigo`), setSearchTerm('');
       if (user) {
         const friendRequest: Friend = {
           user: userFromLocalStorage, 
           friend: user,
           status: "pending",
-          createdAt: new Date().toISOString(), 
-        };
+          };
         await apiCalls.addFriend(friendRequest);
-        setSearchMessage(`Solicitud de amistad enviada a ${user.display_name}`);
+        setSearchMessage(`Solicitud de amistad enviada a ${searchTerm}`);
         setSearchTerm("");
       } else {
         setSearchMessage(`Usuario no encontrado`);
+        setSearchTerm("");
       }
     } catch (error) {
+      setSearchTerm("");
       setSearchMessage(`Error al buscar usuario o enviar solicitud al usuario`);
       alert("Error al buscar usuario o enviar solicitud");
     }
@@ -89,11 +91,13 @@ const ContactView: React.FC = () => {
   const handleFilterChange = (filter: string) => {
     setActiveFilter(filter);
     setShowInput(false);
+    setSearchMessage("");
   };
 
   const handleShowInput = () => {
     setShowInput(true);
     setActiveFilter("");
+    setSearchMessage("");
   };
 
   const styles: { [key: string]: React.CSSProperties } = {
