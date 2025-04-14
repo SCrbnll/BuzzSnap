@@ -4,6 +4,7 @@ interface FriendCardProps {
   friend: any;
   onSendMessage?: () => void; 
   onOptionsClick?: () => void;
+  onAcceptClick?: () => void;
   onDeleteClick?: () => void;
   isActive?: boolean; 
 }
@@ -12,8 +13,9 @@ const FriendCard: React.FC<FriendCardProps> = ({
   friend,
   onSendMessage,
   onOptionsClick,
+  onAcceptClick,
   onDeleteClick,
-  isActive = true,
+  isActive,
 }) => {
   const styles: { [key: string]: React.CSSProperties } = {
     friendCard: {
@@ -101,6 +103,13 @@ const FriendCard: React.FC<FriendCardProps> = ({
             className="bi bi-three-dots-vertical"
             style={styles.icon}
             onClick={onOptionsClick}
+          />
+        )}
+        {onAcceptClick && (
+          <i
+            className="bi bi-check-circle"
+            style={styles.icon}
+            onClick={onAcceptClick}
           />
         )}
         {onDeleteClick && (

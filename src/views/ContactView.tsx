@@ -42,9 +42,11 @@ const ContactView: React.FC = () => {
   const filteredFriends = activeFilter === "solicitudes"
   ? pendingFriends
   : friends.filter((friend) => {
+    const friendInfo = friend.id === userFromLocalStorage.id ? friend.friend : friend.user;
+
       switch (activeFilter) {
         case "activos":
-          return friend.friend.lastLogin !== null && friend.status === "accepted";
+          return friendInfo.lastLogin === null && friend.status === "accepted";
         case "todos":
           return friend.status === "accepted";
         default:
@@ -79,7 +81,8 @@ const ContactView: React.FC = () => {
   
 
   const handleOpenModal = (friend: any) => {
-    setSelectedUser(friend.friend);
+  const userInfo = friend.id === userFromLocalStorage.id ? friend.friend : friend.user;
+    setSelectedUser(userInfo);
     setModalOpen(true);
   };
 
@@ -240,10 +243,15 @@ const ContactView: React.FC = () => {
                   <FriendCard
                     key={friend.id}
                     friend={displayUser}
-                    isActive={!isActive}
+                    isActive={isActive}
                     onDeleteClick={
                       activeFilter === "solicitudes"
                         ? () => alert("Eliminar solicitud")
+                        : undefined
+                    }
+                    onAcceptClick={
+                      activeFilter === "solicitudes"
+                        ? () => alert("Aceptar solicitud")
                         : undefined
                     }
                     onOptionsClick={
