@@ -1,7 +1,7 @@
 export interface User {
   id: number; // ID como string, no debería ser undefined si proviene de la API
   name: string;
-  display_name: string;
+  displayName: string;
   email: string;
   password?: string; // En respuestas de la API, usualmente no se devuelve la contraseña
   avatarUrl?: string; // Puede ser opcional si no siempre se envía

@@ -25,6 +25,11 @@ export default class MessagesApi {
         return response.data;
     }
 
+    async getMessagesByChatId(chatId: number): Promise<Message[]> {
+        const response = await axios.get<Message[]>(`${SERVER}/messages/chat/${chatId}`);
+        return response.data;
+    }
+
     async addMessage(message: Message): Promise<Message> {
         const response = await axios.post<Message>(`${SERVER}/messages`, message);
         return response.data;

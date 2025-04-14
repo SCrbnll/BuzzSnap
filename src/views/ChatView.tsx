@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
 import logo from "/SCrbnll.png";
 import ApiManager from "@/context/apiCalls";
-import { Chats } from "@/services/api/types";
+import { Chats, Message } from "@/services/api/types";
+import ChatBox from "@/components/chats/ChatBox";
 
 const ChatView: React.FC = () => {
   const [chats, setChats] = useState<Chats[]>([]); 
+  const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [activeChat, setActiveChat] = useState<number | null>(null);  
   const [isContentVisible, setIsContentVisible] = useState<boolean>(false);  
 
-  const apiManager = new ApiManager();  
+  const apiManager = new ApiManager(); 
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}"); 
 
   const fetchChats = async (userId: number) => {
     try {
@@ -22,6 +25,15 @@ const ChatView: React.FC = () => {
     }
   };
 
+  const fetchMessages = async (chatId: number) => {
+    try {
+      const messagesData = await apiManager.getMessagesByChatId(chatId);
+      setMessages(messagesData);
+    } catch (error) {
+      console.error("Error al obtener los mensajes", error);
+    }
+  };
+
   useEffect(() => {
     const userLocalStorage = localStorage.getItem("user");
     if (userLocalStorage) {
@@ -29,9 +41,10 @@ const ChatView: React.FC = () => {
       fetchChats(userId); 
     }
   }, []);
-
+  
   const handleChatClick = (chatId: number) => {
     setActiveChat(chatId); 
+    fetchMessages(chatId)
     setIsContentVisible(true); 
   };
 
@@ -81,6 +94,9 @@ const ChatView: React.FC = () => {
       marginTop: "10px",
       borderRadius: "10px",
       marginBottom: "100px",
+      overflowY: "auto",
+      scrollbarWidth: "none",
+      padding: "20px",
     },
   };
 
@@ -115,9 +131,7 @@ const ChatView: React.FC = () => {
       </aside>
 
       {isContentVisible && (
-        <div style={styles.content} className="chat-box">
-          <p>Contenido aquí</p>
-        </div>
+       <ChatBox messages={messages} currentUserId={currentUser.id} />
       )}
     </div>
   );

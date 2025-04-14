@@ -104,6 +104,10 @@ export default class ApiManager {
         return this.messagesApi.getMessage(id);
     }
 
+    async getMessagesByChatId(userId: number): Promise<Message[]> {
+        return this.messagesApi.getMessagesByChatId(userId);
+    }
+
     async addMessage(message: Message): Promise<Message> {
         return this.messagesApi.addMessage(message);
     }
