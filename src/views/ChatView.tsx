@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import logo from "/SCrbnll.png";
 import ApiManager from "@/context/apiCalls";
 import { Chats, Message } from "@/services/api/types";
 import ChatBox from "@/components/chats/ChatBox";
+import ChatSidebar from "@/components/chats/ChatSidebar";
 
 const ChatView: React.FC = () => {
   const [chats, setChats] = useState<Chats[]>([]); 
@@ -63,73 +63,15 @@ const ChatView: React.FC = () => {
     };
   }, []);
 
-  const styles: { [key: string]: React.CSSProperties } = {
-    aside: {
-      width: "325px",
-    },
-    logo: {
-      width: "35px",
-      borderRadius: "50%",
-    },
-    chatList: {
-      padding: "10px 0px 0px 30px",
-      overflowY: "auto",
-      marginBottom: "100px",
-      scrollbarWidth: "none",
-    },
-    chat: {
-      padding: "10px",
-      cursor: "pointer",
-      borderRadius: "10px",
-      paddingLeft: "20px",
-      display: "flex",
-      alignItems: "center",
-    },
-    chatText: {
-      margin: 0,
-      flex: 1,
-    },
-    content: {
-      width: "80%",
-      marginTop: "10px",
-      borderRadius: "10px",
-      marginBottom: "100px",
-      overflowY: "auto",
-      scrollbarWidth: "none",
-      padding: "20px",
-    },
-  };
-
   return (
     <div className="d-flex vh-100 gap-3">
-      <aside style={styles.aside} className="d-flex flex-column vh-100">
-      <div style={styles.chatList}>
-          {loading ? (
-            <p>Cargando chats...</p>  
-          ) : (
-            chats.map((chat) => {
-              const otherUser = JSON.parse(localStorage.getItem("user")!).id === chat.user1.id
-                ? chat.user2
-                : chat.user1;
-
-              const isActive = activeChat === chat.id ? "active" : ""; 
-
-              return (
-                <div
-                  key={chat.id}
-                  style={styles.chat}
-                  className={`mb-3 gap-3 chat-card ${isActive}`} 
-                  onClick={() => handleChatClick(chat.id)} 
-                >
-                  <img src={logo} alt="Icono" style={styles.logo} />
-                  <p style={styles.chatText}>{otherUser.name}</p> 
-                </div>
-              );
-            })
-          )}
-        </div>
-      </aside>
-
+      <ChatSidebar
+        chats={chats}
+        currentUserId={currentUser.id}
+        activeChatId={activeChat}
+        onChatClick={handleChatClick}
+        loading={loading}
+      />
       {isContentVisible && (
        <ChatBox messages={messages} currentUserId={currentUser.id} />
       )}
