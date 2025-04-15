@@ -44,7 +44,7 @@ const ContactView: React.FC = () => {
   const filteredFriends = activeFilter === "solicitudes"
   ? pendingFriends
   : friends.filter((friend) => {
-    const friendInfo = friend.id === userFromLocalStorage.id ? friend.friend : friend.user;
+    const friendInfo = friend.id === userFromLocalStorage.id ? friend.user : friend.friend;
 
       switch (activeFilter) {
         case "activos":
@@ -100,9 +100,34 @@ const ContactView: React.FC = () => {
       console.error("Error al rechazar solicitud de amistad", error);
     }
   };
+
+  const deleteFriend = async (userId: number) => {
+    try {
+      const confirmDelete = confirm("¿Estás seguro de que deseas eliminar a este amigo?");
+      if (!confirmDelete) return;
+  
+      const friendRecord = friends.find(
+        (f) =>
+          (f.user.id === userFromLocalStorage.id && f.friend.id === userId) ||
+          (f.friend.id === userFromLocalStorage.id && f.user.id === userId)
+      );
+  
+      if (!friendRecord) {
+        console.error("No se encontró el registro de amistad");
+        return;
+      }
+  
+      await apiCalls.deleteFriend(friendRecord.id!);
+      dispatch(syncAllData());
+      setModalOpen(false);
+    } catch (error) {
+      console.error("Error al eliminar amigo", error);
+    }
+  };
+  
   
   const handleOpenModal = (friend: any) => {
-    const userInfo = friend.id === userFromLocalStorage.id ? friend.friend : friend.user;
+    const userInfo = friend.id === userFromLocalStorage.id ? friend.user : friend.friend;
     setSelectedUser(userInfo);
     setModalOpen(true);
   };
@@ -178,10 +203,7 @@ const ContactView: React.FC = () => {
           handleClose={handleCloseModal}
           user={selectedUser}
           onSendMessage={() => alert(`Enviar mensaje a ${selectedUser.name}`)}
-          onRequestClick={() =>
-            alert(`Solicitar conexión con ${selectedUser.name}`)
-          }
-          onDeleteClick={() => alert(`Eliminar a ${selectedUser.name}`)}
+          onDeleteClick={() => {deleteFriend(selectedUser.id)}}
         />
       )}
     </div>

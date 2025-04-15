@@ -40,7 +40,7 @@ export default class FriendsApi {
         return response.data;
     }
 
-    async deleteFriend(friend: Friend): Promise<void> {
-        await axios.delete(`${SERVER}/friends/${friend.id}`);
+    async deleteFriend(id: number): Promise<void> {
+        await axios.delete(`${SERVER}/friends/${id}`);
     }
 }

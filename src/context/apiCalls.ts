@@ -53,8 +53,7 @@ export default class ApiManager {
     }
 
     async deleteFriend(id: number): Promise<void> {
-        const friend = await this.friendsApi.getFriend(id);
-        return this.friendsApi.deleteFriend(friend);
+        return this.friendsApi.deleteFriend(id);
     }
 
      /* ========= GROUPSAPI ========= */
