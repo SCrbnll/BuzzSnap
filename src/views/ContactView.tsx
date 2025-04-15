@@ -1,4 +1,6 @@
-import FriendCard from "@/components/friends/FriendCard";
+import ContactNav from "@/components/contact/ContactNav";
+import FriendList from "@/components/contact/FriendList";
+import FriendSearchInput from "@/components/contact/FriendSearchInput";
 import UserInfoModal from "@/components/users/UserInfoModal";
 import ApiManager from "@/context/apiCalls";
 import { AppDispatch, RootState, syncAllData } from "@/context/store";
@@ -124,32 +126,6 @@ const ContactView: React.FC = () => {
   };
 
   const styles: { [key: string]: React.CSSProperties } = {
-    separator: {
-      width: "100%",
-      margin: "15px auto",
-    },
-    nav: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      width: "100%",
-      padding: "0 10px",
-      marginTop: "50px",
-    },
-    button: {
-      width: "100px",
-      borderRadius: "5px",
-      border: "none",
-      cursor: "pointer",
-    },
-    buttonsContainer: {
-      display: "flex",
-      flex: 1,
-      gap: "10px",
-    },
-    addButton: {
-      marginLeft: "auto",
-    },
     contentWrapper: {
       flex: 1,
       overflowY: "auto",
@@ -166,129 +142,34 @@ const ContactView: React.FC = () => {
       gap: "15px",
       padding: "0 10px",
     },
-    input: {
-      width: "90%",
-      padding: "10px",
-      borderRadius: "5px",
-      border: "1px solid #ccc",
-      color: "white",
-      backgroundColor: "transparent",
-      fontSize: "16px",
-      fontWeight: "bold",
-    },
-    confirmButton: {
-      width: "100px",
-      padding: "10px",
-      borderRadius: "5px",
-      cursor: "pointer",
-      color: "white",
-      marginLeft: "10px",
-      opacity: searchTerm.trim() ? 1 : 0.5,
-      pointerEvents: searchTerm.trim() ? "auto" : "none",
-    }
+    
   };
 
   return (
     <div style={{ padding: "0 40px" }}>
-      <nav style={styles.nav} className="d-flex flex-row align-items-center">
-        <div style={styles.buttonsContainer}>
-          <button
-            className={`button ${
-              activeFilter === "activos" ? "button-active-filter" : ""
-            }`}
-            style={styles.button}
-            onClick={() => handleFilterChange("activos")}
-          >
-            Activos
-          </button>
-          <button
-            className={`button ${
-              activeFilter === "todos" ? "button-active-filter" : ""
-            }`}
-            style={styles.button}
-            onClick={() => handleFilterChange("todos")}
-          >
-            Todos
-          </button>
-          <button
-            className={`button ${
-              activeFilter === "solicitudes" ? "button-active-filter" : ""
-            }`}
-            style={styles.button}
-            onClick={() => handleFilterChange("solicitudes")}
-          >
-            Solicitudes
-          </button>
-        </div>
-
-        <button
-          className="button"
-          style={{ ...styles.button, ...styles.addButton }}
-          onClick={handleShowInput}
-        >
-          Añadir
-        </button>
-      </nav>
-      <hr style={styles.separator} />
-
+      <ContactNav
+        activeFilter={activeFilter}
+        handleFilterChange={handleFilterChange}
+        handleShowInput={handleShowInput}
+      />
       <div style={styles.contentWrapper} className="contentWrapper">
         <div style={styles.content}>
           {showInput ? (
-            <div style={{ padding: "10px" }}>
-              <input
-                type="text"
-                placeholder="Buscar usuario por nombre..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                style={styles.input}
-              />
-              <button
-                className="button button-active-filter"
-                style={{ ...styles.button, ...styles.addButton, ...styles.confirmButton }}
-                onClick={handleSearch}
-                disabled={!searchTerm.trim()}
-              >
-                Buscar
-              </button>
-              <p className="mt-2">{searchMessage}</p>
-            </div>
+            <FriendSearchInput
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              handleSearch={handleSearch}
+              searchMessage={searchMessage}
+            />
           ) : (
-            <>
-              {filteredFriends.map((friend) => {
-                const displayUser =
-                friend.friend.id === userFromLocalStorage.id ? friend.user : friend.friend;
-              const isActive = displayUser.lastLogin === null;
-                return (
-                  <FriendCard
-                    key={friend.id}
-                    friend={displayUser}
-                    isActive={isActive}
-                    onDeleteClick={
-                      activeFilter === "solicitudes"
-                        ? () => rejectFriendRequest(friend.id!)
-                        : undefined
-                    }
-                    onAcceptClick={
-                      activeFilter === "solicitudes"
-                        ? () => accepFriendRequest(friend.id!)
-                        : undefined
-                    }
-                    onOptionsClick={
-                      activeFilter !== "solicitudes"
-                        ? () => handleOpenModal(friend)
-                        : undefined
-                    }
-                    onSendMessage={
-                      activeFilter !== "solicitudes"
-                        ? () => alert("Enviar mensaje")
-                        : undefined
-                    }
-                  />
-                )
-              }
-              )}
-            </>
+            <FriendList
+              friends={filteredFriends}
+              userId={userFromLocalStorage.id}
+              activeFilter={activeFilter}
+              onAcceptClick={accepFriendRequest}
+              onRejectClick={rejectFriendRequest}
+              onOptionsClick={handleOpenModal}
+            />
           )}
         </div>
       </div>
