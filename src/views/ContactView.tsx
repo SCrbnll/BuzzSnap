@@ -67,21 +67,41 @@ const ContactView: React.FC = () => {
           };
         await apiCalls.addFriend(friendRequest);
         setSearchMessage(`Solicitud de amistad enviada a ${searchTerm}`);
-        setSearchTerm("");
       } else {
         setSearchMessage(`Usuario no encontrado`);
         setSearchTerm("");
       }
+      setSearchTerm("");
     } catch (error) {
       setSearchTerm("");
       setSearchMessage(`Error al buscar usuario o enviar solicitud al usuario`);
       alert("Error al buscar usuario o enviar solicitud");
     }
   };
+
+  const accepFriendRequest = async (friendId: number) => {
+    try {
+      await apiCalls.acceptFriendRequest(friendId);
+      setPendingFriends(pendingFriends.filter((friend) => friend.id !== friendId));
+      dispatch(syncAllData());
+    } catch (error) {
+      console.error("Error al aceptar solicitud de amistad", error);
+    }
+  };
+
+  const rejectFriendRequest = async (friendId: number) => {
+    try {
+      await apiCalls.rejectFriendRequest(friendId);
+      setPendingFriends(pendingFriends.filter((friend) => friend.id !== friendId));
+      dispatch(syncAllData());
+    } catch (error) {
+      console.error("Error al rechazar solicitud de amistad", error);
+    }
+  };
   
 
   const handleOpenModal = (friend: any) => {
-  const userInfo = friend.id === userFromLocalStorage.id ? friend.friend : friend.user;
+    const userInfo = friend.id === userFromLocalStorage.id ? friend.friend : friend.user;
     setSelectedUser(userInfo);
     setModalOpen(true);
   };
@@ -246,12 +266,12 @@ const ContactView: React.FC = () => {
                     isActive={isActive}
                     onDeleteClick={
                       activeFilter === "solicitudes"
-                        ? () => alert("Eliminar solicitud")
+                        ? () => rejectFriendRequest(friend.id!)
                         : undefined
                     }
                     onAcceptClick={
                       activeFilter === "solicitudes"
-                        ? () => alert("Aceptar solicitud")
+                        ? () => accepFriendRequest(friend.id!)
                         : undefined
                     }
                     onOptionsClick={

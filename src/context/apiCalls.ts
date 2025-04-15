@@ -44,8 +44,12 @@ export default class ApiManager {
         return this.friendsApi.addFriend(friend);
     }
 
-    async updateFriend(id: number, status: string): Promise<Friend> {
-        return this.friendsApi.updateFriend(id, status);
+    async acceptFriendRequest(id: number): Promise<Friend> {
+        return this.friendsApi.acceptFriendRequest(id);
+    }
+
+    async rejectFriendRequest(id: number): Promise<Friend> {
+        return this.friendsApi.rejectFriendRequest(id);
     }
 
     async deleteFriend(id: number): Promise<void> {
