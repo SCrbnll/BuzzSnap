@@ -15,13 +15,13 @@ export default class GroupMembersApi {
         return response.data;
     }
 
-    async getGroupMembersByGroupId(groupId: number): Promise<GroupMember[]> {
-        const response = await axios.get<GroupMember[]>(`${SERVER}/groupmembers/group/${groupId}`);
+    async getGroupMembersByUserId(userId: number): Promise<GroupMember[]> {
+        const response = await axios.get<GroupMember[]>(`${SERVER}/groupmembers/user/${userId}`);
         return response.data;
     }
 
-    async getGroupMembersByUserId(userId: number): Promise<GroupMember[]> {
-        const response = await axios.get<GroupMember[]>(`${SERVER}/groupmembers/user/${userId}`);
+    async getGroupMembersByGroupId(groupId: number): Promise<GroupMember[]> {
+        const response = await axios.get<GroupMember[]>(`${SERVER}/groupmembers/group/${groupId}`);
         return response.data;
     }
 
@@ -31,7 +31,7 @@ export default class GroupMembersApi {
     }
 
     async updateGroupMember(member: GroupMember, role: string): Promise<GroupMember> {
-        const response = await axios.put<GroupMember>(`${SERVER}/groupmembers/change/${member.id}/${role}`, member);
+        const response = await axios.put<GroupMember>(`${SERVER}/groupmembers/change/${member.id}/${role}`);
         return response.data;
     }
 

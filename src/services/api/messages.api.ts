@@ -16,17 +16,17 @@ export default class MessagesApi {
     }
 
     async getMessagesByUserId(userId: number): Promise<Message[]> {
-        const response = await axios.get<Message[]>(`${SERVER}/messages/user/${userId}`);
-        return response.data;
-    }
-
-    async getMessagesByGroupId(groupId: number): Promise<Message[]> {
-        const response = await axios.get<Message[]>(`${SERVER}/messages/group/${groupId}`);
+        const response = await axios.get<Message[]>(`${SERVER}/messages/sender/${userId}`);
         return response.data;
     }
 
     async getMessagesByChatId(chatId: number): Promise<Message[]> {
         const response = await axios.get<Message[]>(`${SERVER}/messages/chat/${chatId}`);
+        return response.data;
+    }
+
+    async getMessagesByGroupId(groupId: number): Promise<Message[]> {
+        const response = await axios.get<Message[]>(`${SERVER}/messages/group/${groupId}`);
         return response.data;
     }
 

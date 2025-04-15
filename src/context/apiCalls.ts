@@ -23,7 +23,7 @@ export default class ApiManager {
         this.chatsApi = new ChatsApi();
     }
 
-    // Amigos
+    /* ========= FRIENDSAPI ========= */
     async getFriends(): Promise<Friend[]> {
         return this.friendsApi.getFriends();
     }
@@ -57,13 +57,17 @@ export default class ApiManager {
         return this.friendsApi.deleteFriend(friend);
     }
 
-    // Grupos
+     /* ========= GROUPSAPI ========= */
     async getGroups(): Promise<Group[]> {
         return this.groupsApi.getGroups();
     }
 
     async getGroup(id: number): Promise<Group> {
         return this.groupsApi.getGroup(id);
+    }
+
+    async getGroupsByUserId(userId: number): Promise<Group[]> {
+        return this.groupsApi.getGroupsByUserId(userId);
     }
 
     async addGroup(group: Group): Promise<Group> {
@@ -78,13 +82,21 @@ export default class ApiManager {
         return this.groupsApi.deleteGroup(id);
     }
 
-    // Miembros de grupos
+     /* ========= GROUPMEMBERSAPI ========= */
     async getGroupMembers(): Promise<GroupMember[]> {
         return this.groupMembersApi.getGroupMembers();
     }
 
     async getGroupMember(id: number): Promise<GroupMember> {
         return this.groupMembersApi.getGroupMember(id);
+    }
+
+    async getGroupMembersByUserId(userId: number): Promise<GroupMember[]> {
+        return this.groupMembersApi.getGroupMembersByUserId(userId);
+    }
+
+    async getGroupMembersByGroupId(groupId: number): Promise<GroupMember[]> {
+        return this.groupMembersApi.getGroupMembersByGroupId(groupId);
     }
 
     async addGroupMember(member: GroupMember): Promise<GroupMember> {
@@ -99,7 +111,7 @@ export default class ApiManager {
         return this.groupMembersApi.deleteGroupMember(id);
     }
 
-    // Mensajes
+     /* ========= MESSAGESAPI ========= */
     async getMessages(): Promise<Message[]> {
         return this.messagesApi.getMessages();
     }
@@ -108,8 +120,16 @@ export default class ApiManager {
         return this.messagesApi.getMessage(id);
     }
 
+    async getMessagesByUserId(userId: number): Promise<Message[]> {
+        return this.messagesApi.getMessagesByUserId(userId);
+    }
+
     async getMessagesByChatId(userId: number): Promise<Message[]> {
         return this.messagesApi.getMessagesByChatId(userId);
+    }
+
+    async getMessagesByGroupId(userId: number): Promise<Message[]> {
+        return this.messagesApi.getMessagesByGroupId(userId);
     }
 
     async addMessage(message: Message): Promise<Message> {
@@ -124,7 +144,7 @@ export default class ApiManager {
         return this.messagesApi.deleteMessage(id);
     }
 
-    // Chats
+     /* ========= CHATSAPI ========= */
     async getChat(user1Id: number, user2Id: number): Promise<Chats> {
         return this.chatsApi.getChat(user1Id, user2Id);
     }
@@ -137,7 +157,7 @@ export default class ApiManager {
         return this.chatsApi.createChat(user1Id, user2Id);
     }
 
-    // Usuarios
+     /* ========= USERSAPI ========= */
     async getUsers(): Promise<User[]> {
         return this.usersApi.getUsers();
     }
@@ -150,19 +170,6 @@ export default class ApiManager {
         return this.usersApi.getUserByDisplayName(displayName);
     }
 
-    async addUser(user: User): Promise<User> {
-        return this.usersApi.addUser(user);
-    }
-
-    async updateUser(user: User): Promise<User> {
-        return this.usersApi.updateUser(user);
-    }
-
-    async deleteUser(id: number): Promise<void> {
-        const user = await this.usersApi.getUser(id); 
-        return this.usersApi.deleteUser(user);
-    }
-
     async loginUser(email: string, password: string): Promise<User> {
         const user = await this.usersApi.loginUser(email, password);
         console.log(user);
@@ -171,11 +178,28 @@ export default class ApiManager {
         return user;
     }
 
+    async addUser(user: User): Promise<User> {
+        return this.usersApi.addUser(user);
+    }
+
     async changePassword(user: User, password: string): Promise<User> {
         return this.usersApi.changePassword(user, password);
     }
 
     async updateLastConnection(user: User, newDate: Date): Promise<User> {
         return this.usersApi.updateLastConnection(user, newDate);
+    }
+
+    async updateUser(user: User): Promise<User> {
+        return this.usersApi.updateUser(user);
+    }
+
+    async updateColor(id: number, color: string): Promise<User> {
+        return this.usersApi.updateColor(id, color);
+    }
+
+    async deleteUser(id: number): Promise<void> {
+        const user = await this.usersApi.getUser(id); 
+        return this.usersApi.deleteUser(user);
     }
 }

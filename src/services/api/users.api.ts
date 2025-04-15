@@ -31,19 +31,24 @@ export default class UsersApi {
     }
 
     async changePassword(user : User, password: string): Promise<User> {
-        const response = await axios.put<User>(`${SERVER}/users/changepass/${user.id}`, {password});
+        const response = await axios.put<User>(`${SERVER}/users/password/${user.id}`, {password});
         return response.data;
     }
 
     async updateLastConnection(user : User, newDate: Date): Promise<User> {
         const formattedDate = newDate.toISOString();
-        const response = await axios.put<User>(`${SERVER}/users/lastconnection/${user.id}`, {formattedDate});
+        const response = await axios.put<User>(`${SERVER}/users/connection/${user.id}`, {formattedDate});
         return response.data;
     }
 
     async updateUser(user: User): Promise<User> {
         if (!user.id) throw new Error("El usuario debe tener un ID para ser modificado.");
-        const response = await axios.put<User>(`${SERVER}/users/changeprofile`, user);
+        const response = await axios.put<User>(`${SERVER}/users/change`, user);
+        return response.data;
+    }
+
+    async updateColor(id: number, color: string): Promise<User> {
+        const response = await axios.put<User>(`${SERVER}/users/color/${id}/${color}`);
         return response.data;
     }
 

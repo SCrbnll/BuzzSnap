@@ -16,7 +16,7 @@ export default class ChatsApi {
     }
 
     async createChat(user1Id: number, user2Id: number): Promise<Chats> {
-        const response = await axios.post<Chats>(`${SERVER}/chats/createChat/${user1Id}/${user2Id}`);
+        const response = await axios.post<Chats>(`${SERVER}/chats/create/${user1Id}/${user2Id}`);
         return response.data;
     }
 }

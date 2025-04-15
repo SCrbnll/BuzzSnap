@@ -34,6 +34,20 @@ const ChatView: React.FC = () => {
     }
   };
 
+  const handleChatClick = (chatId: number) => {
+    setActiveChat(chatId); 
+    fetchMessages(chatId)
+    setIsContentVisible(true); 
+  };
+  
+  const handleKeyPress = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      setIsContentVisible(false);
+      setActiveChat(null); 
+      
+    }
+  };
+
   useEffect(() => {
     const userLocalStorage = localStorage.getItem("user");
     if (userLocalStorage) {
@@ -41,20 +55,6 @@ const ChatView: React.FC = () => {
       fetchChats(userId); 
     }
   }, []);
-  
-  const handleChatClick = (chatId: number) => {
-    setActiveChat(chatId); 
-    fetchMessages(chatId)
-    setIsContentVisible(true); 
-  };
-
-  const handleKeyPress = (event: KeyboardEvent) => {
-    if (event.key === "Escape") {
-      setIsContentVisible(false);
-      setActiveChat(null); 
- 
-    }
-  };
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyPress);
