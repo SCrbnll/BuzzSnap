@@ -3,6 +3,7 @@ import FriendList from "@/components/contact/FriendList";
 import FriendSearchInput from "@/components/contact/FriendSearchInput";
 import UserInfoModal from "@/components/users/UserInfoModal";
 import ApiManager from "@/context/apiCalls";
+import LocalStorageCalls from "@/context/localStorageCalls";
 import { AppDispatch, RootState, syncAllData } from "@/context/store";
 import { Friend } from "@/services/api/types";
 import { useEffect, useState } from "react";
@@ -21,7 +22,7 @@ const ContactView: React.FC = () => {
   const [pendingFriends, setPendingFriends] = useState<Friend[]>([]);
   const [searchMessage, setSearchMessage] = useState<string>('');
 
-  const userFromLocalStorage = JSON.parse(localStorage.getItem("user") || "{}");
+  const userFromLocalStorage = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
   
   useEffect(() => {
     dispatch(syncAllData());

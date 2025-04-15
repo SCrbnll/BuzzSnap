@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import ColorButton from "./ColorButton";
+import ApiManager from "@/context/apiCalls";
+import LocalStorageCalls from "@/context/localStorageCalls";
 
 interface UserInfoModalProps {
   show: boolean;
@@ -17,9 +19,11 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
   onChangePassword,
   onLogOut,
 }) => {
-  const user = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") as string) : null;
+  const user = LocalStorageCalls.getStorageUser() ? JSON.parse(LocalStorageCalls.getStorageUser()!) : null;
   const [isEditingName, setIsEditingName] = useState(false);
   const [userName, setUserName] = useState(user.name);
+  const apiCalls = new ApiManager();
+  
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserName(e.target.value);
@@ -30,10 +34,14 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
     setIsEditingName(false);
   };
 
-  const changeColor = (color: string) => {
-    document.body.setAttribute("data-theme", color);
-    // TODO : Implementar llamada API guardar User
-  }
+  const changeColor = async (color: string) => {
+      try {
+        await apiCalls.updateColor(user.id, color);
+        document.body.setAttribute("data-theme", color);
+      } catch (error) {
+        console.error("Error al aceptar solicitud de amistad", error);
+      }
+    };
 
   const hideEmail = (email: string) => {
     const [username, domain] = email.split("@");

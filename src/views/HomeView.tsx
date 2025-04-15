@@ -1,6 +1,7 @@
 import React, {  useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import SettingsModal from "@/components/settings/SettingsModal";
+import LocalStorageCalls from "@/context/localStorageCalls";
 
 const HomeView: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -10,7 +11,7 @@ const HomeView: React.FC = () => {
   const handleCloseModal = () => setModalOpen(false); 
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
+    LocalStorageCalls.removeStorageUser();
     navigate('/login')
   }  
 

@@ -2,6 +2,7 @@ import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Friend, GroupMember } from "@/services/api/types";
 import FriendsApi from "@/services/api/friends.api";
 import GroupMembersApi from "@/services/api/groupsmember.api";
+import LocalStorageCalls from "./localStorageCalls";
 
 const friendsApi = new FriendsApi();
 const groupMembersApi = new GroupMembersApi();
@@ -42,7 +43,7 @@ export const store = configureStore({
 export const syncAllData = () => async (dispatch: any) => {
   try {
     console.log("🔄 Sincronizando datos...");
-    const userLocalStorage = localStorage.getItem("user");
+    const userLocalStorage = LocalStorageCalls.getStorageUser();
     if (userLocalStorage) {
       const userId = JSON.parse(userLocalStorage).id;
       const [friends, groupMembers] = await Promise.all([

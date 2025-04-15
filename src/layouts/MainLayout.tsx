@@ -8,6 +8,7 @@ import sv from "/SCrbnll.png";
 
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { useNavigate } from "react-router-dom";
+import LocalStorageCalls from "@/context/localStorageCalls";
 
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const POLL_INTERVAL = 60000; // 5 minutos en milisegundos
@@ -20,7 +21,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
+    const user = LocalStorageCalls.getStorageUser();
     if (!user) {
       navigate("/login");
     } else {

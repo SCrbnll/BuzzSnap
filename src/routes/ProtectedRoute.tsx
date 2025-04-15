@@ -1,3 +1,4 @@
+import LocalStorageCalls from "@/context/localStorageCalls";
 import React from "react";
 import { Navigate } from "react-router-dom";
 
@@ -6,7 +7,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const user = localStorage.getItem("user");
+  const user = LocalStorageCalls.getStorageUser();
 
   if (!user) {
     return <Navigate to="/login" replace />;

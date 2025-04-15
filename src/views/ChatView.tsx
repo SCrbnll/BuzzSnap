@@ -3,6 +3,7 @@ import ApiManager from "@/context/apiCalls";
 import { Chats, Message } from "@/services/api/types";
 import ChatBox from "@/components/chats/ChatBox";
 import ChatSidebar from "@/components/chats/ChatSidebar";
+import LocalStorageCalls from "@/context/localStorageCalls";
 
 const ChatView: React.FC = () => {
   const [chats, setChats] = useState<Chats[]>([]); 
@@ -12,7 +13,7 @@ const ChatView: React.FC = () => {
   const [isContentVisible, setIsContentVisible] = useState<boolean>(false);  
 
   const apiManager = new ApiManager(); 
-  const currentUser = JSON.parse(localStorage.getItem("user") || "{}"); 
+  const currentUser = JSON.parse(LocalStorageCalls.getStorageUser() || "{}"); 
 
   const fetchChats = async (userId: number) => {
     try {
@@ -49,7 +50,7 @@ const ChatView: React.FC = () => {
   };
 
   useEffect(() => {
-    const userLocalStorage = localStorage.getItem("user");
+    const userLocalStorage = LocalStorageCalls.getStorageUser();
     if (userLocalStorage) {
       const userId = JSON.parse(userLocalStorage).id;
       fetchChats(userId); 

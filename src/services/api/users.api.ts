@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { User } from './types';
+import LocalStorageCalls from '@/context/localStorageCalls';
 
 const SERVER = import.meta.env.VITE_URL_API;
 axios.defaults.baseURL = SERVER;
@@ -49,6 +50,10 @@ export default class UsersApi {
 
     async updateColor(id: number, color: string): Promise<User> {
         const response = await axios.put<User>(`${SERVER}/users/color/${id}/${color}`);
+        const userStr = LocalStorageCalls.getStorageUser();
+        const user = JSON.parse(userStr!);
+        user.theme = color;
+        LocalStorageCalls.setStorageUser(user);
         return response.data;
     }
 

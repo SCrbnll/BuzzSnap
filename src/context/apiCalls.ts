@@ -5,6 +5,7 @@ import GroupMembersApi from '@/services/api/groupsmember.api';
 import MessagesApi from '@/services/api/messages.api';
 import UsersApi from '@/services/api/users.api';
 import ChatsApi from '@/services/api/chats.api'; 
+import LocalStorageCalls from './localStorageCalls';
 
 export default class ApiManager {
     private friendsApi: FriendsApi;
@@ -172,7 +173,7 @@ export default class ApiManager {
     async loginUser(email: string, password: string): Promise<User> {
         const user = await this.usersApi.loginUser(email, password);
         console.log(user);
-        localStorage.setItem('user', JSON.stringify(user));
+        LocalStorageCalls.setStorageUser(user);
         document.body.setAttribute("data-theme", user.theme);
         return user;
     }
@@ -194,7 +195,7 @@ export default class ApiManager {
     }
 
     async updateColor(id: number, color: string): Promise<User> {
-        return this.usersApi.updateColor(id, color);
+        return await this.usersApi.updateColor(id, color);
     }
 
     async deleteUser(id: number): Promise<void> {
