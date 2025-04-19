@@ -182,6 +182,7 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
                     color: "white",
                     backgroundColor: "transparent",
                     fontSize: "14px",
+                    width: "400px",
                   }}
                 />
               ) : (
@@ -191,6 +192,13 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
                     setIsEditingName(true);
                     setIsEditingDescription(true);
                   }}
+                  style={{
+                    maxWidth: "300px",  
+                    whiteSpace: "nowrap", 
+                    overflow: "hidden", 
+                    textOverflow: "ellipsis",
+                  }}
+                  title={userDescription}
                 >
                   {userDescription}
                 </p>
