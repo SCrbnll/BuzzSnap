@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { syncAllData } from "@/context/store";
 import { RootState, AppDispatch } from "@/context/store";
+import SettingsModal from "@/components/settings/SettingsModal";
 
 import logo from "/buzzsnap-recorte.png";
 import sv from "/SCrbnll.png";
@@ -13,10 +14,13 @@ import LocalStorageCalls from "@/context/localStorageCalls";
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const POLL_INTERVAL = 60000; // 5 minutos en milisegundos
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
 
-  const groupMembers = useSelector((state: RootState) => state.app.groupMembers);
-  const [userInfo, setUserInfo] = useState<any>(); 
+  const groupMembers = useSelector(
+    (state: RootState) => state.app.groupMembers
+  );
+  const [userInfo, setUserInfo] = useState<any>();
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -43,15 +47,23 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     };
   }, [dispatch]);
 
+  const handleLogout = () => {
+    LocalStorageCalls.removeStorageUser();
+    navigate('/login')
+  }
+
+  const handleOpenModal = () => setShowSettingsModal(true); 
+  const handleCloseModal = () => setShowSettingsModal(false); 
+
   const createGroup = async () => {
     // TODO : Crear Modal para creación de grupo
     // name;
-		// imageUrl;
-		// description;
-		// createdBy;
-		// inviteCode;
-		// createdAt;
-  }
+    // imageUrl;
+    // description;
+    // createdBy;
+    // inviteCode;
+    // createdAt;
+  };
 
   const styles: { [key: string]: React.CSSProperties } = {
     container: {
@@ -147,52 +159,72 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <>
-        <div style={styles.container}>
-          <aside style={styles.aside} className="aside-layout">
-            <p style={styles.title}>BuzzSnap</p>
-            <img src={logo} alt="Buzzsnap Logo" style={styles.logo} onClick={() => navigate("/home")}/>
+      <div style={styles.container}>
+        <aside style={styles.aside} className="aside-layout">
+          <p style={styles.title}>BuzzSnap</p>
+          <img
+            src={logo}
+            alt="Buzzsnap Logo"
+            style={styles.logo}
+            onClick={() => navigate("/home")}
+          />
 
-            <hr style={styles.hr} />
+          <hr style={styles.hr} />
 
-             <div style={styles.groupContainer}>
+          <div style={styles.groupContainer}>
             {groupMembers.length > 0 ? (
               groupMembers.map((groupMember) => (
-                <div key={groupMember.id} style={styles.groupItem} className="group-item">
+                <div
+                  key={groupMember.id}
+                  style={styles.groupItem}
+                  className="group-item"
+                >
                   <img
                     src={groupMember.group?.imageUrl || sv}
                     alt={groupMember.group?.name}
                     style={styles.groupImage}
                     onClick={() => navigate(`/groups/${groupMember.group?.id}`)}
                   />
-                  <span className="group-tooltip">{groupMember.group?.name}</span>
+                  <span className="group-tooltip">
+                    {groupMember.group?.name}
+                  </span>
                 </div>
               ))
             ) : (
               <></>
             )}
-            <button style={styles.button} onClick={() => alert("¡Botón presionado!")}>
+            <button
+              style={styles.button}
+              onClick={() => alert("¡Botón presionado!")}
+            >
               <i className="bi bi-plus" style={styles.plusIcon}></i>
             </button>
           </div>
 
-            {userInfo && userInfo.avatarUrl ? (
-              <img
-                onClick={() => alert("¡Perfil presionado!")}
-                src={userInfo.avatarUrl}
-                alt="Perfil"
-                style={styles.profileImage}
-              />
-            ) : (
-              <></>
-            )}
-          </aside>
+          {userInfo && userInfo.avatarUrl ? (
+            <img
+              onClick={handleOpenModal}
+              src={userInfo.avatarUrl}
+              alt="Perfil"
+              style={styles.profileImage}
+            />
+          ) : null}
 
-          <div style={styles.mainContent}>
-            <main>{children}</main>
-          </div>
+          <SettingsModal
+            show={showSettingsModal}
+            handleClose={handleCloseModal}
+            onChangeEmail={() => alert(`Cambiar email`)}
+            onChangePassword={() => alert(`Cambiar password`)}
+            onLogOut={() => handleLogout()}
+          />
+        </aside>
+
+        <div style={styles.mainContent}>
+          <main>{children}</main>
         </div>
-        <style>
-          {`
+      </div>
+      <style>
+        {`
             .group-tooltip {
               position: fixed;
               left: 80px; 
@@ -216,7 +248,6 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             }
           `}
       </style>
-
     </>
   );
 };

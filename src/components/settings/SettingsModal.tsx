@@ -24,7 +24,11 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
     : null;
 
   const [isEditingName, setIsEditingName] = useState(false);
+  const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [userName, setUserName] = useState(user.name);
+  const [userDescription, setUserDescription] = useState(
+    user.description || ""
+  );
   const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl);
   const apiCalls = new ApiManager();
 
@@ -32,9 +36,14 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
     setUserName(e.target.value);
   };
 
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUserDescription(e.target.value);
+  };
+
   const saveUser = () => {
     // Aquí deberías hacer una llamada a la API para guardar el nuevo nombre
     setIsEditingName(false);
+    setIsEditingDescription(false);
   };
 
   const changeColor = async (color: string) => {
@@ -126,7 +135,10 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
               ) : (
                 <h5
                   className="mb-1"
-                  onDoubleClick={() => setIsEditingName(true)}
+                  onDoubleClick={() => {
+                    setIsEditingName(true);
+                    setIsEditingDescription(false);
+                  }}
                 >
                   {userName}
                 </h5>
@@ -135,7 +147,10 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
               {!isEditingName ? (
                 <i
                   className="bi bi-pencil text-primary fs-4"
-                  onClick={() => setIsEditingName(true)}
+                  onClick={() => {
+                    setIsEditingName(true);
+                    setIsEditingDescription(true);
+                  }}
                 ></i>
               ) : (
                 <div className="d-flex flex-row gap-3">
@@ -147,12 +162,40 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
                   <i
                     className="bi bi-x fs-4"
                     style={{ color: "red", cursor: "pointer" }}
-                    onClick={() => setIsEditingName(false)}
+                    onClick={() => {
+                      setIsEditingName(false);
+                      setIsEditingDescription(false);
+                    }}
                   ></i>
                 </div>
               )}
             </div>
-            {user.description && <p className="mb-1">{user.description}</p>}
+            <div className="d-flex justify-content-between align-items-center">
+              {isEditingDescription ? (
+                <input
+                  type="text"
+                  value={userDescription}
+                  onChange={handleDescriptionChange}
+                  style={{
+                    border: "1px solid #7f7f7f",
+                    outline: "none",
+                    color: "white",
+                    backgroundColor: "transparent",
+                    fontSize: "14px",
+                  }}
+                />
+              ) : (
+                <p
+                  className="mb-1"
+                  onDoubleClick={() => {
+                    setIsEditingName(true);
+                    setIsEditingDescription(true);
+                  }}
+                >
+                  {userDescription}
+                </p>
+              )}
+            </div>
             <p className="mb-1">{hideEmail(user.email)}</p>
           </div>
         </div>
