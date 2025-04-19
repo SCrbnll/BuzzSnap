@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Message } from "@/services/api/types";
+import UserInfoModal from "@/components/users/UserInfoModal";
 
 interface Props {
   message: Message;
@@ -8,6 +9,8 @@ interface Props {
 
 const MessageBubble: React.FC<Props> = ({ message, currentUserId }) => {
   const isSender = message.sender.id === currentUserId;
+  const [showModal, setShowModal] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const formattedTime = new Date(message.createdAt).toLocaleTimeString([], {
     hour: "2-digit",
@@ -20,12 +23,14 @@ const MessageBubble: React.FC<Props> = ({ message, currentUserId }) => {
       flexDirection: isSender ? "row-reverse" : "row",
       alignItems: "flex-start",
       marginBottom: "15px",
-      gap: "15px", 
+      gap: "15px",
+      position: "relative",
     },
     avatar: {
       width: "40px",
       height: "40px",
       borderRadius: "50%",
+      cursor: isSender ? "default" : "pointer",
     },
     bubbleWrapper: {
       display: "flex",
@@ -55,15 +60,49 @@ const MessageBubble: React.FC<Props> = ({ message, currentUserId }) => {
       fontSize: "0.75rem",
       color: "#000000",
     },
+    tooltip: {
+      position: "absolute",
+      top: "-10px",
+      left: isSender ? "auto" : "50px",
+      right: isSender ? "50px" : "auto",
+      backgroundColor: "#000",
+      border: "1px solid #ccc",
+      padding: "5px 10px",
+      borderRadius: "8px",
+      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+      cursor: "pointer",
+      zIndex: 10,
+      whiteSpace: "nowrap",
+      fontSize: "0.8rem",
+    },
+  };
+
+  const handleAvatarClick = () => {
+    if (!isSender) setShowModal(true);
   };
 
   return (
-    <div style={styles.wrapper}>
-      <img
-        src={message.sender.avatarUrl}
-        alt={message.sender.displayName}
-        style={styles.avatar}
-      />
+    <div
+      style={styles.wrapper}
+      onMouseEnter={() => !isSender && setShowTooltip(true)}
+      onMouseLeave={() => setShowTooltip(false)}
+    >
+      <div style={{ position: "relative" }}>
+        {!isSender && showTooltip && (
+          <div
+            style={styles.tooltip}
+            onClick={handleAvatarClick}
+          >
+            Ver perfil de {message.sender.displayName}
+          </div>
+        )}
+        <img
+          src={message.sender.avatarUrl}
+          alt={message.sender.displayName}
+          style={styles.avatar}
+          onClick={handleAvatarClick}
+        />
+      </div>
 
       <div style={styles.bubbleWrapper}>
         <strong style={styles.displayName}>{message.sender.displayName}</strong>
@@ -72,6 +111,16 @@ const MessageBubble: React.FC<Props> = ({ message, currentUserId }) => {
           <small style={styles.time}>{formattedTime}</small>
         </div>
       </div>
+
+      {showModal && (
+        <UserInfoModal
+          show={showModal}
+          handleClose={() => setShowModal(false)}
+          user={{ ...message.sender, avatarUrl: message.sender.avatarUrl! }}
+          onSendMessage={() => {}}
+          onDeleteClick={() => {}}
+        />
+      )}
     </div>
   );
 };

@@ -4,15 +4,17 @@ import FriendSearchInput from "@/components/contact/FriendSearchInput";
 import UserInfoModal from "@/components/users/UserInfoModal";
 import ApiManager from "@/context/apiCalls";
 import LocalStorageCalls from "@/context/localStorageCalls";
-import { AppDispatch, RootState, syncAllData } from "@/context/store";
+import { AppDispatch, RootState, setCurrentChatUserId, syncAllData } from "@/context/store";
 import { Friend } from "@/services/api/types";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const ContactView: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const friends = useSelector((state: RootState) => state.app.friends);
   const apiCalls = new ApiManager();
+  const navigate = useNavigate();
 
   const [activeFilter, setActiveFilter] = useState<string>("activos");
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
@@ -128,7 +130,7 @@ const ContactView: React.FC = () => {
   
   
   const handleOpenModal = (friend: any) => {
-    const userInfo = friend.id === userFromLocalStorage.id ? friend.user : friend.friend;
+    const userInfo = friend.id === userFromLocalStorage.id ? friend.friend : friend.user;
     setSelectedUser(userInfo);
     setModalOpen(true);
   };
@@ -148,6 +150,12 @@ const ContactView: React.FC = () => {
     setShowInput(true);
     setActiveFilter("");
     setSearchMessage("");
+  };
+
+  const handleSendMessage = (userId: number) => {
+    dispatch(setCurrentChatUserId(userId));
+    console.log("CurrentChatUserId:", userId);
+    navigate("/home/chats");
   };
 
   const styles: { [key: string]: React.CSSProperties } = {
@@ -193,6 +201,7 @@ const ContactView: React.FC = () => {
               activeFilter={activeFilter}
               onAcceptClick={accepFriendRequest}
               onRejectClick={rejectFriendRequest}
+              onSendMessage={handleSendMessage}
               onOptionsClick={handleOpenModal}
             />
           )}
@@ -203,7 +212,7 @@ const ContactView: React.FC = () => {
           show={modalOpen}
           handleClose={handleCloseModal}
           user={selectedUser}
-          onSendMessage={() => alert(`Enviar mensaje a ${selectedUser.name}`)}
+          onSendMessage={() => handleSendMessage(selectedUser.id)}
           onDeleteClick={() => {deleteFriend(selectedUser.id)}}
         />
       )}

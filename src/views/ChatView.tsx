@@ -4,22 +4,41 @@ import { Chats, Message } from "@/services/api/types";
 import ChatBox from "@/components/chats/ChatBox";
 import ChatSidebar from "@/components/chats/ChatSidebar";
 import LocalStorageCalls from "@/context/localStorageCalls";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/context/store";
+import { setCurrentChatUserId } from "@/context/store";
 
 const ChatView: React.FC = () => {
-  const [chats, setChats] = useState<Chats[]>([]); 
+  const [chats, setChats] = useState<Chats[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [activeChat, setActiveChat] = useState<number | null>(null);  
-  const [isContentVisible, setIsContentVisible] = useState<boolean>(false);  
+  const [activeChat, setActiveChat] = useState<number | null>(null);
+  const [isContentVisible, setIsContentVisible] = useState<boolean>(false);
 
-  const apiManager = new ApiManager(); 
-  const currentUser = JSON.parse(LocalStorageCalls.getStorageUser() || "{}"); 
+  const apiManager = new ApiManager();
+  const currentUser = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
+
+  const dispatch = useDispatch();
+  const currentChatUserId = useSelector((state: RootState) => state.app.currentChatUserId);
 
   const fetchChats = async (userId: number) => {
     try {
-      const chatsData = await apiManager.getChatsByUserId(userId); 
-      setChats(chatsData);  
-      setLoading(false); 
+      const chatsData = await apiManager.getChatsByUserId(userId);
+      setChats(chatsData);
+      setLoading(false);
+
+      if (currentChatUserId) {
+        const foundChat = chatsData.find((chat) =>
+        (chat.user1.id === currentChatUserId || chat.user2.id === currentChatUserId)
+        );
+
+        if (foundChat) {
+          setActiveChat(foundChat.id);
+          fetchMessages(foundChat.id);
+          setIsContentVisible(true);
+        }
+        dispatch(setCurrentChatUserId(null)); 
+      }
     } catch (error) {
       console.error("Error al obtener los chats", error);
       setLoading(false);
@@ -36,16 +55,16 @@ const ChatView: React.FC = () => {
   };
 
   const handleChatClick = (chatId: number) => {
-    setActiveChat(chatId); 
-    fetchMessages(chatId)
-    setIsContentVisible(true); 
+    setActiveChat(chatId);
+    fetchMessages(chatId);
+    setIsContentVisible(true);
   };
-  
+
   const handleKeyPress = (event: KeyboardEvent) => {
     if (event.key === "Escape") {
       setIsContentVisible(false);
-      setActiveChat(null); 
-      
+      setActiveChat(null);
+      setMessages([]);
     }
   };
 
@@ -53,7 +72,7 @@ const ChatView: React.FC = () => {
     const userLocalStorage = LocalStorageCalls.getStorageUser();
     if (userLocalStorage) {
       const userId = JSON.parse(userLocalStorage).id;
-      fetchChats(userId); 
+      fetchChats(userId);
     }
   }, []);
 
@@ -74,7 +93,7 @@ const ChatView: React.FC = () => {
         loading={loading}
       />
       {isContentVisible && (
-       <ChatBox messages={messages} currentUserId={currentUser.id} />
+        <ChatBox messages={messages} currentUserId={currentUser.id} />
       )}
     </div>
   );

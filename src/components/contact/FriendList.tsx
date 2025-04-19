@@ -7,6 +7,7 @@ type FriendListProps = {
   activeFilter: string;
   onAcceptClick?: (id: number) => void;
   onRejectClick?: (id: number) => void;
+  onSendMessage?: (id: number) => void;
   onOptionsClick?: (friend: Friend) => void;
 };
 
@@ -16,6 +17,7 @@ const FriendList: React.FC<FriendListProps> = ({
   activeFilter,
   onAcceptClick,
   onRejectClick,
+  onSendMessage,
   onOptionsClick,
 }) => {
   return (
@@ -46,7 +48,7 @@ const FriendList: React.FC<FriendListProps> = ({
             }
             onSendMessage={
               activeFilter !== "solicitudes"
-                ? () => alert("Enviar mensaje")
+                ? () =>  onSendMessage?.(displayUser.id)
                 : undefined
             }
           />

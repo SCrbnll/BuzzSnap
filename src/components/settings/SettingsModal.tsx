@@ -19,34 +19,41 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
   onChangePassword,
   onLogOut,
 }) => {
-  const user = LocalStorageCalls.getStorageUser() ? JSON.parse(LocalStorageCalls.getStorageUser()!) : null;
+  const user = LocalStorageCalls.getStorageUser()
+    ? JSON.parse(LocalStorageCalls.getStorageUser()!)
+    : null;
+
   const [isEditingName, setIsEditingName] = useState(false);
   const [userName, setUserName] = useState(user.name);
+  const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl);
   const apiCalls = new ApiManager();
-  
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserName(e.target.value);
   };
 
   const saveUser = () => {
-    // TODO : Implementar llamada API guardar User
+    // Aquí deberías hacer una llamada a la API para guardar el nuevo nombre
     setIsEditingName(false);
   };
 
   const changeColor = async (color: string) => {
-      try {
-        await apiCalls.updateColor(user.id, color);
-        document.body.setAttribute("data-theme", color);
-      } catch (error) {
-        console.error("Error al aceptar solicitud de amistad", error);
-      }
-    };
+    try {
+      await apiCalls.updateColor(user.id, color);
+      document.body.setAttribute("data-theme", color);
+    } catch (error) {
+      console.error("Error al cambiar color", error);
+    }
+  };
 
   const hideEmail = (email: string) => {
     const [username, domain] = email.split("@");
     const hiddenUsername = username.slice(0, 3) + "***";
     return hiddenUsername + "@" + domain;
+  };
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    // TODO : Por implementar en S3 AWS
   };
 
   return (
@@ -56,15 +63,48 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
       </Modal.Header>
 
       <Modal.Body>
-        <h5 className="mb-3" style={{ fontSize: "16px" }}>MY PROFILE</h5>
+        <h5 className="mb-3" style={{ fontSize: "16px" }}>
+          MY PROFILE
+        </h5>
         <div className="d-flex align-items-center ms-5">
-          <div className="text-center me-3">
+          <div className="text-center me-3 position-relative">
             <img
-              src={user.avatarUrl}
+              src={avatarUrl}
               alt={user.name}
               className="rounded-circle"
               style={{ width: "100px", height: "100px", objectFit: "cover" }}
             />
+
+            {/* Botón de cambiar imagen */}
+            <label
+              htmlFor="avatarUpload"
+              className="position-absolute bg-dark rounded-circle d-flex justify-content-center align-items-center"
+              style={{
+                bottom: 0,
+                right: 0,
+                width: "30px",
+                height: "30px",
+                cursor: "pointer",
+                border: "2px solid white",
+              }}
+            >
+              <i
+                className="bi bi-camera-fill text-white"
+                style={{ fontSize: "16px" }}
+              ></i>
+              <input
+                id="avatarUpload"
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    console.log("Imagen seleccionada:", file);
+                  }
+                }}
+                style={{ display: "none" }}
+              />
+            </label>
           </div>
 
           <div className="flex-grow-1">
@@ -76,7 +116,7 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
                   onChange={handleNameChange}
                   style={{
                     border: "1px solid #7f7f7f",
-                    outline: "none",  
+                    outline: "none",
                     color: "white",
                     backgroundColor: "transparent",
                     fontSize: "18px",
@@ -84,34 +124,51 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
                   }}
                 />
               ) : (
-                <h5 className="mb-1" onDoubleClick={() => setIsEditingName(true)}>{userName}</h5>
+                <h5
+                  className="mb-1"
+                  onDoubleClick={() => setIsEditingName(true)}
+                >
+                  {userName}
+                </h5>
               )}
 
               {!isEditingName ? (
-                <div className="d-flex flex-row gap-3">
-                  <i className="bi bi-pencil text-primary fs-4" onClick={() => setIsEditingName(true)}></i>
-                </div>
+                <i
+                  className="bi bi-pencil text-primary fs-4"
+                  onClick={() => setIsEditingName(true)}
+                ></i>
               ) : (
                 <div className="d-flex flex-row gap-3">
-                  <i className="bi bi-check fs-4" style={{ color: "green", cursor: "pointer" }} onClick={saveUser}></i>
-                  <i className="bi bi-x fs-4" style={{ color: "red", cursor: "pointer" }} onClick={() => setIsEditingName(false)}></i>
+                  <i
+                    className="bi bi-check fs-4"
+                    style={{ color: "green", cursor: "pointer" }}
+                    onClick={saveUser}
+                  ></i>
+                  <i
+                    className="bi bi-x fs-4"
+                    style={{ color: "red", cursor: "pointer" }}
+                    onClick={() => setIsEditingName(false)}
+                  ></i>
                 </div>
               )}
-
             </div>
             {user.description && <p className="mb-1">{user.description}</p>}
             <p className="mb-1">{hideEmail(user.email)}</p>
           </div>
         </div>
 
-        <h5 className="mt-4 mb-3" style={{ fontSize: "16px" }}>APPEARANCE</h5>
+        <h5 className="mt-4 mb-3" style={{ fontSize: "16px" }}>
+          APPEARANCE
+        </h5>
         <div className="d-flex ms-5 gap-3">
-          <ColorButton color="purple" onClick={() => changeColor("purple")}/>
+          <ColorButton color="purple" onClick={() => changeColor("purple")} />
           <ColorButton color="green" onClick={() => changeColor("green")} />
-          <ColorButton color="blue" onClick={() => changeColor("blue")}/>
+          <ColorButton color="blue" onClick={() => changeColor("blue")} />
         </div>
 
-        <h5 className="mt-4 mb-3" style={{ fontSize: "16px" }}>ACCESSIBILITY</h5>
+        <h5 className="mt-4 mb-3" style={{ fontSize: "16px" }}>
+          ACCESSIBILITY
+        </h5>
         <div className="d-flex ms-5 gap-3">
           {onChangeEmail && (
             <Button className="button-modal" onClick={onChangeEmail}>

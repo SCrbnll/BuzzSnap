@@ -10,11 +10,13 @@ const groupMembersApi = new GroupMembersApi();
 interface AppState {
   friends: Friend[];
   groupMembers: GroupMember[];
+  currentChatUserId: number | null;
 }
 
 const initialState: AppState = {
   friends: [],
   groupMembers: [],
+  currentChatUserId: null,
 };
 
 const appSlice = createSlice({
@@ -28,10 +30,13 @@ const appSlice = createSlice({
       state.friends = action.payload.friends;
       state.groupMembers = action.payload.groupMembers;
     },
+    setCurrentChatUserId: (state, action: PayloadAction<number | null>) => {
+      state.currentChatUserId = action.payload;
+    },
   },
 });
 
-export const { setAllData } = appSlice.actions;
+export const { setAllData, setCurrentChatUserId } = appSlice.actions;
 
 export const store = configureStore({
   reducer: {

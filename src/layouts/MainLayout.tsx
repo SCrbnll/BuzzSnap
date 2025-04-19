@@ -43,6 +43,16 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     };
   }, [dispatch]);
 
+  const createGroup = async () => {
+    // TODO : Crear Modal para creación de grupo
+    // name;
+		// imageUrl;
+		// description;
+		// createdBy;
+		// inviteCode;
+		// createdAt;
+  }
+
   const styles: { [key: string]: React.CSSProperties } = {
     container: {
       display: "flex",
