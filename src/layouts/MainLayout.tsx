@@ -202,12 +202,18 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
 
           {userInfo && userInfo.avatarUrl ? (
-            <img
-              onClick={handleOpenModal}
-              src={userInfo.avatarUrl}
-              alt="Perfil"
-              style={styles.profileImage}
-            />
+            <div className="group-item">
+              <img
+                onClick={handleOpenModal}
+                src={userInfo.avatarUrl}
+                alt="Perfil"
+                style={styles.profileImage}
+              />
+              <span className="group-tooltip">
+                Ver perfil
+              </span>
+            </div>
+            
           ) : null}
 
           <SettingsModal

@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom";
 import ApiManager from "@/context/apiCalls";
 import { Group } from "@/services/api/types";
 import GroupModal from "@/components/groups/GroupModal";
+import { notifyError } from "@/components/NotificationProvider";
+
 
 const GroupView: React.FC = () => {
     const { id } = useParams<{ id: string }>(); 
@@ -20,7 +22,7 @@ const GroupView: React.FC = () => {
             const response = await apiCalls.getGroup(groupId); 
             setGroup(response);
           } catch (error) {
-            console.error("Error al obtener el grupo:", error);
+            notifyError("Error al obtener el grupo");
           }
         };
     

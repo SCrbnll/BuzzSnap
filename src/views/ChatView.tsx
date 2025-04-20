@@ -7,6 +7,8 @@ import LocalStorageCalls from "@/context/localStorageCalls";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/context/store";
 import { setCurrentChatUserId } from "@/context/store";
+import { notifyError } from "@/components/NotificationProvider";
+
 
 const ChatView: React.FC = () => {
   const [chats, setChats] = useState<Chats[]>([]);
@@ -40,7 +42,7 @@ const ChatView: React.FC = () => {
         dispatch(setCurrentChatUserId(null)); 
       }
     } catch (error) {
-      console.error("Error al obtener los chats", error);
+      notifyError("Error al obtener los chats");
       setLoading(false);
     }
   };
@@ -50,7 +52,7 @@ const ChatView: React.FC = () => {
       const messagesData = await apiManager.getMessagesByChatId(chatId);
       setMessages(messagesData);
     } catch (error) {
-      console.error("Error al obtener los mensajes", error);
+      notifyError("Error al obtener los mensajes");
     }
   };
 

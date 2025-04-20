@@ -3,6 +3,7 @@ import { Friend, GroupMember } from "@/services/api/types";
 import FriendsApi from "@/services/api/friends.api";
 import GroupMembersApi from "@/services/api/groupsmember.api";
 import LocalStorageCalls from "./localStorageCalls";
+import { notifyError } from "@/components/NotificationProvider";
 
 const friendsApi = new FriendsApi();
 const groupMembersApi = new GroupMembersApi();
@@ -64,7 +65,7 @@ export const syncAllData = () => async (dispatch: any) => {
       console.log("📦 Store actualizado con los nuevos datos."); 
     }
   } catch (error) {
-    console.error("Error al sincronizar datos:", error);
+    notifyError("Error crítico al sincronizar datos");
   }
 };
 

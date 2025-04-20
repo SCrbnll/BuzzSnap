@@ -3,6 +3,7 @@ import { Modal, Button } from "react-bootstrap";
 import ColorButton from "./ColorButton";
 import ApiManager from "@/context/apiCalls";
 import LocalStorageCalls from "@/context/localStorageCalls";
+import { notifyError } from "../NotificationProvider";
 
 interface UserInfoModalProps {
   show: boolean;
@@ -51,7 +52,7 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
       await apiCalls.updateColor(user.id, color);
       document.body.setAttribute("data-theme", color);
     } catch (error) {
-      console.error("Error al cambiar color", error);
+      notifyError("Error al cambiar color");
     }
   };
 

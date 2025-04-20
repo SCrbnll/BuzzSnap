@@ -9,6 +9,8 @@ import { Friend } from "@/services/api/types";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { notifySuccess, notifyError } from "@/components/NotificationProvider";
+
 
 const ContactView: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -37,7 +39,7 @@ const ContactView: React.FC = () => {
           const pendingFriends = await apiCalls.getFriendsPending(userFromLocalStorage.id);
           setPendingFriends(pendingFriends);
         } catch (error) {
-          console.error("Error al obtener solicitudes pendientes", error);
+          notifyError("Error al obtener solicitudes pendientes");
         }
       }
     };
@@ -71,16 +73,18 @@ const ContactView: React.FC = () => {
           status: "pending",
           };
         await apiCalls.addFriend(friendRequest);
+        notifySuccess(`Solicitud de amistad enviada a {searchTerm}`);
         setSearchMessage(`Solicitud de amistad enviada a ${searchTerm}`);
       } else {
+        notifyError(`Usuario no encontrado`);
         setSearchMessage(`Usuario no encontrado`);
         setSearchTerm("");
       }
       setSearchTerm("");
     } catch (error) {
       setSearchTerm("");
+      notifyError(`Error al buscar usuario o enviar solicitud al usuario`);
       setSearchMessage(`Error al buscar usuario o enviar solicitud al usuario`);
-      alert("Error al buscar usuario o enviar solicitud");
     }
   };
 
@@ -90,7 +94,7 @@ const ContactView: React.FC = () => {
       setPendingFriends(pendingFriends.filter((friend) => friend.id !== friendId));
       dispatch(syncAllData());
     } catch (error) {
-      console.error("Error al aceptar solicitud de amistad", error);
+      notifyError("Error al aceptar solicitud de amistad");
     }
   };
 
@@ -100,7 +104,7 @@ const ContactView: React.FC = () => {
       setPendingFriends(pendingFriends.filter((friend) => friend.id !== friendId));
       dispatch(syncAllData());
     } catch (error) {
-      console.error("Error al rechazar solicitud de amistad", error);
+      notifyError("Error al rechazar solicitud de amistad");
     }
   };
 
@@ -116,7 +120,7 @@ const ContactView: React.FC = () => {
       );
   
       if (!friendRecord) {
-        console.error("No se encontró el registro de amistad");
+        notifyError("No se encontró el registro de amistad");
         return;
       }
   
@@ -124,7 +128,7 @@ const ContactView: React.FC = () => {
       dispatch(syncAllData());
       setModalOpen(false);
     } catch (error) {
-      console.error("Error al eliminar amigo", error);
+      notifyError("Error al eliminar amigo");
     }
   };
   
@@ -154,7 +158,6 @@ const ContactView: React.FC = () => {
 
   const handleSendMessage = (userId: number) => {
     dispatch(setCurrentChatUserId(userId));
-    console.log("CurrentChatUserId:", userId);
     navigate("/home/chats");
   };
 
