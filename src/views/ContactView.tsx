@@ -134,7 +134,7 @@ const ContactView: React.FC = () => {
   
   
   const handleOpenModal = (friend: any) => {
-    const userInfo = friend.id === userFromLocalStorage.id ? friend.friend : friend.user;
+    const userInfo = friend.friend.id === userFromLocalStorage.id ? friend.user : friend.friend;
     setSelectedUser(userInfo);
     setModalOpen(true);
   };

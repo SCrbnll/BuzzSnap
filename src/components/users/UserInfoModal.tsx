@@ -30,7 +30,7 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
   const lastLoginDate = new Date(user.lastLogin);
   const createdAtDate = new Date(user.createdAt);
 
-  const lastLoginRelative = formatDistanceToNow(lastLoginDate, { addSuffix: true, locale: es });
+  const lastLoginRelative = user.lastLogin !== null ? formatDistanceToNow(lastLoginDate, { addSuffix: true, locale: es }) : "Actualmente conectado";  
   const createdAtRelative = formatDistanceToNow(createdAtDate, { addSuffix: true, locale: es });
 
   return (
@@ -87,8 +87,16 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({
             {user.description && <p>{user.description}</p>}
 
             <div className="tooltip-container">
-              <p>Conectado <code className="fw-bold">{lastLoginRelative}</code></p>
-              <span className="custom-tooltip">Último login: {lastLoginDate.toLocaleString()}</span>
+              {user.lastLogin === null ? 
+              <>
+               <p><code className="fw-bold">{lastLoginRelative}</code></p>
+              </>
+               : 
+               <>
+                <p>Conectado <code className="fw-bold">{lastLoginRelative}</code></p>
+                <span className="custom-tooltip">Último login: {lastLoginDate.toLocaleString()}</span>
+               </>
+              }
             </div>
 
             <div className="tooltip-container">
