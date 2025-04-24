@@ -41,8 +41,10 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
     setUserDescription(e.target.value);
   };
 
-  const saveUser = () => {
-    // TODO: Por implementar API
+  const saveUser = async () => {
+    await apiCalls.updateUser({ ...user, name: userName, description: userDescription });
+    LocalStorageCalls.setStorageUser({ ...user, name: userName, description: userDescription });
+    console.log("User updated");
     setIsEditingName(false);
     setIsEditingDescription(false);
   };
