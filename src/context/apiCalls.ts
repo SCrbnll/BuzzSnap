@@ -155,7 +155,7 @@ export default class ApiManager {
 
     async checkChat(user1Id: number, user2Id: number): Promise<boolean> {
         const chats = await this.chatsApi.getChatsByUser(user1Id);
-        const exist = chats.filter((chat) => chat.user1.id === user1Id && chat.user2.id === user2Id);
+        const exist = chats.filter((chat) => chat.user1.id === user1Id && chat.user2.id === user2Id || chat.user1.id === user2Id && chat.user2.id === user1Id);
         if (exist.length === 0) return false
         return true;
     }
