@@ -28,6 +28,7 @@ const ContactView: React.FC = () => {
 
   const userFromLocalStorage = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
   
+  
   useEffect(() => {
     dispatch(syncAllData());
   }, [dispatch]);
@@ -156,7 +157,14 @@ const ContactView: React.FC = () => {
     setSearchMessage("");
   };
 
-  const handleSendMessage = (userId: number) => {
+  const handleSendMessage = async (userId: number) => {
+    const exist = await apiCalls.checkChat(userFromLocalStorage.id, userId);
+    if (exist) {
+      dispatch(setCurrentChatUserId(userId));
+      navigate("/home/chats");
+      return;
+    }
+    await apiCalls.createChat(userFromLocalStorage.id, userId);
     dispatch(setCurrentChatUserId(userId));
     navigate("/home/chats");
   };

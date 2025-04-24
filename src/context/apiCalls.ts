@@ -153,6 +153,13 @@ export default class ApiManager {
         return this.chatsApi.getChatsByUser(userId);
     }
 
+    async checkChat(user1Id: number, user2Id: number): Promise<boolean> {
+        const chats = await this.chatsApi.getChatsByUser(user1Id);
+        const exist = chats.filter((chat) => chat.user1.id === user1Id && chat.user2.id === user2Id);
+        if (exist.length === 0) return false
+        return true;
+    }
+
     async createChat(user1Id: number, user2Id: number): Promise<Chats> {
         return this.chatsApi.createChat(user1Id, user2Id);
     }

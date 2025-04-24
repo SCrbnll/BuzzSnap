@@ -42,7 +42,7 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
   };
 
   const saveUser = () => {
-    // Aquí deberías hacer una llamada a la API para guardar el nuevo nombre
+    // TODO: Por implementar API
     setIsEditingName(false);
     setIsEditingDescription(false);
   };

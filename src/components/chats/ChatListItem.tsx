@@ -1,6 +1,7 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { Chats } from "@/services/api/types";
 import logo from "/SCrbnll.png";
+import UserInfoModal from "../users/UserInfoModal";
 
 type Props = {
   chat: Chats;
@@ -27,8 +28,9 @@ const ChatListItem: React.FC<Props> = ({
 }) => {
   const otherUser = chat.user1.id === currentUserId ? chat.user2 : chat.user1;
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const [showModal, setShowModal] = useState(false);
 
-  // Cierra el menú si clicas fuera
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
@@ -99,12 +101,30 @@ const ChatListItem: React.FC<Props> = ({
         <div style={styles.menu}>
           <div className="menu-item"
             onClick={() => {
+              setShowModal(true);
               onCloseMenu();
             }}
           >
             Ver perfil de {otherUser.displayName}
           </div>
         </div>
+      )}
+
+    {showModal && (
+        <UserInfoModal
+          show={showModal}
+          handleClose={() => setShowModal(false)}
+          user={{
+            avatarUrl: otherUser.avatarUrl!,
+            name: otherUser.displayName,
+            email: otherUser.email,
+            lastLogin: otherUser.lastLogin!,
+            createdAt: otherUser.createdAt,
+            description: otherUser.description,
+          }}
+          onSendMessage={() => {}}
+          onDeleteClick={() => {}}
+        />
       )}
     </>
   );

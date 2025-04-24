@@ -38,7 +38,7 @@ const ChatView: React.FC = () => {
           setActiveChat(foundChat.id);
           fetchMessages(foundChat.id);
           setIsContentVisible(true);
-        }
+        } 
         dispatch(setCurrentChatUserId(null)); 
       }
     } catch (error) {
