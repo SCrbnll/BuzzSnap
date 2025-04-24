@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ChatListItem from "./ChatListItem";
 import { Chats } from "@/services/api/types";
 
@@ -17,6 +17,20 @@ const ChatSidebar: React.FC<Props> = ({
   onChatClick,
   loading,
 }) => {
+  const [menuState, setMenuState] = useState<{
+    chatId: number | null;
+    x: number;
+    y: number;
+  }>({ chatId: null, x: 0, y: 0 });
+
+  const handleOpenMenu = (chatId: number, x: number, y: number) => {
+    setMenuState({ chatId, x, y });
+  };
+
+  const handleCloseMenu = () => {
+    setMenuState({ chatId: null, x: 0, y: 0 });
+  };
+
   const styles: { [key: string]: React.CSSProperties } = {
     aside: {
       width: "325px",
@@ -42,6 +56,11 @@ const ChatSidebar: React.FC<Props> = ({
               currentUserId={currentUserId}
               isActive={chat.id === activeChatId}
               onClick={() => onChatClick(chat.id)}
+              menuOpen={menuState.chatId === chat.id}
+              menuX={menuState.x}
+              menuY={menuState.y}
+              onOpenMenu={(x: number, y: number) => handleOpenMenu(chat.id, x, y)}
+              onCloseMenu={handleCloseMenu}
             />
           ))
         )}

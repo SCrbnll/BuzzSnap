@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Message } from "@/services/api/types";
 import MessageBubble from "@/components/chats/MessageBubble";
 
@@ -8,27 +8,88 @@ interface ChatBoxProps {
 }
 
 const ChatBox: React.FC<ChatBoxProps> = ({ messages, currentUserId }) => {
+  const [messageTerm, setMessageTerm] = useState<string>("");
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleSend = () => {
+    if (!messageTerm.trim()) return;
+    console.log("Enviando mensaje:", messageTerm);
+    setMessageTerm("");
+  };
+
+  useEffect(() => {
+    if (containerRef.current) {
+      const c = containerRef.current;
+      c.scrollTo({
+        top: c.scrollHeight,
+        behavior: "smooth"
+      });
+    }
+  }, [messages]);
+
   const styles: { [key: string]: React.CSSProperties } = {
-    content: {
+    wrapper: {
       width: "80%",
-      marginTop: "10px",
-      borderRadius: "10px",
-      marginBottom: "100px",
+      margin: "10px auto",
+      display: "flex",
+      flexDirection: "column",
+      height: "calc(100% - 100px)", 
+      overflow: "hidden",
+    },
+    messagesContainer: {
+      flex: 1,
       overflowY: "auto",
-      scrollbarWidth: "none",
       padding: "20px",
+      scrollbarWidth: "thin",
+    },
+    inputContainer: {
+      padding: "10px 20px",
+      borderTop: "1px solid #ccc",
+    },
+    input: {
+      width: "100%",
+      padding: "10px 15px",
+      borderRadius: "50px",
+      border: "1px solid #ccc",
+      fontSize: "16px",
+      outline: "none",
+      boxSizing: "border-box",
     },
   };
 
   return (
-    <div style={styles.content} className="chat-box">
-      {messages.length === 0 ? (
-        <p>No hay mensajes</p>
-      ) : (
-        messages.map((msg) => (
-          <MessageBubble key={msg.id} message={msg} currentUserId={currentUserId} />
-        ))
-      )}
+    <div style={styles.wrapper} className="chat-box">
+      <div style={styles.messagesContainer} ref={containerRef}>
+        {messages.length === 0 ? (
+          <p>No hay mensajes</p>
+        ) : (
+          messages.map((msg) => (
+            <MessageBubble
+              key={msg.id}
+              message={msg}
+              currentUserId={currentUserId}
+            />
+          ))
+        )}
+        <div />
+      </div>
+
+      <div style={styles.inputContainer}>
+        <input
+          type="text"
+          placeholder="Escribe un mensaje..."
+          value={messageTerm}
+          onChange={(e) => setMessageTerm(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSend();
+            }
+          }}
+          style={styles.input}
+          className="chat-box-input-text"
+        />
+      </div>
     </div>
   );
 };

@@ -82,11 +82,7 @@ const MessageBubble: React.FC<Props> = ({ message, currentUserId }) => {
   };
 
   return (
-    <div
-      style={styles.wrapper}
-      onMouseEnter={() => !isSender && setShowTooltip(true)}
-      onMouseLeave={() => setShowTooltip(false)}
-    >
+    <div style={styles.wrapper}>
       <div style={{ position: "relative" }}>
         {!isSender && showTooltip && (
           <div
@@ -101,6 +97,8 @@ const MessageBubble: React.FC<Props> = ({ message, currentUserId }) => {
           alt={message.sender.displayName}
           style={styles.avatar}
           onClick={handleAvatarClick}
+          onMouseEnter={() => !isSender && setShowTooltip(true)}
+          onMouseLeave={() => setShowTooltip(false)}
         />
       </div>
 
