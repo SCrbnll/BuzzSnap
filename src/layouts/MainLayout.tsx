@@ -10,6 +10,7 @@ import sv from "/SCrbnll.png";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { useNavigate } from "react-router-dom";
 import LocalStorageCalls from "@/context/localStorageCalls";
+import SocketCalls from "@/context/socketCalls";
 
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const POLL_INTERVAL = 60000; // 5 minutos en milisegundos
@@ -30,6 +31,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       navigate("/login");
     } else {
       setUserInfo(JSON.parse(user));
+      SocketCalls.connect(JSON.parse(user).id);
       console.log("🔄 Ejecutando dispatch(syncAllData())...");
       dispatch(syncAllData());
 
@@ -41,6 +43,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
     return () => {
       if (intervalRef.current) {
+        SocketCalls.disconnect();
         console.log("🛑 Deteniendo sincronización.");
         clearInterval(intervalRef.current);
       }

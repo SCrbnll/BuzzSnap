@@ -41,13 +41,13 @@ export interface GroupMember {
 }
 
 export interface Message {
-  id: number;
+  id?: number;
   sender: User;
-  groupId?: number | null; // Puede ser null o undefined
-  chatId?: number | null; // Puede ser null o undefined
-  messageType: "text"; // Tipo de mensaje (por ahora solo "text")
+  group?: Group | null; // Puede ser null o undefined
+  chat?: Chats | null; // Puede ser null o undefined
+  message_type?: string; // Puede ser opcional
   content: string;
-  createdAt: string; // Fecha en formato ISO
+  created_at?: string; // Fecha en formato ISO
 }
 
 export interface Chats {

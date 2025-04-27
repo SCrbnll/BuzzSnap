@@ -95,7 +95,7 @@ const ChatView: React.FC = () => {
         loading={loading}
       />
       {isContentVisible && (
-        <ChatBox messages={messages} currentUserId={currentUser.id} />
+        <ChatBox messages={messages} currentUserId={currentUser.id} chatId={activeChat} groupId={null} />
       )}
     </div>
   );

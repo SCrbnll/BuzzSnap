@@ -1,19 +1,47 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Message } from "@/services/api/types";
 import MessageBubble from "@/components/chats/MessageBubble";
+import SocketCalls from "@/context/socketCalls";
+import ApiManager from "@/context/apiCalls";
 
 interface ChatBoxProps {
   messages: Message[];
   currentUserId: number;
+  chatId: number | null;
+  groupId: number | null;
 }
 
-const ChatBox: React.FC<ChatBoxProps> = ({ messages, currentUserId }) => {
+const ChatBox: React.FC<ChatBoxProps> = ({ messages, currentUserId, chatId, groupId }) => {
   const [messageTerm, setMessageTerm] = useState<string>("");
   const containerRef = useRef<HTMLDivElement>(null);
+  const apiCalls = new ApiManager();
 
-  const handleSend = () => {
+  const handleSend = async () => {
+    const sender = await apiCalls.getUser(currentUserId);
+    let group
+    let chat
+    if(chatId === null){
+      group = await apiCalls.getGroup(groupId!);
+    } else {
+      chat = await apiCalls.getChatById(chatId!);
+    }
+
     if (!messageTerm.trim()) return;
     console.log("Enviando mensaje:", messageTerm);
+     const message = {
+      sender: sender,
+      chat: chat,
+      group: group,
+      content: messageTerm,
+    };
+
+    // Enviar el mensaje al servidor
+    // apiCalls.addMessage(message);
+
+    // Usar SocketCalls para enviar el mensaje
+    SocketCalls.sendMessage(message); // Enviar el mensaje
+
+    // Limpiar el campo de entrada
     setMessageTerm("");
   };
 

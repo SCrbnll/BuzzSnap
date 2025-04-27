@@ -10,6 +10,11 @@ export default class ChatsApi {
         return response.data;
     }
 
+    async getChatById(chatId: number): Promise<Chats> {
+        const response = await axios.get<Chats>(`${SERVER}/chats/${chatId}`);
+        return response.data;
+    }
+
     async getChatsByUser(userId: number): Promise<Chats[]> {
         const response = await axios.get<Chats[]>(`${SERVER}/chats/user/${userId}`);
         return response.data;

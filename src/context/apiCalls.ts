@@ -133,6 +133,7 @@ export default class ApiManager {
     }
 
     async addMessage(message: Message): Promise<Message> {
+        console.log(message);
         return this.messagesApi.addMessage(message);
     }
 
@@ -147,6 +148,10 @@ export default class ApiManager {
      /* ========= CHATSAPI ========= */
     async getChat(user1Id: number, user2Id: number): Promise<Chats> {
         return this.chatsApi.getChat(user1Id, user2Id);
+    }
+
+    async getChatById(chatId: number): Promise<Chats> {
+        return this.chatsApi.getChatById(chatId);
     }
 
     async getChatsByUserId(userId: number): Promise<Chats[]> {
