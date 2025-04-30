@@ -1,28 +1,28 @@
 import { io, Socket } from "socket.io-client";
+import { Message } from "@/services/api/types";
 
 export default class SocketCalls {
   private static socket: Socket | null = null;
-  private static socketUrl: string = import.meta.env.VITE_SOCKET_URL; 
+  private static socketUrl: string = import.meta.env.VITE_SOCKET_URL;
 
   // Conectar al WebSocket
-  static connect(userId: string): void {
+  static connect(userId: number, displayName: string): void {
     if (!this.socket) {
       this.socket = io(this.socketUrl, {
         transports: ["websocket"],
-        query: { userId }, // Pasamos el userId como query
       });
 
       this.socket.on("connect", () => {
-        console.log("Conectado al servidor WebSocket");
-      });
-
-      // Manejar mensajes entrantes
-      this.socket.on("new_private_message", (message: any) => {
-        console.log("Nuevo mensaje recibido:", message);
+        console.log("✅ Conectado al WebSocket");
+        this.socket?.emit("user_connected", { userId, displayName: displayName }); // Emitimos user conectado
       });
 
       this.socket.on("disconnect", () => {
-        console.log("Desconectado del servidor WebSocket");
+        console.log("🔌 Desconectado del WebSocket");
+      });
+
+      this.socket.on("connect_error", (err) => {
+        console.error("Error al conectar con el WebSocket:", err);
       });
     }
   }
@@ -32,25 +32,39 @@ export default class SocketCalls {
     if (this.socket) {
       this.socket.disconnect();
       this.socket = null;
-      console.log("Desconectado del WebSocket");
+      console.log("🔌 Socket desconectado manualmente");
     }
   }
 
   // Enviar un mensaje al servidor WebSocket
-  static sendMessage(message: any): void {
+  static sendPrivateMessage(message: Message): void {
     if (this.socket) {
-      this.socket.emit("private_message", message);
+      this.socket.emit("private_message", {
+        ...message,
+        message_type: message.message_type || "text",
+      });
     } else {
-      console.error("No se pudo enviar el mensaje. No está conectado al WebSocket.");
+      console.error("❌ No conectado al WebSocket.");
     }
   }
 
-  // Escuchar un evento en particular
-  static on(event: string, callback: any): void {
+  static joinChat(chatId: number): void {
+    if (this.socket) {
+      this.socket.emit("join_chat", chatId);
+    }
+  }
+
+  // Escuchar un evento específico (ej. "new_private_message")
+  static on(event: string, callback: (data: any) => void): void {
     if (this.socket) {
       this.socket.on(event, callback);
     } else {
-      console.error("No está conectado al WebSocket.");
+      console.error("❌ No conectado al WebSocket.");
     }
+  }
+
+  // Dejar de escuchar un evento (opcional, para limpieza)
+  static off(event: string): void {
+    this.socket?.off(event);
   }
 }

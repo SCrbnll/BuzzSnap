@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { Message } from "@/services/api/types";
 import UserInfoModal from "@/components/users/UserInfoModal";
 
 interface Props {
-  message: Message;
+  message: any;
   currentUserId: number;
 }
 
@@ -11,7 +10,7 @@ const MessageBubble: React.FC<Props> = ({ message, currentUserId }) => {
   const isSender = message.sender.id === currentUserId;
   const [showModal, setShowModal] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
-
+  
   const formattedTime = new Date(message.createdAt).toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit",

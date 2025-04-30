@@ -31,7 +31,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       navigate("/login");
     } else {
       setUserInfo(JSON.parse(user));
-      SocketCalls.connect(JSON.parse(user).id);
+      SocketCalls.connect(JSON.parse(user).id, JSON.parse(user).displayName);
       console.log("🔄 Ejecutando dispatch(syncAllData())...");
       dispatch(syncAllData());
 

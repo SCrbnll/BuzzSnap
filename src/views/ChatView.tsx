@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/context/store";
 import { setCurrentChatUserId } from "@/context/store";
 import { notifyError } from "@/components/NotificationProvider";
+import SocketCalls from "@/context/socketCalls";
 
 
 const ChatView: React.FC = () => {
@@ -59,6 +60,7 @@ const ChatView: React.FC = () => {
   const handleChatClick = (chatId: number) => {
     setActiveChat(chatId);
     fetchMessages(chatId);
+    SocketCalls.joinChat(chatId);
     setIsContentVisible(true);
   };
 
@@ -85,6 +87,31 @@ const ChatView: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!currentUser?.id) return;
+
+    SocketCalls.connect(currentUser.id, currentUser.displayName);
+
+    SocketCalls.on("new_private_message", async (newMessageId: number) => {
+      console.log("Mensaje ID recibido:", newMessageId); 
+      console.log("Comparando con activeChat:", activeChat);
+    
+      try {
+        const messageResponse = await apiManager.getMessage(newMessageId);
+        const newMessage = messageResponse;
+    
+        if (newMessage.chat?.id === activeChat) {
+          setMessages((prevMessages) => [...prevMessages, newMessage]);
+        }
+      } catch (error) {
+        console.error("Error al obtener el mensaje completo:", error);
+      }
+    });
+    return () => {
+      SocketCalls.off("new_private_message");
+    };
+  }, [activeChat, currentUser?.id]);
+  
   return (
     <div className="d-flex vh-100 gap-3">
       <ChatSidebar
@@ -95,7 +122,12 @@ const ChatView: React.FC = () => {
         loading={loading}
       />
       {isContentVisible && (
-        <ChatBox messages={messages} currentUserId={currentUser.id} chatId={activeChat} groupId={null} />
+        <ChatBox 
+          messages={messages} 
+          currentUserId={currentUser.id} 
+          chatId={activeChat} 
+          groupId={null} 
+        />
       )}
     </div>
   );

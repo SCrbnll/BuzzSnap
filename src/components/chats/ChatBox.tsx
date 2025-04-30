@@ -35,13 +35,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ messages, currentUserId, chatId, grou
       content: messageTerm,
     };
 
-    // Enviar el mensaje al servidor
-    // apiCalls.addMessage(message);
-
-    // Usar SocketCalls para enviar el mensaje
-    SocketCalls.sendMessage(message); // Enviar el mensaje
-
-    // Limpiar el campo de entrada
+    SocketCalls.sendPrivateMessage(message); 
     setMessageTerm("");
   };
 
@@ -93,7 +87,6 @@ const ChatBox: React.FC<ChatBoxProps> = ({ messages, currentUserId, chatId, grou
         ) : (
           messages.map((msg) => (
             <MessageBubble
-              key={msg.id}
               message={msg}
               currentUserId={currentUserId}
             />
