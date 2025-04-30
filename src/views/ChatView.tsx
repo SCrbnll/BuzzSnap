@@ -102,7 +102,10 @@ const ChatView: React.FC = () => {
     
         if (newMessage.chat?.id === activeChat) {
           setMessages((prevMessages) => [...prevMessages, newMessage]);
+        } else {
+          alert(`📩 Nuevo mensaje de ${newMessage.sender.displayName}`);
         }
+
       } catch (error) {
         console.error("Error al obtener el mensaje completo:", error);
       }
