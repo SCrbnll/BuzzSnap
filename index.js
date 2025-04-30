@@ -3,79 +3,84 @@ import axios from "axios";
 import { config } from "dotenv";
 config();
 
-
 const io = new Server();
 
-// Lista de usuarios conectados (socketId <=> userId)
 let connectedUsers = [];
 
-// Chats activos (podrías mapear chatId a sockets participantes si quieres)
-let privateChats = [];
-
-
 io.on("connection", (socket) => {
-  console.log(`Nuevo cliente conectado: ${socket.id}`);
+  console.log(`🟢 Cliente conectado: ${socket.id}`);
 
-  // ➡️ Cuando un usuario inicia sesión
-  socket.on("user_connected", (userId) => {
-    connectedUsers.push({ socketId: socket.id, userId });
-    console.log(`Usuario ${userId} conectado con socket ${socket.id}`);
+  // ➕ Registrar usuario
+  socket.on("user_connected", ({ userId, displayName }) => {
+    connectedUsers.push({ socketId: socket.id, userId, displayName });
+    console.log(`✅ Usuario conectado: ${displayName} (ID: ${userId}, Socket: ${socket.id})`);
+    logConnectedUsers();
   });
 
-  // ➡️ Cuando un usuario envía un mensaje privado
-  socket.on("private_message", async ({ sender, chat, group, content, message_type }) => {
-    try {
-      message_type = 'text'
+  // 🧩 Unirse a una sala (chatId)
+  socket.on("join_chat", (chatId) => {
+    const roomName = `chat_${chatId}`;
+    socket.join(roomName);
+    console.log(`👥 Socket ${socket.id} se unió a la sala ${roomName}`);
+  });
 
-      // Imprimir los datos en consola antes de enviarlos a la base de datos
-      console.log("Recibido mensaje para guardar en la base de datos:");
-      console.log({ sender, chat, group, content, message_type });
-  
-      // Validar que chatId o groupId no sean null antes de enviarlos a la API
-      if (chat === undefined && group === undefined) {
-        throw new Error("El mensaje debe pertenecer a un chat o grupo.");
+  // 📩 Manejo de mensaje privado
+  socket.on("private_message", async ({ sender, chat, group, content, message_type = 'text' }) => {
+    try {
+      if (!chat && !group) throw new Error("El mensaje debe pertenecer a un chat o grupo.");
+
+      // 🛠️ Formatear sala (usamos sólo chat por ahora)
+      const roomName = chat ? `chat_${chat.id}` : null;
+
+      // 🔧 Unirse a sala si no está ya
+      if (roomName && !socket.rooms.has(roomName)) {
+        socket.join(roomName);
+        console.log(`⚙️ Socket ${socket.id} unido automáticamente a ${roomName}`);
       }
-  
-      // Realizar la llamada a la API REST para guardar el mensaje
-      if(chat == undefined){
-        chat = null
-      }
-      if(group == undefined){
-        group = null
-      }
-      const data = {
+
+      // 🗄️ Guardar mensaje en la base de datos
+      const response = await axios.post(`${process.env.API_BASE_URL}/messages`, {
         sender,
         chat,
         group,
         content,
         message_type
+      });
+
+      const savedMessage = response.data;
+
+      // 📡 Emitir a todos en la sala
+      if (roomName) {
+        io.to(roomName).emit("new_private_message", savedMessage);
+        console.log(`📨 Mensaje enviado en sala ${roomName} (ID chat: ${chat.id})`);
       }
-      const response = await axios.post(`${process.env.API_BASE_URL}/messages`, data);
-      const savedMessage = response.data; // Suponiendo que la API te devuelve el mensaje guardado
-  
-      console.log(`Mensaje guardado a través de API. ID: ${savedMessage.id}`);
-  
-      // Emitir el mensaje al receptor si está conectado
-      const receiver = connectedUsers.find((u) => u.userId === receiverId);
-      if (receiver) {
-        io.to(receiver.socketId).emit("new_private_message", savedMessage);
-      }
-  
-      // Emitir también al emisor
-      socket.emit("new_private_message", savedMessage);
-  
+
     } catch (error) {
-      console.error("Error al guardar mensaje vía API:", error.response?.data || error.message);
+      console.error("❌ Error al guardar mensaje:", error.response?.data || error.message);
       socket.emit("error_saving_message", { error: error.message });
     }
   });
-  
 
-  // ➡️ Cuando un usuario se desconecta
+  // 🔌 Desconexión
   socket.on("disconnect", () => {
-    connectedUsers = connectedUsers.filter(u => u.socketId !== socket.id);
-    console.log(`Cliente desconectado: ${socket.id}`);
+    const user = connectedUsers.find(u => u.socketId === socket.id);
+    if (user) {
+      console.log(`🔴 Usuario desconectado: ${user.displayName} (ID: ${user.userId}, Socket: ${socket.id})`);
+      connectedUsers = connectedUsers.filter(u => u.socketId !== socket.id);
+    } else {
+      console.log(`🔴 Socket desconectado sin usuario registrado: ${socket.id}`);
+    }
+    logConnectedUsers();
   });
 });
 
 io.listen(3000);
+
+// 🧾 Mostrar usuarios conectados
+function logConnectedUsers() {
+  console.log(`\n👤 Usuarios conectados (${connectedUsers.length}):`);
+  connectedUsers.forEach((u) =>
+    console.log(` - ${u.displayName} (ID: ${u.userId}, Socket: ${u.socketId})`)
+  );
+  console.log("====================================\n");
+}
