@@ -50,8 +50,7 @@ const ContactView: React.FC = () => {
   const filteredFriends = activeFilter === "solicitudes"
   ? pendingFriends
   : friends.filter((friend) => {
-    const friendInfo = friend.id === userFromLocalStorage.id ? friend.user : friend.friend;
-
+    const friendInfo = friend.friend.id === userFromLocalStorage.id ? friend.user : friend.friend;
       switch (activeFilter) {
         case "activos":
           return friendInfo.lastLogin === null && friend.status === "accepted";
