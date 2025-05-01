@@ -11,10 +11,10 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { useNavigate } from "react-router-dom";
 import LocalStorageCalls from "@/context/localStorageCalls";
 import SocketCalls from "@/context/socketCalls";
-import { notifySuccess, notifySuccessDescription } from "@/components/NotificationProvider";
+import { notifySuccessDescription } from "@/components/NotificationProvider";
 
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const POLL_INTERVAL = 60000; // 5 minutos en milisegundos
+  const POLL_INTERVAL = 60000; // 1 minutos en milisegundos
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
