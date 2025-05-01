@@ -11,9 +11,10 @@ io.on("connection", (socket) => {
   console.log(`🟢 Cliente conectado: ${socket.id}`);
 
   // ➕ Registrar usuario
-  socket.on("user_connected", ({ userId, displayName }) => {
+  socket.on("user_connected", async ({ userId, displayName }) => {
     connectedUsers.push({ socketId: socket.id, userId, displayName });
     console.log(`✅ Usuario conectado: ${displayName} (ID: ${userId}, Socket: ${socket.id})`);
+    await axios.put(`${process.env.API_BASE_URL}/users/connection/${userId}`, null, { headers: { 'Content-Type': 'application/json' } });
     logConnectedUsers();
   });
 
@@ -55,6 +56,23 @@ io.on("connection", (socket) => {
         console.log(`📨 Mensaje enviado en sala ${roomName} (ID chat: ${chat.id})`);
       }
 
+      const recipientId = (chat.user1.id === sender.id) ? chat.user2.id : chat.user1.id;
+      const recipientSocket = connectedUsers.find(u => u.userId === recipientId);
+
+      if (recipientSocket) {
+        io.to(recipientSocket.socketId).emit("notify_user", {
+          recipientId,
+          senderId: sender.id,
+          chatId: chat.id,
+          messageId: savedMessage.id,
+          senderName: sender.displayName,
+          preview: content,
+        });
+      
+        console.log(`🔔 Notificación enviada a usuario ${recipientId} desde ${sender.id} en chat ${chat.id}`);
+      }
+      
+
     } catch (error) {
       console.error("❌ Error al guardar mensaje:", error.response?.data || error.message);
       socket.emit("error_saving_message", { error: error.message });
@@ -62,10 +80,11 @@ io.on("connection", (socket) => {
   });
 
   // 🔌 Desconexión
-  socket.on("disconnect", () => {
+  socket.on("disconnect", async () => {
     const user = connectedUsers.find(u => u.socketId === socket.id);
     if (user) {
       console.log(`🔴 Usuario desconectado: ${user.displayName} (ID: ${user.userId}, Socket: ${socket.id})`);
+      await axios.put(`${process.env.API_BASE_URL}/users/connection/${user.userId}`, new Date(), { headers: { 'Content-Type': 'application/json' } });
       connectedUsers = connectedUsers.filter(u => u.socketId !== socket.id);
     } else {
       console.log(`🔴 Socket desconectado sin usuario registrado: ${socket.id}`);
