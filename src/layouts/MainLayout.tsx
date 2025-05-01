@@ -11,6 +11,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { useNavigate } from "react-router-dom";
 import LocalStorageCalls from "@/context/localStorageCalls";
 import SocketCalls from "@/context/socketCalls";
+import { notifySuccess, notifySuccessDescription } from "@/components/NotificationProvider";
 
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const POLL_INTERVAL = 60000; // 5 minutos en milisegundos
@@ -32,6 +33,12 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     } else {
       setUserInfo(JSON.parse(user));
       SocketCalls.connect(JSON.parse(user).id, JSON.parse(user).displayName);
+      SocketCalls.on("notify_user", (data) => {
+        const currentUser = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
+        if (data.recipientId !== currentUser.id) return;
+        notifySuccessDescription(`Nuevo mensaje de ${data.senderName}`, data.preview);
+      });
+      
       console.log("🔄 Ejecutando dispatch(syncAllData())...");
       dispatch(syncAllData());
 
@@ -47,6 +54,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         console.log("🛑 Deteniendo sincronización.");
         clearInterval(intervalRef.current);
       }
+      SocketCalls.off("new_private_message");
     };
   }, [dispatch]);
 

@@ -93,19 +93,13 @@ const ChatView: React.FC = () => {
     SocketCalls.connect(currentUser.id, currentUser.displayName);
 
     SocketCalls.on("new_private_message", async (newMessageId: number) => {
-      console.log("Mensaje ID recibido:", newMessageId); 
-      console.log("Comparando con activeChat:", activeChat);
-    
       try {
         const messageResponse = await apiManager.getMessage(newMessageId);
         const newMessage = messageResponse;
     
         if (newMessage.chat?.id === activeChat) {
           setMessages((prevMessages) => [...prevMessages, newMessage]);
-        } else {
-          alert(`📩 Nuevo mensaje de ${newMessage.sender.displayName}`);
-        }
-
+        } 
       } catch (error) {
         console.error("Error al obtener el mensaje completo:", error);
       }
