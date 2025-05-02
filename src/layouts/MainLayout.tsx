@@ -33,21 +33,35 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     } else {
       setUserInfo(JSON.parse(user));
       SocketCalls.connect(JSON.parse(user).id, JSON.parse(user).displayName);
-        SocketCalls.on("notify_user", (data) => {
-          const currentUser = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
+      SocketCalls.on("notify_user", (data) => {
           const activeChatId = LocalStorageCalls.getActiveChatId();
+          const currentUser = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
           if (data.recipientId !== currentUser.id) return;
-          if(activeChatId !== data.chatId.toString()) {
-            notifyAction(
-              `Nuevo mensaje de ${data.senderName}`,
-              data.preview,
-              "Abrir",
-              () => {
-                dispatch(setCurrentChatUserId(data.recipientId));
-                navigate("/home/chats");
-              }
-            );
-          };
+          if(data.chatId === null){
+            if(window.location.pathname.split("/")[2] !== data.groupId.toString()) {
+              notifyAction(
+                `Nuevo mensaje de ${data.senderName}`,
+                data.preview,
+                "Abrir",
+                () => {
+                  dispatch(setCurrentChatUserId(data.recipientId));
+                  navigate("/groups/" + data.groupId);
+                }
+              );
+            };
+          } else {
+            if(activeChatId !== data.chatId.toString()) {
+              notifyAction(
+                `Nuevo mensaje de ${data.senderName}`,
+                data.preview,
+                "Abrir",
+                () => {
+                  dispatch(setCurrentChatUserId(data.recipientId));
+                  navigate("/home/chats");
+                }
+              );
+            };
+          }          
         });
       
       console.log("🔄 Ejecutando dispatch(syncAllData())...");

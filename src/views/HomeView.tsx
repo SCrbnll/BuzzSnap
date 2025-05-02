@@ -11,6 +11,7 @@ const HomeView: React.FC = () => {
   const handleCloseModal = () => setModalOpen(false); 
 
   const handleLogout = () => {
+    LocalStorageCalls.removeActiveChatId();
     LocalStorageCalls.removeStorageUser();
     navigate('/login')
   }  

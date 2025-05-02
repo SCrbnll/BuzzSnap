@@ -29,6 +29,7 @@ const GroupView: React.FC = () => {
       setGroup(groupData);
       fetchMessages(groupId);
       dispatch(setCurrentGroupUserId(groupId));
+      
     } catch (error) {
       notifyError("Error al obtener el grupo");
     }

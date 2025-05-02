@@ -25,5 +25,4 @@ export default class LocalStorageCalls {
     static removeActiveChatId() {
         localStorage.removeItem(this.ACTIVE_CHAT_KEY);
     }
-
 }
