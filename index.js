@@ -25,10 +25,17 @@ io.on("connection", (socket) => {
     console.log(`👥 Socket ${socket.id} se unió a la sala ${roomName}`);
   });
 
+  // 🧩 Unirse a una sala de grupo
+  socket.on("join_group", (groupId) => {
+    const roomName = `group_${groupId}`;
+    socket.join(roomName);
+    console.log(`👥 Socket ${socket.id} se unió al grupo ${roomName}`);
+  });
+
   // 📩 Manejo de mensaje privado
   socket.on("private_message", async ({ sender, chat, group, content, message_type = 'text' }) => {
     try {
-      if (!chat && !group) throw new Error("El mensaje debe pertenecer a un chat o grupo.");
+      if (!chat) throw new Error("El mensaje debe pertenecer a un chat.");
 
       // 🛠️ Formatear sala (usamos sólo chat por ahora)
       const roomName = chat ? `chat_${chat.id}` : null;
@@ -64,6 +71,7 @@ io.on("connection", (socket) => {
           recipientId,
           senderId: sender.id,
           chatId: chat.id,
+          groupId: null,
           messageId: savedMessage.id,
           senderName: sender.displayName,
           preview: content,
@@ -78,6 +86,61 @@ io.on("connection", (socket) => {
       socket.emit("error_saving_message", { error: error.message });
     }
   });
+
+  // 📩 Manejo de mensaje de grupo
+  socket.on("group_message", async ({ sender, chat, group, content, message_type = 'text' }) => {
+    try {
+      if (!group) throw new Error("El mensaje de grupo debe incluir un objeto 'group'.");
+
+      const roomName = `group_${group.id}`;
+
+      if (!socket.rooms.has(roomName)) {
+        socket.join(roomName);
+        console.log(`⚙️ Socket ${socket.id} unido automáticamente a ${roomName}`);
+      }
+
+      // 🗄️ Guardar mensaje en base de datos
+      const response = await axios.post(`${process.env.API_BASE_URL}/messages`, {
+        sender,
+        chat,
+        group,
+        content,
+        message_type,
+      });
+
+      const savedMessage = response.data;
+
+      // 📡 Emitir a todos en la sala del grupo
+      io.to(roomName).emit("new_group_message", savedMessage);
+      console.log(`📨 Mensaje enviado en grupo ${roomName}`);
+
+      const responseGroup = await axios.get(`${process.env.API_BASE_URL}/groupmembers/group/${group.id}`);
+      const groupUsers = responseGroup.data; 
+
+      groupUsers.forEach((member) => {
+        const user = member.user; 
+        if (user.id === sender.id) return;
+
+        const recipientSocket = connectedUsers.find(u => u.userId === user.id);
+        if (recipientSocket) {
+          io.to(recipientSocket.socketId).emit("notify_user", {
+            recipientId: user.id,
+            senderId: sender.id,
+            chatId: null,
+            groupId: group.id,
+            messageId: savedMessage.id,
+            senderName: sender.displayName,
+            preview: content,
+          });
+          console.log(`🔔 Notificación enviada a usuario ${user.id} en grupo ${group.id}`);
+        }
+      });
+    } catch (error) {
+      console.error("❌ Error al guardar mensaje de grupo:", error.response?.data || error.message);
+      socket.emit("error_saving_group_message", { error: error.message });
+    }
+  });
+
 
   // 🔌 Desconexión
   socket.on("disconnect", async () => {
