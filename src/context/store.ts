@@ -12,12 +12,14 @@ interface AppState {
   friends: Friend[];
   groupMembers: GroupMember[];
   currentChatUserId: number | null;
+  currentGroupUserId: number | null;
 }
 
 const initialState: AppState = {
   friends: [],
   groupMembers: [],
   currentChatUserId: null,
+  currentGroupUserId: null,
 };
 
 const appSlice = createSlice({
@@ -34,10 +36,13 @@ const appSlice = createSlice({
     setCurrentChatUserId: (state, action: PayloadAction<number | null>) => {
       state.currentChatUserId = action.payload;
     },
+    setCurrentGroupUserId: (state, action: PayloadAction<number | null>) => {
+      state.currentGroupUserId = action.payload;
+    },
   },
 });
 
-export const { setAllData, setCurrentChatUserId } = appSlice.actions;
+export const { setAllData, setCurrentChatUserId, setCurrentGroupUserId } = appSlice.actions;
 
 export const store = configureStore({
   reducer: {

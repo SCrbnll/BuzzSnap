@@ -27,15 +27,17 @@ const ChatBox: React.FC<ChatBoxProps> = ({ messages, currentUserId, chatId, grou
     }
 
     if (!messageTerm.trim()) return;
-    console.log("Enviando mensaje:", messageTerm);
      const message = {
       sender: sender,
       chat: chat,
       group: group,
       content: messageTerm,
     };
-
-    SocketCalls.sendPrivateMessage(message); 
+    if(chatId !== null){
+      SocketCalls.sendPrivateMessage(message); 
+    } else {
+      SocketCalls.sendGroupMessage(message);
+    }
     setMessageTerm("");
   };
 

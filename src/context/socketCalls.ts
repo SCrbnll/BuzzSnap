@@ -48,9 +48,27 @@ export default class SocketCalls {
     }
   }
 
+  // Enviar un mensaje al servidor WebSocket
+  static sendGroupMessage(message: Message): void {
+    if (this.socket) {
+      this.socket.emit("group_message", {
+        ...message,
+        message_type: message.message_type || "text",
+      });
+    } else {
+      console.error("❌ No conectado al WebSocket.");
+    }
+  }
+
   static joinChat(chatId: number): void {
     if (this.socket) {
       this.socket.emit("join_chat", chatId);
+    }
+  }
+
+  static joinGroup(chatId: number): void {
+    if (this.socket) {
+      this.socket.emit("join_group", chatId);
     }
   }
 
