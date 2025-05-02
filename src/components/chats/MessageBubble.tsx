@@ -53,6 +53,7 @@ const MessageBubble: React.FC<Props> = ({ message, currentUserId }) => {
       maxWidth: "100%",
     },
     content: {
+      maxWidth: "300px",
       margin: "5px 0",
     },
     time: {
