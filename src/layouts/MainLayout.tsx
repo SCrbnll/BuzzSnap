@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { syncAllData } from "@/context/store";
+import { setCurrentChatUserId, syncAllData } from "@/context/store";
 import { RootState, AppDispatch } from "@/context/store";
 import SettingsModal from "@/components/settings/SettingsModal";
 
@@ -11,7 +11,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { useNavigate } from "react-router-dom";
 import LocalStorageCalls from "@/context/localStorageCalls";
 import SocketCalls from "@/context/socketCalls";
-import { notifySuccessDescription } from "@/components/NotificationProvider";
+import { notifyAction } from "@/components/NotificationProvider";
 
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const POLL_INTERVAL = 60000; // 1 minutos en milisegundos
@@ -33,11 +33,22 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     } else {
       setUserInfo(JSON.parse(user));
       SocketCalls.connect(JSON.parse(user).id, JSON.parse(user).displayName);
-      SocketCalls.on("notify_user", (data) => {
-        const currentUser = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
-        if (data.recipientId !== currentUser.id) return;
-        notifySuccessDescription(`Nuevo mensaje de ${data.senderName}`, data.preview);
-      });
+        SocketCalls.on("notify_user", (data) => {
+          const currentUser = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
+          const activeChatId = LocalStorageCalls.getActiveChatId();
+          if (data.recipientId !== currentUser.id) return;
+          if(activeChatId !== data.chatId.toString()) {
+            notifyAction(
+              `Nuevo mensaje de ${data.senderName}`,
+              data.preview,
+              "Abrir",
+              () => {
+                dispatch(setCurrentChatUserId(data.recipientId));
+                navigate("/home/chats");
+              }
+            );
+          };
+        });
       
       console.log("🔄 Ejecutando dispatch(syncAllData())...");
       dispatch(syncAllData());

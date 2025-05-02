@@ -39,6 +39,7 @@ const ChatView: React.FC = () => {
           setActiveChat(foundChat.id);
           fetchMessages(foundChat.id);
           setIsContentVisible(true);
+          LocalStorageCalls.setActiveChatId(foundChat.id.toString());
         } 
         dispatch(setCurrentChatUserId(null)); 
       }
@@ -62,11 +63,14 @@ const ChatView: React.FC = () => {
     fetchMessages(chatId);
     SocketCalls.joinChat(chatId);
     setIsContentVisible(true);
+    LocalStorageCalls.setActiveChatId(chatId.toString());
+
   };
 
   const handleKeyPress = (event: KeyboardEvent) => {
     if (event.key === "Escape") {
       setIsContentVisible(false);
+      LocalStorageCalls.removeActiveChatId();
       setActiveChat(null);
       setMessages([]);
     }

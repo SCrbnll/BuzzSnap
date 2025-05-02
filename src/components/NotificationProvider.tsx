@@ -30,6 +30,23 @@ export const notifyErrorDescription = (message: string, description: string) => 
     });
 };
 
+export const notifyAction = (
+  message: string,
+  description: string,
+  actionLabel: string,
+  actionCallback: () => void
+) => {
+  toast(message, {
+    description,
+    duration: 4000,
+    action: {
+      label: actionLabel,
+      onClick: actionCallback,
+    },
+  });
+};
+
+
 
 export function notifyPromise<T>(
   promiseFunction: () => Promise<T>,
