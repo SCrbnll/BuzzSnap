@@ -33,11 +33,10 @@ export interface Group {
 
 export interface GroupMember {
   id: number;
-  groupId: number; // ID del grupo
-  userId: number; // ID del usuario
+  group: Group; // ID del grupo
+  user: User; // ID del usuario
   role: "admin" | "member"; // Rol en el grupo
   joinedAt: string; // Fecha de unión
-  group?: Group; // Esto es opcional, ya que no siempre tendrás el objeto completo del grupo aquí
 }
 
 export interface Message {

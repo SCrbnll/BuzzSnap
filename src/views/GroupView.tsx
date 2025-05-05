@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import logo from "/SCrbnll.png";
 import { useParams } from "react-router-dom";
 import ApiManager from "@/context/apiCalls";
-import { Group, Message } from "@/services/api/types";
+import { Group, Message, User } from "@/services/api/types";
 import GroupModal from "@/components/groups/GroupModal";
 import { notifyError } from "@/components/NotificationProvider";
 import ChatBox from "@/components/chats/ChatBox";
@@ -10,12 +10,15 @@ import LocalStorageCalls from "@/context/localStorageCalls";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, setCurrentGroupUserId } from "@/context/store";
 import SocketCalls from "@/context/socketCalls";
+import GroupListModal from "@/components/groups/GroupListModal";
 
 const GroupView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [group, setGroup] = React.useState<Group | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [modalMembers, setModalMembers] = useState<boolean>(false);
+  const [groupUsers, setGroupUsers] = useState<User[]>([]);
   const apiCalls = new ApiManager();
   const currentUser = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
   const dispatch = useDispatch();
@@ -41,6 +44,20 @@ const GroupView: React.FC = () => {
       setMessages(messagesData);
     } catch (error) {
       notifyError("Error al obtener los mensajes");
+    }
+  };
+
+  const fetchGroupMembers = async () => {
+    try {
+      const groupMembers = await apiCalls.getGroupMembersByGroupId(group!.id);
+      const users = []
+      for (const member of groupMembers) {
+        const user = await apiCalls.getUser(member.user.id);
+        users.push(user);
+      }
+      setGroupUsers(users);
+    } catch (error) {
+      notifyError("Error al obtener los miembros del grupo");
     }
   };
 
@@ -86,6 +103,11 @@ const GroupView: React.FC = () => {
 
   const handleCloseModal = () => {
     setModalOpen(false);
+  };
+
+  const handleOpenModalMembers = () => {
+    setModalMembers(true);
+    fetchGroupMembers();
   };
 
   const styles: { [key: string]: React.CSSProperties } = {
@@ -136,9 +158,10 @@ const GroupView: React.FC = () => {
         <div className="d-flex vh-100 gap-3">
           <aside style={styles.aside} className="d-flex flex-column vh-100">
             <div style={styles.chatList}>
-              <div style={styles.chat} className="mb-3 gap-3">
+              <div style={styles.chat} className="mb-3 gap-3" onClick={() => handleOpenModalMembers()}>
                 <img src={logo} alt="Icono" style={styles.logo} />
                 <p style={styles.chatText}>Members</p>
+
               </div>
             </div>
           </aside>
@@ -163,6 +186,9 @@ const GroupView: React.FC = () => {
           }
         />
       )}
+
+    <GroupListModal show={modalMembers} onClose={() => setModalMembers(false)} users={groupUsers} />
+
     </div>
   );
 };
