@@ -181,9 +181,7 @@ const GroupView: React.FC = () => {
           group={group}
           onLeftGroup={() => alert(`Has abandonado el grupo: ${group.name}`)}
           onEditGroup={() => alert(`Editando grupo: ${group.name}`)}
-          onInviteGroup={() =>
-            alert(`Invitando usuarios al grupo: ${group.name}`)
-          }
+          currentUserId={currentUser.id}        
         />
       )}
 
