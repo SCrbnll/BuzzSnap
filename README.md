@@ -2,35 +2,45 @@
 
 ### SQL
 ```sql
+CREATE DATABASE buzzsnap;
+USE buzzsnap;
+
+
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,  -- ID único del usuario
-    name VARCHAR(100) NOT NULL,         -- Nombre del usuario
+    name VARCHAR(100) UNIQUE NOT NULL,         -- Nombre único del usuario (será utilizado para buscar usuarios)
+    display_name VARCHAR(100),  -- Nombre para mostrar (puede ser un alias o nombre público)
     email VARCHAR(255) UNIQUE NOT NULL, -- Email del usuario (único)
     password VARCHAR(255) NOT NULL,     -- Contraseña cifrada
-    avatar_url VARCHAR(255) DEFAULT 'https://media.discordapp.net/attachments/1350894316767416412/1350897517507903559/2301-default-2.png?ex=67d868da&is=67d7175a&hm=7cf1b8c93ccdb5b4091dedd02f9ecfc665ac2a779e2440413781caf05e343839&=&format=webp&quality=lossless',            -- URL del avatar (puede ser almacenado en un S3)
-    description VARCHAR(255),			-- Descripción personaizada del usuario
-    theme enum('green','blue','purple') DEFAULT 'purple',  -- Tema seleccionado (por ejemplo 'light' o 'dark')
+    avatar_url VARCHAR(255) DEFAULT 'https://github.com/SCrbnll.png',            -- URL del avatar (puede ser almacenado en un S3)
+    description VARCHAR(255),			-- Descripción personalizada del usuario
+    theme enum('green','blue','purple') DEFAULT 'purple',  -- Tema seleccionado
     last_login TIMESTAMP NULL DEFAULT NULL,  -- Última vez que el usuario estuvo en línea
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Fecha de creación de la cuenta
     closed BOOLEAN DEFAULT false        -- Estado de la cuenta (borrada o no borrada)
+    display_name VARCHAR(100) DEFAULT NULL
 );
+
 
 -- 2. Tabla de Amigos o Contactos
 CREATE TABLE friends (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,               -- Usuario que envió la solicitud
     friend_id INT NOT NULL,             -- Usuario al que se le envió la solicitud
-    status ENUM('pending', 'accepted', 'canceled') NOT NULL, -- Estado de la solicitud
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Fecha en que se realizó la solicitud
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,  
-    FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE 
+    status ENUM('pending', 'accepted', 'canceled') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    users_order VARCHAR(255) GENERATED ALWAYS AS (CONCAT(LEAST(user_id, friend_id), '-', GREATEST(user_id, friend_id))) STORED,     -- Columna calculada que combina los IDs ordenados (como en chats)
+    UNIQUE KEY unique_friendship (users_order),   -- Clave única para evitar duplicados entre pares de usuarios
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
 
 -- 3. Tabla de Grupos
 CREATE TABLE groups (
     id INT AUTO_INCREMENT PRIMARY KEY,   -- ID único del grupo
     name VARCHAR(100) NOT NULL,           -- Nombre del grupo
-    image_url VARCHAR(255),               -- URL de la imagen del grupo (puede ser almacenada en un S3)
+    image_url VARCHAR(255) DEFAULT 'https://github.com/SCrbnll.png',               -- URL de la imagen del grupo (puede ser almacenada en un S3)
     description TEXT,                     -- Descripción del grupo
     created_by INT NOT NULL,              -- ID del creador del grupo
     invite_code VARCHAR(8) UNIQUE NOT NULL,  -- Código de invitación único para el grupo (letras y números, longitud máxima 8)
@@ -45,6 +55,7 @@ CREATE TABLE group_members (
     user_id INT NOT NULL,                   -- ID del usuario
     role ENUM('admin', 'member') NOT NULL,  -- Rol del miembro (Administrador o Miembro)
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Fecha de unión al grupo
+    CONSTRAINT unique_group_user UNIQUE (group_id, user_id),  -- ✅ Previene duplicados
     FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE,  
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE    
 );
@@ -55,8 +66,7 @@ CREATE TABLE chats (
     user1_id INT NOT NULL,                      -- ID del primer usuario
     user2_id INT NOT NULL,                      -- ID del segundo usuario
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Fecha de creación del chat
-    -- Columna calculada que almacena el menor de los dos IDs y el mayor
-    users_order VARCHAR(255) GENERATED ALWAYS AS (CONCAT(LEAST(user1_id, user2_id), '-', GREATEST(user1_id, user2_id))) STORED,
+    users_order VARCHAR(255) GENERATED ALWAYS AS (CONCAT(LEAST(user1_id, user2_id), '-', GREATEST(user1_id, user2_id))) STORED,     -- Columna calculada que almacena el menor de los dos IDs y el mayor
     UNIQUE KEY unique_chat (users_order),  -- Constraint para asegurar que no haya duplicados
     FOREIGN KEY (user1_id) REFERENCES users(id) ON DELETE CASCADE, -- Relación con la tabla 'users'
     FOREIGN KEY (user2_id) REFERENCES users(id) ON DELETE CASCADE  -- Relación con la tabla 'users'
@@ -68,12 +78,13 @@ CREATE TABLE messages (
     sender_id INT NOT NULL,                  -- ID del usuario que envió el mensaje
     chat_id INT DEFAULT NULL,               -- ID del grupo (si es mensaje de chat)
     group_id INT DEFAULT NULL,               -- ID del grupo (si es mensaje de grupo)
-    message_type ENUM('text', 'image', 'video', 'audio') NOT NULL, -- Tipo de mensaje (texto o multimedia)
+    message_type ENUM('text', 'image', 'video', 'audio') DEFAULT 'text', -- Tipo de mensaje (texto o multimedia)
     content TEXT NOT NULL,                   -- Contenido del mensaje
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Fecha de creación del mensaje
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,  -- Fecha de creación del mensaje
     FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE, 
     FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE,
     FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE
+ 
 );
 ```
 
