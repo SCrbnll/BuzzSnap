@@ -20,8 +20,8 @@ export default class GroupsApi {
         return response.data;
     }
 
-    async addGroup(group: Group): Promise<Group> {
-        const response = await axios.post<Group>(`${SERVER}/groups`, group);
+    async addGroup(group: Group): Promise<number> {
+        const response = await axios.post<number>(`${SERVER}/groups`, group);
         return response.data;
     }
 

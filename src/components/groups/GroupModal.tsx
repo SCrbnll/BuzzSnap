@@ -28,7 +28,7 @@ const GroupModal: React.FC<GroupModalProps> = ({
   const [showUserModal, setShowUserModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
 
-  const createdAtDate = new Date(group.createdAt);
+  const createdAtDate = new Date(group.createdAt!);
   const createdAtRelative = formatDistanceToNow(createdAtDate, {
     addSuffix: true,
     locale: es,

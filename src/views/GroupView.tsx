@@ -23,9 +23,7 @@ const GroupView: React.FC = () => {
   const apiCalls = new ApiManager();
   const currentUser = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
   const dispatch = useDispatch();
-  const currentGroupUserId = useSelector(
-    (state: RootState) => state.app.currentGroupUserId
-  );
+  const currentGroupUserId = useSelector((state: RootState) => state.app.currentGroupUserId);
 
   const fetchGroup = async (groupId: number) => {
     try {
@@ -50,7 +48,7 @@ const GroupView: React.FC = () => {
 
   const fetchGroupMembers = async () => {
     try {
-      const groupMembers = await apiCalls.getGroupMembersByGroupId(group!.id);
+      const groupMembers = await apiCalls.getGroupMembersByGroupId(group!.id!);
       const users = []
       for (const member of groupMembers) {
         const user = await apiCalls.getUser(member.user.id);
@@ -113,7 +111,7 @@ const GroupView: React.FC = () => {
 
 const leftGroup = async (group: Group, currentUser: User) => {
   try {
-    const members = await apiCalls.getGroupMembersByGroupId(group.id);
+    const members = await apiCalls.getGroupMembersByGroupId(group.id!);
     const currentMembership = members.find(
       (member) => member.user.id === currentUser.id
     );
@@ -128,7 +126,7 @@ const leftGroup = async (group: Group, currentUser: User) => {
 
     const confirmed = window.confirm("¿Estás seguro que deseas abandonar el grupo?");
     if (confirmed) {
-      await apiCalls.deleteGroupMember(currentMembership!.id);
+      await apiCalls.deleteGroupMember(currentMembership!.id!);
       alert("Has abandonado el grupo con éxito.");
       navigate("/home");
     }

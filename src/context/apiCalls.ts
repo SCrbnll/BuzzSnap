@@ -70,7 +70,7 @@ export default class ApiManager {
         return this.groupsApi.getGroupsByUserId(userId);
     }
 
-    async addGroup(group: Group): Promise<Group> {
+    async addGroup(group: Group): Promise<number> {
         return this.groupsApi.addGroup(group);
     }
 

@@ -22,21 +22,21 @@ export interface Friend {
 
 
 export interface Group {
-  id: number;
+  id?: number;
   name: string;
   imageUrl?: string; // Puede ser opcional
   description?: string;
   creator: User; // ID del creador en string
   inviteCode: string;
-  createdAt: string; // Fecha en formato ISO
+  createdAt?: string; // Fecha en formato ISO
 }
 
 export interface GroupMember {
-  id: number;
+  id?: number;
   group: Group; // ID del grupo
   user: User; // ID del usuario
   role: "admin" | "member"; // Rol en el grupo
-  joinedAt: string; // Fecha de unión
+  joinedAt?: string; // Fecha de unión
 }
 
 export interface Message {

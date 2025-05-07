@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import LocalStorageCalls from "@/context/localStorageCalls";
 import SocketCalls from "@/context/socketCalls";
 import { notifyAction } from "@/components/NotificationProvider";
+import CreateGroupModal from "@/components/groups/CreateGroupModal";
 
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const POLL_INTERVAL = 60000; // 1 minutos en milisegundos
@@ -23,6 +24,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   );
   const [userInfo, setUserInfo] = useState<any>();
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -90,16 +92,8 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   const handleOpenModal = () => setShowSettingsModal(true); 
   const handleCloseModal = () => setShowSettingsModal(false); 
-
-  const createGroup = async () => {
-    // TODO : Crear Modal para creación de grupo
-    // name;
-    // imageUrl;
-    // description;
-    // createdBy;
-    // inviteCode;
-    // createdAt;
-  };
+  const handleOpenCreateGroupModal = () => setShowCreateGroupModal(true);
+  const handleCloseCreateGroupModal = () => setShowCreateGroupModal(false);
 
   const styles: { [key: string]: React.CSSProperties } = {
     container: {
@@ -231,8 +225,8 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             )}
             <button
               style={styles.button}
-              onClick={() => alert("¡Botón presionado!")}
-            >
+              onClick={handleOpenCreateGroupModal}
+              >
               <i className="bi bi-plus" style={styles.plusIcon}></i>
             </button>
           </div>
@@ -265,6 +259,8 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <main>{children}</main>
         </div>
       </div>
+      <CreateGroupModal show={showCreateGroupModal} handleClose={handleCloseCreateGroupModal} />
+
       <style>
         {`
             .group-tooltip {
