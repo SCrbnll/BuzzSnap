@@ -10,11 +10,24 @@ const MessageBubble: React.FC<Props> = ({ message, currentUserId }) => {
   const isSender = message.sender.id === currentUserId;
   const [showModal, setShowModal] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
-  
-  const formattedTime = new Date(message.createdAt).toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+
+  const createdAt = new Date(message.createdAt);
+  const now = new Date();
+
+  const isSameDay =
+    createdAt.getFullYear() === now.getFullYear() &&
+    createdAt.getMonth() === now.getMonth() &&
+    createdAt.getDate() === now.getDate();
+
+  const formattedTime = isSameDay
+    ? createdAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    : createdAt.toLocaleString([], {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
 
   const styles: { [key: string]: React.CSSProperties } = {
     wrapper: {
@@ -85,10 +98,7 @@ const MessageBubble: React.FC<Props> = ({ message, currentUserId }) => {
     <div style={styles.wrapper}>
       <div style={{ position: "relative" }}>
         {!isSender && showTooltip && (
-          <div
-            style={styles.tooltip}
-            onClick={handleAvatarClick}
-          >
+          <div style={styles.tooltip} onClick={handleAvatarClick}>
             Ver perfil de {message.sender.displayName}
           </div>
         )}
