@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, setCurrentGroupUserId } from "@/context/store";
 import SocketCalls from "@/context/socketCalls";
 import GroupListModal from "@/components/groups/GroupListModal";
+import GroupSettingsModal from "@/components/groups/GroupSettinsModal";
 
 const GroupView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,6 +20,7 @@ const GroupView: React.FC = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [modalMembers, setModalMembers] = useState<boolean>(false);
   const [groupUsers, setGroupUsers] = useState<User[]>([]);
+  const [showEditModal, setShowEditModal] = useState(false);
   const navigate = useNavigate();
   const apiCalls = new ApiManager();
   const currentUser = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
@@ -95,6 +97,12 @@ const GroupView: React.FC = () => {
         SocketCalls.off("new_group_message");
       };
     }, [group?.id, currentUser?.id]);
+
+    useEffect(() => {
+      if (showEditModal && group?.id) {
+        fetchGroupMembers();
+      }
+    }, [showEditModal, group]);
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -208,13 +216,23 @@ const leftGroup = async (group: Group, currentUser: User) => {
           handleClose={handleCloseModal}
           group={group}
           onLeftGroup={() => leftGroup(group, currentUser)}
-          onEditGroup={() => alert(`Editando grupo: ${group.name}`)}
+          onEditGroup={() => setShowEditModal(true)}
           currentUserId={currentUser.id}        
         />
       )}
 
     <GroupListModal show={modalMembers} onClose={() => setModalMembers(false)} users={groupUsers} />
-
+      {group ? (
+        <GroupSettingsModal
+          show={showEditModal}
+          handleClose={() => setShowEditModal(false)}
+          group={group}
+          members={groupUsers}
+          onSave={() => {
+            console.log("Modal cerrado");
+          }}
+        />
+      ) : null}
     </div>
   );
 };
