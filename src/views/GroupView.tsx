@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import logo from "/SCrbnll.png";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ApiManager from "@/context/apiCalls";
 import { Group, Message, User } from "@/services/api/types";
 import GroupModal from "@/components/groups/GroupModal";
@@ -19,6 +19,7 @@ const GroupView: React.FC = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [modalMembers, setModalMembers] = useState<boolean>(false);
   const [groupUsers, setGroupUsers] = useState<User[]>([]);
+  const navigate = useNavigate();
   const apiCalls = new ApiManager();
   const currentUser = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
   const dispatch = useDispatch();
@@ -110,6 +111,34 @@ const GroupView: React.FC = () => {
     fetchGroupMembers();
   };
 
+const leftGroup = async (group: Group, currentUser: User) => {
+  try {
+    const members = await apiCalls.getGroupMembersByGroupId(group.id);
+    const currentMembership = members.find(
+      (member) => member.user.id === currentUser.id
+    );
+
+    const isCreator = group.creator.id === currentUser.id;
+    const isAdmin = currentMembership!.role === "admin";
+
+    if (isCreator || isAdmin) {
+      alert("Eres el administrador del grupo. Debes transferir la administración antes de poder salir.");
+      return;
+    }
+
+    const confirmed = window.confirm("¿Estás seguro que deseas abandonar el grupo?");
+    if (confirmed) {
+      await apiCalls.deleteGroupMember(currentMembership!.id);
+      alert("Has abandonado el grupo con éxito.");
+      navigate("/home");
+    }
+  } catch (error) {
+    console.error("Error al intentar abandonar el grupo:", error);
+    alert("Ocurrió un error al intentar abandonar el grupo.");
+  }
+};
+
+
   const styles: { [key: string]: React.CSSProperties } = {
     aside: {
       width: "325px",
@@ -180,7 +209,7 @@ const GroupView: React.FC = () => {
           show={modalOpen}
           handleClose={handleCloseModal}
           group={group}
-          onLeftGroup={() => alert(`Has abandonado el grupo: ${group.name}`)}
+          onLeftGroup={() => leftGroup(group, currentUser)}
           onEditGroup={() => alert(`Editando grupo: ${group.name}`)}
           currentUserId={currentUser.id}        
         />
