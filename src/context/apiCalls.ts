@@ -70,6 +70,10 @@ export default class ApiManager {
         return this.groupsApi.getGroupsByUserId(userId);
     }
 
+    async getGroupByInviteCode(invite_code: string): Promise<Group>{
+        return this.groupsApi.getGroupByInviteCode(invite_code);
+    }
+
     async addGroup(group: Group): Promise<number> {
         return this.groupsApi.addGroup(group);
     }
@@ -103,8 +107,8 @@ export default class ApiManager {
         return this.groupMembersApi.addGroupMember(member);
     }
 
-    async updateGroupMember(member: GroupMember, role: string): Promise<GroupMember> {
-        return this.groupMembersApi.updateGroupMember(member, role);
+    async updateGroupMember(memberId: number, role: string): Promise<GroupMember> {
+        return this.groupMembersApi.updateGroupMember(memberId, role);
     }
 
     async deleteGroupMember(id: number): Promise<void> {

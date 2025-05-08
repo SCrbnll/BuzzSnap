@@ -20,6 +20,11 @@ export default class GroupsApi {
         return response.data;
     }
 
+    async getGroupByInviteCode(invite_code: string): Promise<Group> {
+        const response = await axios.get<Group>(`${SERVER}/groups/invite_code/${invite_code}`);
+        return response.data;
+    }
+
     async addGroup(group: Group): Promise<number> {
         const response = await axios.post<number>(`${SERVER}/groups`, group);
         return response.data;

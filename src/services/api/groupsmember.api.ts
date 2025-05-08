@@ -30,8 +30,8 @@ export default class GroupMembersApi {
         return response.data;
     }
 
-    async updateGroupMember(member: GroupMember, role: string): Promise<GroupMember> {
-        const response = await axios.put<GroupMember>(`${SERVER}/groupmembers/change/${member.id}/${role}`);
+    async updateGroupMember(member: number, role: string): Promise<GroupMember> {
+        const response = await axios.put<GroupMember>(`${SERVER}/groupmembers/change/${member}/${role}`);
         return response.data;
     }
 

@@ -46,6 +46,14 @@ const GroupSettingsModal: React.FC<GroupSettingsModalProps> = ({
         creator: selectedUser ? selectedUser : group.creator,
         // imageUrl: ..., // cuando tengas S3
       };
+      if(selectedUser) {
+        const groupMembers = await apiCalls.getGroupMembersByGroupId(group!.id!);
+        const currentMembership = groupMembers.find((member) => member.user.id === selectedUser.id);
+        const lastCreatorMembership = groupMembers.find((member) => member.user.id === group.creator.id);
+        await apiCalls.updateGroupMember(currentMembership?.id!, "admin");
+        await apiCalls.updateGroupMember(lastCreatorMembership!.id!, "member");
+
+      }
 
       await apiCalls.updateGroup(updatedGroup);
       notifySuccess("Grupo actualizado correctamente");
