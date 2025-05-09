@@ -3,13 +3,15 @@ import { Modal, Button, Form } from "react-bootstrap";
 import ApiManager from "@/context/apiCalls";
 import { notifySuccess, notifyError } from "../NotificationProvider";
 import { Group, User } from "@/services/api/types";
+import { AppDispatch, syncAllData } from "@/context/store";
+import { useDispatch } from "react-redux";
 
 interface GroupSettingsModalProps {
   show: boolean;
   handleClose: () => void;
   group: Group;
   members: User[];
-  onSave?: () => void;
+  onGroupUpdated?: () => void;
 }
 
 const GroupSettingsModal: React.FC<GroupSettingsModalProps> = ({
@@ -17,7 +19,7 @@ const GroupSettingsModal: React.FC<GroupSettingsModalProps> = ({
   handleClose,
   group,
   members,
-  onSave,
+  onGroupUpdated
 }) => {
   const [name, setName] = useState(group.name);
   const [description, setDescription] = useState(group.description || "");
@@ -25,6 +27,7 @@ const GroupSettingsModal: React.FC<GroupSettingsModalProps> = ({
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const apiCalls = new ApiManager();
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     setName(group.name);
@@ -35,9 +38,7 @@ const GroupSettingsModal: React.FC<GroupSettingsModalProps> = ({
 
   const handleSave = async () => {
     try {
-      // Aquí podrías incluir lógica futura de subida a AWS S3
       const selectedUser = members.find((member) => member.id === creatorId)
-
 
       const updatedGroup: Group = {
         ...group,
@@ -52,13 +53,12 @@ const GroupSettingsModal: React.FC<GroupSettingsModalProps> = ({
         const lastCreatorMembership = groupMembers.find((member) => member.user.id === group.creator.id);
         await apiCalls.updateGroupMember(currentMembership?.id!, "admin");
         await apiCalls.updateGroupMember(lastCreatorMembership!.id!, "member");
-
       }
-
+      
       await apiCalls.updateGroup(updatedGroup);
       notifySuccess("Grupo actualizado correctamente");
-
-      if (onSave) onSave();
+      dispatch(syncAllData());
+      if(onGroupUpdated) onGroupUpdated();
       handleClose();
     } catch (error) {
       console.error(error);

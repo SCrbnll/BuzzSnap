@@ -28,7 +28,6 @@ const ContactView: React.FC = () => {
 
   const userFromLocalStorage = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
   
-  
   useEffect(() => {
     dispatch(syncAllData());
   }, [dispatch]);

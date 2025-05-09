@@ -5,7 +5,7 @@ import ChatBox from "@/components/chats/ChatBox";
 import ChatSidebar from "@/components/chats/ChatSidebar";
 import LocalStorageCalls from "@/context/localStorageCalls";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "@/context/store";
+import { AppDispatch, RootState, syncAllData } from "@/context/store";
 import { setCurrentChatUserId } from "@/context/store";
 import { notifyError } from "@/components/NotificationProvider";
 import SocketCalls from "@/context/socketCalls";
@@ -21,7 +21,7 @@ const ChatView: React.FC = () => {
   const apiManager = new ApiManager();
   const currentUser = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const currentChatUserId = useSelector((state: RootState) => state.app.currentChatUserId);
 
   const fetchChats = async (userId: number) => {
@@ -75,6 +75,10 @@ const ChatView: React.FC = () => {
       setMessages([]);
     }
   };
+
+   useEffect(() => {
+      dispatch(syncAllData());
+    }, [dispatch]);
 
   useEffect(() => {
     const userLocalStorage = LocalStorageCalls.getStorageUser();

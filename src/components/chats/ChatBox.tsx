@@ -87,8 +87,9 @@ const ChatBox: React.FC<ChatBoxProps> = ({ messages, currentUserId, chatId, grou
         {messages.length === 0 ? (
           <p>No hay mensajes</p>
         ) : (
-          messages.map((msg) => (
+          messages.map((msg, index) => (
             <MessageBubble
+              key={index}
               message={msg}
               currentUserId={currentUserId}
             />

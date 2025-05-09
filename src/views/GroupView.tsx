@@ -4,11 +4,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import ApiManager from "@/context/apiCalls";
 import { Group, Message, User } from "@/services/api/types";
 import GroupModal from "@/components/groups/GroupModal";
-import { notifyError } from "@/components/NotificationProvider";
+import { notifyError, notifySuccess } from "@/components/NotificationProvider";
 import ChatBox from "@/components/chats/ChatBox";
 import LocalStorageCalls from "@/context/localStorageCalls";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState, setCurrentGroupUserId } from "@/context/store";
+import { AppDispatch, RootState, setCurrentGroupUserId, syncAllData } from "@/context/store";
 import SocketCalls from "@/context/socketCalls";
 import GroupListModal from "@/components/groups/GroupListModal";
 import GroupSettingsModal from "@/components/groups/GroupSettinsModal";
@@ -24,7 +24,7 @@ const GroupView: React.FC = () => {
   const navigate = useNavigate();
   const apiCalls = new ApiManager();
   const currentUser = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const currentGroupUserId = useSelector((state: RootState) => state.app.currentGroupUserId);
 
   const fetchGroup = async (groupId: number) => {
@@ -104,12 +104,29 @@ const GroupView: React.FC = () => {
       }
     }, [showEditModal, group]);
 
+     useEffect(() => {
+      dispatch(syncAllData());
+    }, [dispatch]);
+
   const handleOpenModal = () => {
     setModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setModalOpen(false);
+  };
+
+  const handleOpenEditModal = () => {
+    setModalOpen(false);
+    setShowEditModal(true);
+  };
+
+  const handleEditCloseModal = async () => {
+    setShowEditModal(false);
+    setModalOpen(true);
+    if (group?.id) {
+      await fetchGroup(group.id);
+    }
   };
 
   const handleOpenModalMembers = () => {
@@ -128,19 +145,20 @@ const leftGroup = async (group: Group, currentUser: User) => {
     const isAdmin = currentMembership!.role === "admin";
 
     if (isCreator || isAdmin) {
-      alert("Eres el administrador del grupo. Debes transferir la administración antes de poder salir.");
+      notifyError("Eres el administrador del grupo. Debes transferir la administración antes de poder salir.");
       return;
     }
 
     const confirmed = window.confirm("¿Estás seguro que deseas abandonar el grupo?");
     if (confirmed) {
       await apiCalls.deleteGroupMember(currentMembership!.id!);
-      alert("Has abandonado el grupo con éxito.");
+      dispatch(syncAllData());
+      notifySuccess("Has abandonado el grupo con éxito.");
       navigate("/home");
     }
   } catch (error) {
     console.error("Error al intentar abandonar el grupo:", error);
-    alert("Ocurrió un error al intentar abandonar el grupo.");
+    notifyError("Ocurrió un error al intentar abandonar el grupo.");
   }
 };
 
@@ -216,7 +234,7 @@ const leftGroup = async (group: Group, currentUser: User) => {
           handleClose={handleCloseModal}
           group={group}
           onLeftGroup={() => leftGroup(group, currentUser)}
-          onEditGroup={() => setShowEditModal(true)}
+          onEditGroup={handleOpenEditModal}
           currentUserId={currentUser.id}        
         />
       )}
@@ -225,12 +243,10 @@ const leftGroup = async (group: Group, currentUser: User) => {
       {group ? (
         <GroupSettingsModal
           show={showEditModal}
-          handleClose={() => setShowEditModal(false)}
+          handleClose={handleEditCloseModal}
           group={group}
           members={groupUsers}
-          onSave={() => {
-            console.log("Modal cerrado");
-          }}
+          onGroupUpdated={() => fetchGroup(group.id!)}
         />
       ) : null}
     </div>

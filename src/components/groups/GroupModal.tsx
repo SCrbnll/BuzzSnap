@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Button, Image } from "react-bootstrap";
 import { Group } from "@/services/api/types";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import UserInfoModal from "./../users/UserInfoModal"; 
 import { notifySuccess } from "../NotificationProvider";
+import { useDispatch } from "react-redux";
+import { AppDispatch, syncAllData } from "@/context/store";
 
 interface GroupModalProps {
   show: boolean;
@@ -29,6 +31,8 @@ const GroupModal: React.FC<GroupModalProps> = ({
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
 
   const createdAtDate = new Date(group.createdAt!);
+  const dispatch = useDispatch<AppDispatch>();
+
   const createdAtRelative = formatDistanceToNow(createdAtDate, {
     addSuffix: true,
     locale: es,
@@ -46,6 +50,10 @@ const GroupModal: React.FC<GroupModalProps> = ({
       setShowUserModal(true);
     }
   };
+
+   useEffect(() => {
+    dispatch(syncAllData());
+  }, [dispatch]);
 
   const isAdmin = group.creator?.id === currentUserId;
 
