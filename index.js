@@ -141,6 +141,9 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("trigger_update", () => {
+    io.emit("sync_data_notify"); 
+  });
 
   // 🔌 Desconexión
   socket.on("disconnect", async () => {
