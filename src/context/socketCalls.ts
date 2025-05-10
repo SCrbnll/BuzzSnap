@@ -72,6 +72,12 @@ export default class SocketCalls {
     }
   }
 
+  static syncData(): void {
+    if (this.socket) {
+      this.socket.emit("trigger_update");
+    }
+  }
+
   // Escuchar un evento específico (ej. "new_private_message")
   static on(event: string, callback: (data: any) => void): void {
     if (this.socket) {

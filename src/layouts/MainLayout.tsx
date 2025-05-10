@@ -36,36 +36,34 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       setUserInfo(JSON.parse(user));
       SocketCalls.connect(JSON.parse(user).id, JSON.parse(user).displayName);
       SocketCalls.on("notify_user", (data) => {
-          const activeChatId = LocalStorageCalls.getActiveChatId();
-          const currentUser = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
-          if (data.recipientId !== currentUser.id) return;
-          if(data.chatId === null){
-            if(window.location.pathname.split("/")[2] !== data.groupId.toString()) {
-              notifyAction(
-                `Nuevo mensaje de ${data.senderName}`,
-                data.preview,
-                "Abrir",
-                () => {
-                  dispatch(setCurrentChatUserId(data.recipientId));
-                  navigate("/groups/" + data.groupId);
-                }
-              );
-            };
-          } else {
-            if(activeChatId !== data.chatId.toString()) {
-              notifyAction(
-                `Nuevo mensaje de ${data.senderName}`,
-                data.preview,
-                "Abrir",
-                () => {
-                  dispatch(setCurrentChatUserId(data.recipientId));
-                  navigate("/home/chats");
-                }
-              );
-            };
-          }          
-        });
-      
+        const activeChatId = LocalStorageCalls.getActiveChatId();
+        const currentUser = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
+        if (data.recipientId !== currentUser.id) return;
+        if (data.chatId === null) {
+          if (window.location.pathname.split("/")[2] !== data.groupId.toString()) {
+            notifyAction(`Nuevo mensaje de ${data.senderName}`, data.preview, "Abrir",
+              () => {
+                dispatch(setCurrentChatUserId(data.recipientId));
+                navigate("/groups/" + data.groupId);
+              }
+            );
+          }
+        } else {
+          if (activeChatId !== data.chatId.toString()) {
+            notifyAction(`Nuevo mensaje de ${data.senderName}`, data.preview, "Abrir",
+              () => {
+                dispatch(setCurrentChatUserId(data.recipientId));
+                navigate("/home/chats");
+              }
+            );
+          }
+        }
+      });
+
+      SocketCalls.on("sync_data_notify", () => {
+        dispatch(syncAllData());
+      });
+
       console.log("🔄 Ejecutando dispatch(syncAllData())...");
       dispatch(syncAllData());
 
@@ -87,11 +85,11 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   const handleLogout = () => {
     LocalStorageCalls.removeStorageUser();
-    navigate('/login')
-  }
+    navigate("/login");
+  };
 
-  const handleOpenModal = () => setShowSettingsModal(true); 
-  const handleCloseModal = () => setShowSettingsModal(false); 
+  const handleOpenModal = () => setShowSettingsModal(true);
+  const handleCloseModal = () => setShowSettingsModal(false);
   const handleOpenCreateGroupModal = () => setShowCreateGroupModal(true);
   const handleCloseCreateGroupModal = () => setShowCreateGroupModal(false);
 
@@ -223,10 +221,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             ) : (
               <></>
             )}
-            <button
-              style={styles.button}
-              onClick={handleOpenCreateGroupModal}
-              >
+            <button style={styles.button} onClick={handleOpenCreateGroupModal}>
               <i className="bi bi-plus" style={styles.plusIcon}></i>
             </button>
           </div>
@@ -239,11 +234,8 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 alt="Perfil"
                 style={styles.profileImage}
               />
-              <span className="group-tooltip">
-                Ver perfil
-              </span>
+              <span className="group-tooltip">Ver perfil</span>
             </div>
-            
           ) : null}
 
           <SettingsModal
@@ -259,7 +251,12 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <main>{children}</main>
         </div>
       </div>
-      <CreateGroupModal show={showCreateGroupModal} handleClose={handleCloseCreateGroupModal} />
+      <CreateGroupModal
+        show={showCreateGroupModal}
+        handleClose={handleCloseCreateGroupModal}
+        onGroupCreated={() => SocketCalls.syncData()}
+        onGroupJoined={() => SocketCalls.syncData()}
+      />
 
       <style>
         {`

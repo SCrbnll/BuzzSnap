@@ -5,6 +5,7 @@ import { notifySuccess, notifyError } from "../NotificationProvider";
 import { Group, User } from "@/services/api/types";
 import { AppDispatch, syncAllData } from "@/context/store";
 import { useDispatch } from "react-redux";
+import SocketCalls from "@/context/socketCalls";
 
 interface GroupSettingsModalProps {
   show: boolean;
@@ -59,6 +60,7 @@ const GroupSettingsModal: React.FC<GroupSettingsModalProps> = ({
       notifySuccess("Grupo actualizado correctamente");
       dispatch(syncAllData());
       if(onGroupUpdated) onGroupUpdated();
+      SocketCalls.syncData();
       handleClose();
     } catch (error) {
       console.error(error);

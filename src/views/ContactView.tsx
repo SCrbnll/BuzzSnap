@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { notifySuccess, notifyError } from "@/components/NotificationProvider";
+import SocketCalls from "@/context/socketCalls";
 
 
 const ContactView: React.FC = () => {
@@ -27,7 +28,7 @@ const ContactView: React.FC = () => {
   const [searchMessage, setSearchMessage] = useState<string>('');
 
   const userFromLocalStorage = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
-  
+
   useEffect(() => {
     dispatch(syncAllData());
   }, [dispatch]);
@@ -74,6 +75,7 @@ const ContactView: React.FC = () => {
         await apiCalls.addFriend(friendRequest);
         notifySuccess(`Solicitud de amistad enviada a {searchTerm}`);
         setSearchMessage(`Solicitud de amistad enviada a ${searchTerm}`);
+        SocketCalls.syncData();
       } else {
         notifyError(`Usuario no encontrado`);
         setSearchMessage(`Usuario no encontrado`);
@@ -91,7 +93,7 @@ const ContactView: React.FC = () => {
     try {
       await apiCalls.acceptFriendRequest(friendId);
       setPendingFriends(pendingFriends.filter((friend) => friend.id !== friendId));
-      dispatch(syncAllData());
+      SocketCalls.syncData();
     } catch (error) {
       notifyError("Error al aceptar solicitud de amistad");
     }
@@ -101,7 +103,7 @@ const ContactView: React.FC = () => {
     try {
       await apiCalls.rejectFriendRequest(friendId);
       setPendingFriends(pendingFriends.filter((friend) => friend.id !== friendId));
-      dispatch(syncAllData());
+      SocketCalls.syncData();
     } catch (error) {
       notifyError("Error al rechazar solicitud de amistad");
     }
@@ -124,7 +126,7 @@ const ContactView: React.FC = () => {
       }
   
       await apiCalls.deleteFriend(friendRecord.id!);
-      dispatch(syncAllData());
+      SocketCalls.syncData();      
       setModalOpen(false);
     } catch (error) {
       notifyError("Error al eliminar amigo");

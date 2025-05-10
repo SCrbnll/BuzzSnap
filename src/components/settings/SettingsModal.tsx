@@ -4,6 +4,7 @@ import ColorButton from "./ColorButton";
 import ApiManager from "@/context/apiCalls";
 import LocalStorageCalls from "@/context/localStorageCalls";
 import { notifyError } from "../NotificationProvider";
+import SocketCalls from "@/context/socketCalls";
 
 interface UserInfoModalProps {
   show: boolean;
@@ -47,6 +48,7 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
     console.log("User updated");
     setIsEditingName(false);
     setIsEditingDescription(false);
+    SocketCalls.syncData();
   };
 
   const changeColor = async (color: string) => {

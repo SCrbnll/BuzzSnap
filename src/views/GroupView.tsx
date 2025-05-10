@@ -26,6 +26,7 @@ const GroupView: React.FC = () => {
   const currentUser = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
   const dispatch = useDispatch<AppDispatch>();
   const currentGroupUserId = useSelector((state: RootState) => state.app.currentGroupUserId);
+  const lastSyncedAt = useSelector((state: RootState) => state.app.lastSyncedAt);
 
   const fetchGroup = async (groupId: number) => {
     try {
@@ -107,6 +108,12 @@ const GroupView: React.FC = () => {
      useEffect(() => {
       dispatch(syncAllData());
     }, [dispatch]);
+
+    useEffect(() => {
+    if (lastSyncedAt && group?.id) {
+      fetchGroup(group.id); 
+    }
+  }, [lastSyncedAt]);
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -246,7 +253,7 @@ const leftGroup = async (group: Group, currentUser: User) => {
           handleClose={handleEditCloseModal}
           group={group}
           members={groupUsers}
-          onGroupUpdated={() => fetchGroup(group.id!)}
+          onGroupUpdated={() => SocketCalls.syncData()}
         />
       ) : null}
     </div>

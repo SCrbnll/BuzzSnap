@@ -13,6 +13,8 @@ interface AppState {
   groupMembers: GroupMember[];
   currentChatUserId: number | null;
   currentGroupUserId: number | null;
+  lastSyncedAt: number | null; 
+
 }
 
 const initialState: AppState = {
@@ -20,6 +22,7 @@ const initialState: AppState = {
   groupMembers: [],
   currentChatUserId: null,
   currentGroupUserId: null,
+  lastSyncedAt: null,
 };
 
 const appSlice = createSlice({
@@ -39,10 +42,13 @@ const appSlice = createSlice({
     setCurrentGroupUserId: (state, action: PayloadAction<number | null>) => {
       state.currentGroupUserId = action.payload;
     },
+    setLastSyncedAt: (state, action: PayloadAction<number>) => {
+      state.lastSyncedAt = action.payload;
+    },
   },
 });
 
-export const { setAllData, setCurrentChatUserId, setCurrentGroupUserId } = appSlice.actions;
+export const { setAllData, setCurrentChatUserId, setCurrentGroupUserId, setLastSyncedAt } = appSlice.actions;
 
 export const store = configureStore({
   reducer: {
@@ -67,6 +73,7 @@ export const syncAllData = () => async (dispatch: any) => {
           groupMembers: groupMembers as GroupMember[],
         })
       );
+      dispatch(setLastSyncedAt(Date.now()));
       console.log("📦 Store actualizado con los nuevos datos."); 
     }
   } catch (error) {

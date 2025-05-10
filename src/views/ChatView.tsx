@@ -23,6 +23,7 @@ const ChatView: React.FC = () => {
 
   const dispatch = useDispatch<AppDispatch>();
   const currentChatUserId = useSelector((state: RootState) => state.app.currentChatUserId);
+  const lastSyncedAt = useSelector((state: RootState) => state.app.lastSyncedAt);
 
   const fetchChats = async (userId: number) => {
     try {
@@ -79,6 +80,12 @@ const ChatView: React.FC = () => {
    useEffect(() => {
       dispatch(syncAllData());
     }, [dispatch]);
+
+    useEffect(() => {
+    if (lastSyncedAt && chats.length > 0) {
+      fetchChats(currentUser.id); 
+    }
+  }, [lastSyncedAt]);
 
   useEffect(() => {
     const userLocalStorage = LocalStorageCalls.getStorageUser();
