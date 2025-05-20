@@ -1,0 +1,71 @@
+name: CI/CD React Deployment
+
+on:
+  push:
+    branches:
+      - main  
+
+jobs:
+  build:
+    name: 🏗️ Realizando Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout del código
+        uses: actions/checkout@v3
+
+      - name: 🔧 Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 21
+          cache: 'npm'
+
+      - name: 📦 Instalar dependencias
+        run: npm install --progress=false
+
+      - name: 🏗️ Construir la aplicación Vue
+        run: npm run build
+
+      - name: 📦 Guardar artefactos
+        uses: actions/upload-artifact@v4 
+        with:
+          name: build-artifacts
+          path: dist
+          retention-days: 7  
+
+  test:
+    name: ✅ Ejecutar pruebas
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout del código
+        uses: actions/checkout@v3
+
+  deploy:
+    name: 🚀 Deploy a AWS
+    needs: [build, test] 
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: 📥 Descargar artefactos
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: dist
+
+      - name: 📤 Subir archivos al servidor (rsync)
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_SSH_KEY }}
+          source: "dist/*"
+          target: "/var/www/buzzsnap/"
+
+      - name: 🔄 Reiniciar Nginx en el servidor
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_SSH_KEY }}
+          script: |
+            sudo systemctl restart nginx
