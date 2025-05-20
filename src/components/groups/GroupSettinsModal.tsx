@@ -40,6 +40,10 @@ const GroupSettingsModal: React.FC<GroupSettingsModalProps> = ({
   const handleSave = async () => {
     try {
       const selectedUser = members.find((member) => member.id === creatorId)
+      if (imageFile) {
+        // TODO: subir a S3 y setear la nueva imageUrl
+        console.log('a')
+      }
 
       const updatedGroup: Group = {
         ...group,
