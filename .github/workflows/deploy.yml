@@ -22,7 +22,13 @@ jobs:
       - name: 📦 Instalar dependencias
         run: npm install --progress=false
 
-      - name: 🏗️ Construir la aplicación Vue
+      - name: 📝 Crear .env.production desde secrets
+        run: |
+          echo "VITE_URL_API=${{ secrets.VITE_URL_API }}" >> .env.production
+          echo "VITE_SOCKET_URL=${{ secrets.VITE_SOCKET_URL }}" >> .env.production
+          echo "VITE_RESEND_KEY=${{ secrets.VITE_RESEND_KEY }}" >> .env.production
+
+      - name: 🏗️ Construir la aplicación
         run: npm run build
 
       - name: 📦 Guardar artefactos
