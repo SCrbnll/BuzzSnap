@@ -55,6 +55,7 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
     try {
       await apiCalls.updateColor(user.id, color);
       document.body.setAttribute("data-theme", color);
+      setAvatarUrl('');
     } catch (error) {
       notifyError("Error al cambiar color");
     }
@@ -68,6 +69,7 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     // TODO : Por implementar en S3 AWS
+    console.log(e)
   };
 
   return (
@@ -114,6 +116,7 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
                   const file = e.target.files?.[0];
                   if (file) {
                     console.log("Imagen seleccionada:", file);
+                    handleImageChange(e);
                   }
                 }}
                 style={{ display: "none" }}
