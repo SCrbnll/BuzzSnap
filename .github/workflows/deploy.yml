@@ -32,16 +32,9 @@ jobs:
           path: dist
           retention-days: 7  
 
-  test:
-    name: ✅ Ejecutar pruebas
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📥 Checkout del código
-        uses: actions/checkout@v3
-
   deploy:
     name: 🚀 Deploy a AWS
-    needs: [build, test] 
+    needs: [build] 
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
 
