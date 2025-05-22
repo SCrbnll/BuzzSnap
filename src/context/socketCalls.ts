@@ -10,6 +10,7 @@ export default class SocketCalls {
     if (!this.socket) {
       this.socket = io(this.socketUrl, {
         transports: ["websocket"],
+        path: "/socket",
       });
 
       this.socket.on("connect", () => {
