@@ -79,6 +79,18 @@ export default class SocketCalls {
     }
   }
 
+  static sendEmailChange(email: string, username: string) {
+    if (this.socket) {
+      this.socket.emit("send_email_change", { email, username });
+    }
+  }
+
+  static sendPasswordChange(email: string, username: string) {
+    if (this.socket) {
+      this.socket.emit("send_password_reset", { email, username });
+    }
+  }
+
   // Escuchar un evento específico (ej. "new_private_message")
   static on(event: string, callback: (data: any) => void): void {
     if (this.socket) {
