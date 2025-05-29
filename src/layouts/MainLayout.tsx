@@ -13,6 +13,7 @@ import LocalStorageCalls from "@/context/localStorageCalls";
 import SocketCalls from "@/context/socketCalls";
 import { notifyAction } from "@/components/NotificationProvider";
 import CreateGroupModal from "@/components/groups/CreateGroupModal";
+import TokenUtils from "@/utils/TokenUtils";
 
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const POLL_INTERVAL = 60000; // 1 minutos en milisegundos
@@ -29,16 +30,17 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const user = LocalStorageCalls.getStorageUser();
+    const storedUser = LocalStorageCalls.getStorageUser();
+    const data = storedUser ? TokenUtils.decodeToken(storedUser) : null;  
+    const user = TokenUtils.mapJwtPayloadToUser(data!);  
     if (!user) {
       navigate("/login");
     } else {
-      setUserInfo(JSON.parse(user));
-      SocketCalls.connect(JSON.parse(user).id, JSON.parse(user).displayName);
+      setUserInfo(user);
+      SocketCalls.connect(user.id, user.displayName);
       SocketCalls.on("notify_user", (data) => {
         const activeChatId = LocalStorageCalls.getActiveChatId();
-        const currentUser = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
-        if (data.recipientId !== currentUser.id) return;
+        if (data.recipientId !== user.id) return;
         if (data.chatId === null) {
           if (window.location.pathname.split("/")[2] !== data.groupId.toString()) {
             notifyAction(`Nuevo mensaje de ${data.senderName}`, data.preview, "Abrir",
@@ -84,9 +86,10 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   }, [dispatch]);
 
   const handleLogout = () => {
-    LocalStorageCalls.removeStorageUser();
-    navigate("/login");
-  };
+      LocalStorageCalls.removeActiveChatId();
+      LocalStorageCalls.removeStorageUser();
+      navigate('/login')
+    }
 
   const handleOpenModal = () => setShowSettingsModal(true);
   const handleCloseModal = () => setShowSettingsModal(false);

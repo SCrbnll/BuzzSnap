@@ -12,6 +12,7 @@ import { AppDispatch, RootState, setCurrentGroupUserId, syncAllData } from "@/co
 import SocketCalls from "@/context/socketCalls";
 import GroupListModal from "@/components/groups/GroupListModal";
 import GroupSettingsModal from "@/components/groups/GroupSettinsModal";
+import TokenUtils from "@/utils/TokenUtils";
 
 const GroupView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -23,7 +24,9 @@ const GroupView: React.FC = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const navigate = useNavigate();
   const apiCalls = new ApiManager();
-  const currentUser = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
+  const storedUser = LocalStorageCalls.getStorageUser();
+  const data = storedUser ? TokenUtils.decodeToken(storedUser) : null;  
+  const currentUser = TokenUtils.mapJwtPayloadToUser(data!); 
   const dispatch = useDispatch<AppDispatch>();
   const currentGroupUserId = useSelector((state: RootState) => state.app.currentGroupUserId);
   const lastSyncedAt = useSelector((state: RootState) => state.app.lastSyncedAt);

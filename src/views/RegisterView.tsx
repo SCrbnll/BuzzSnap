@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import logo from "/buzzsnap-logo.png";
-import background from "@/assets/images/background.jpg";
+import background from "/background.jpg";
 import { useNavigate } from "react-router-dom";
 
 const Register: React.FC = () => {

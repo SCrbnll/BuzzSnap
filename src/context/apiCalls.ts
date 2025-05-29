@@ -6,8 +6,10 @@ import MessagesApi from '@/services/api/messages.api';
 import UsersApi from '@/services/api/users.api';
 import ChatsApi from '@/services/api/chats.api'; 
 import LocalStorageCalls from './localStorageCalls';
+import AuthController from '@/services/authController';
 
 export default class ApiManager {
+    private authControler: AuthController;
     private friendsApi: FriendsApi;
     private groupsApi: GroupsApi;
     private groupMembersApi: GroupMembersApi;
@@ -16,12 +18,41 @@ export default class ApiManager {
     private chatsApi: ChatsApi;
 
     constructor() {
+        this.authControler = new AuthController();
         this.friendsApi = new FriendsApi();
         this.groupsApi = new GroupsApi();
         this.groupMembersApi = new GroupMembersApi();
         this.messagesApi = new MessagesApi();
         this.usersApi = new UsersApi();
         this.chatsApi = new ChatsApi();
+    }
+    /* ========= AUTH ========= */
+    async login(email: string, password: string): Promise<{ token: string; refreshToken: string;} | {error: string; message:string}> {
+        const data = await this.authControler.login({ email, password });
+        if ("token" in data && "refreshToken" in data) {
+            LocalStorageCalls.setStorageUser(data);
+        }
+        return data;
+    }
+
+    async register(user: User): Promise<{ token: string; refreshToken: string;} | {error: string; message:string}> {
+        const data = await this.authControler.register(user);
+        if ("token" in data && "refreshToken" in data) {
+            LocalStorageCalls.setStorageUser(data);
+        }
+        return data;
+    }
+
+    async refreshToken(token: string): Promise<{ token: string; refreshToken: string;} | {error: string; message:string}> {
+        const data = await this.authControler.refreshToken({refreshToken: token});
+        if ("token" in data && "refreshToken" in data) {
+            LocalStorageCalls.setStorageUser(data);
+        }
+        return data;
+    }
+
+    async updateToken(user: User): Promise<{ token: string; refreshToken: string;} | {error: string; message:string}> {
+        return this.authControler.updateToken(user);
     }
 
     /* ========= FRIENDSAPI ========= */
@@ -186,18 +217,6 @@ export default class ApiManager {
         return this.usersApi.getUserByDisplayName(displayName);
     }
 
-    async loginUser(email: string, password: string): Promise<User> {
-        const user = await this.usersApi.loginUser(email, password);
-        console.log(user);
-        LocalStorageCalls.setStorageUser(user);
-        document.body.setAttribute("data-theme", user.theme);
-        return user;
-    }
-
-    async addUser(user: User): Promise<User> {
-        return this.usersApi.addUser(user);
-    }
-
     async changePassword(user: User, password: string): Promise<User> {
         return this.usersApi.changePassword(user, password);
     }
@@ -206,12 +225,12 @@ export default class ApiManager {
         return this.usersApi.updateLastConnection(user, newDate);
     }
 
-    async updateUser(user: User): Promise<User> {
-        return this.usersApi.updateUser(user);
-    }
-
     async updateColor(id: number, color: string): Promise<User> {
         return await this.usersApi.updateColor(id, color);
+    }
+
+    async updateUser(user: User): Promise<User> {
+        return this.usersApi.updateUser(user);
     }
 
     async deleteUser(id: number): Promise<void> {

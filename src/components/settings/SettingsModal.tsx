@@ -5,6 +5,7 @@ import ApiManager from "@/context/apiCalls";
 import LocalStorageCalls from "@/context/localStorageCalls";
 import { notifyError } from "../NotificationProvider";
 import SocketCalls from "@/context/socketCalls";
+import TokenUtils from "@/utils/TokenUtils";
 
 interface UserInfoModalProps {
   show: boolean;
@@ -21,17 +22,19 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
   onChangePassword,
   onLogOut,
 }) => {
-  const user = LocalStorageCalls.getStorageUser()
-    ? JSON.parse(LocalStorageCalls.getStorageUser()!)
-    : null;
+  const storedUser = LocalStorageCalls.getStorageUser()
+  ? JSON.parse(LocalStorageCalls.getStorageUser()!)
+  : null;
+
+  const decodedUser = storedUser ? TokenUtils.decodeToken(storedUser.token) : null;
 
   const [isEditingName, setIsEditingName] = useState(false);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
-  const [userName, setUserName] = useState(user.name);
+  const [userName, setUserName] = useState(decodedUser!.name);
   const [userDescription, setUserDescription] = useState(
-    user.description || ""
+    decodedUser!.description || ""
   );
-  const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl);
+  const [avatarUrl, setAvatarUrl] = useState(decodedUser!.avatar_url);
   const apiCalls = new ApiManager();
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,19 +46,42 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
   };
 
   const saveUser = async () => {
-    await apiCalls.updateUser({ ...user, name: userName, description: userDescription });
-    LocalStorageCalls.setStorageUser({ ...user, name: userName, description: userDescription });
-    console.log("User updated");
+  try {
+    const user = TokenUtils.mapJwtPayloadToUser(decodedUser!);
+    const userDb = await apiCalls.getUser(user.id);
+    const userUpdated = await apiCalls.updateUser({
+      ...userDb!,
+      name: userName,
+      description: userDescription
+    })
+    const response = await apiCalls.updateToken(userUpdated);
+    if ("error" in response) {
+      throw new Error(response.error);
+    }
+    const { token, refreshToken } = response;
+    LocalStorageCalls.setStorageUser({ token, refreshToken });
+
     setIsEditingName(false);
     setIsEditingDescription(false);
     SocketCalls.syncData();
-  };
+  } catch (error) {
+    notifyError("Error al guardar el usuario");
+  }
+};
+
 
   const changeColor = async (color: string) => {
     try {
-      await apiCalls.updateColor(user.id, color);
+      const user = await apiCalls.updateColor(decodedUser!.id, color);
       document.body.setAttribute("data-theme", color);
-      setAvatarUrl('');
+      const response = await apiCalls.updateToken(user);
+      if ("error" in response) {
+        throw new Error(response.error);
+      }
+      const { token, refreshToken } = response;
+      LocalStorageCalls.setStorageUser({ token, refreshToken });
+      SocketCalls.syncData();
+
     } catch (error) {
       notifyError("Error al cambiar color");
     }
@@ -86,7 +112,7 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
           <div className="text-center me-3 position-relative">
             <img
               src={avatarUrl}
-              alt={user.name}
+              alt={decodedUser!.name}
               className="rounded-circle"
               style={{ width: "100px", height: "100px", objectFit: "cover" }}
             />
@@ -212,7 +238,7 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
                 </p>
               )}
             </div>
-            <p className="mb-1">{hideEmail(user.email)}</p>
+            <p className="mb-1">{hideEmail(decodedUser!.email)}</p>
           </div>
         </div>
 

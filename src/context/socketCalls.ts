@@ -1,9 +1,11 @@
 import { io, Socket } from "socket.io-client";
 import { Message } from "@/services/api/types";
+import LocalStorageCalls from "./localStorageCalls";
 
 export default class SocketCalls {
   private static socket: Socket | null = null;
   private static socketUrl: string = import.meta.env.VITE_SOCKET_URL;
+  private static token: string = LocalStorageCalls.getAccessToken()!;
 
   // Conectar al WebSocket
   static connect(userId: number, displayName: string): void {
@@ -15,7 +17,7 @@ export default class SocketCalls {
 
       this.socket.on("connect", () => {
         console.log("✅ Conectado al WebSocket");
-        this.socket?.emit("user_connected", { userId, displayName: displayName }); // Emitimos user conectado
+        this.socket?.emit("user_connected", { token: this.token, userId, displayName: displayName }); // Emitimos user conectado
       });
 
       this.socket.on("disconnect", () => {
@@ -41,6 +43,7 @@ export default class SocketCalls {
   static sendPrivateMessage(message: Message): void {
     if (this.socket) {
       this.socket.emit("private_message", {
+        token: this.token,
         ...message,
         message_type: message.message_type || "text",
       });
@@ -53,6 +56,7 @@ export default class SocketCalls {
   static sendGroupMessage(message: Message): void {
     if (this.socket) {
       this.socket.emit("group_message", {
+        token: this.token,
         ...message,
         message_type: message.message_type || "text",
       });
@@ -76,6 +80,18 @@ export default class SocketCalls {
   static syncData(): void {
     if (this.socket) {
       this.socket.emit("trigger_update");
+    }
+  }
+
+  static sendEmailChange(email: string, username: string) {
+    if (this.socket) {
+      this.socket.emit("send_email_change", { email, username });
+    }
+  }
+
+  static sendPasswordChange(email: string, username: string) {
+    if (this.socket) {
+      this.socket.emit("send_password_reset", { email, username });
     }
   }
 

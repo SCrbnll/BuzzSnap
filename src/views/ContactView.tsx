@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { notifySuccess, notifyError } from "@/components/NotificationProvider";
 import SocketCalls from "@/context/socketCalls";
+import TokenUtils from "@/utils/TokenUtils";
 
 
 const ContactView: React.FC = () => {
@@ -27,7 +28,9 @@ const ContactView: React.FC = () => {
   const [pendingFriends, setPendingFriends] = useState<Friend[]>([]);
   const [searchMessage, setSearchMessage] = useState<string>('');
 
-  const userFromLocalStorage = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
+  const storedUser = LocalStorageCalls.getStorageUser();
+  const data = storedUser ? TokenUtils.decodeToken(storedUser) : null;  
+  const currentUser = TokenUtils.mapJwtPayloadToUser(data!); 
 
   useEffect(() => {
     dispatch(syncAllData());
@@ -37,7 +40,7 @@ const ContactView: React.FC = () => {
     const fetchPendingFriends = async () => {
       if (activeFilter === "solicitudes") {
         try {
-          const pendingFriends = await apiCalls.getFriendsPending(userFromLocalStorage.id);
+          const pendingFriends = await apiCalls.getFriendsPending(currentUser.id);
           setPendingFriends(pendingFriends);
         } catch (error) {
           notifyError("Error al obtener solicitudes pendientes");
@@ -45,12 +48,12 @@ const ContactView: React.FC = () => {
       }
     };
     fetchPendingFriends();
-  }, [activeFilter, userFromLocalStorage.id]);
+  }, [activeFilter, currentUser.id]);
   
   const filteredFriends = activeFilter === "solicitudes"
   ? pendingFriends
   : friends.filter((friend) => {
-    const friendInfo = friend.friend.id === userFromLocalStorage.id ? friend.user : friend.friend;
+    const friendInfo = friend.friend.id === currentUser.id ? friend.user : friend.friend;
       switch (activeFilter) {
         case "activos":
           return friendInfo.lastLogin === null && friend.status === "accepted";
@@ -68,7 +71,7 @@ const ContactView: React.FC = () => {
       if(friends.find((friend) => friend.friend.id === user.id || friend.user.id === user.id)) return setSearchMessage(`El usuario <b>${searchTerm}</b> ya es tu amigo`), setSearchTerm('');
       if (user) {
         const friendRequest: Friend = {
-          user: userFromLocalStorage, 
+          user: currentUser, 
           friend: user,
           status: "pending",
           };
@@ -116,8 +119,8 @@ const ContactView: React.FC = () => {
   
       const friendRecord = friends.find(
         (f) =>
-          (f.user.id === userFromLocalStorage.id && f.friend.id === userId) ||
-          (f.friend.id === userFromLocalStorage.id && f.user.id === userId)
+          (f.user.id === currentUser.id && f.friend.id === userId) ||
+          (f.friend.id === currentUser.id && f.user.id === userId)
       );
   
       if (!friendRecord) {
@@ -135,7 +138,7 @@ const ContactView: React.FC = () => {
   
   
   const handleOpenModal = (friend: any) => {
-    const userInfo = friend.friend.id === userFromLocalStorage.id ? friend.user : friend.friend;
+    const userInfo = friend.friend.id === currentUser.id ? friend.user : friend.friend;
     setSelectedUser(userInfo);
     setModalOpen(true);
   };
@@ -158,13 +161,13 @@ const ContactView: React.FC = () => {
   };
 
   const handleSendMessage = async (userId: number) => {
-    const exist = await apiCalls.checkChat(userFromLocalStorage.id, userId);
+    const exist = await apiCalls.checkChat(currentUser.id, userId);
     if (exist) {
       dispatch(setCurrentChatUserId(userId));
       navigate("/home/chats");
       return;
     }
-    await apiCalls.createChat(userFromLocalStorage.id, userId);
+    await apiCalls.createChat(currentUser.id, userId);
     dispatch(setCurrentChatUserId(userId));
     navigate("/home/chats");
   };
@@ -208,7 +211,7 @@ const ContactView: React.FC = () => {
           ) : (
             <FriendList
               friends={filteredFriends}
-              userId={userFromLocalStorage.id}
+              userId={currentUser.id}
               activeFilter={activeFilter}
               onAcceptClick={accepFriendRequest}
               onRejectClick={rejectFriendRequest}
