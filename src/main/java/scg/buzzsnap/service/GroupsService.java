@@ -32,5 +32,8 @@ public class GroupsService {
 	public List<Groups> getGroupsByCreator(Integer userId) {
 		return groupsRepository.findByCreatedBy(userId);
 	}
+	public Groups getByInviteCode(String inviteCode) {
+		return groupsRepository.getByInviteCode(inviteCode);
+	}
 
 }

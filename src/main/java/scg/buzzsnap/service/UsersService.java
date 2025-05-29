@@ -32,5 +32,8 @@ public class UsersService {
 	public Users getUserByEmail(String email) {
 		return usersRepository.findByEmail(email);
 	}
+	public Users getUserByDisplayName(String displayName) {
+		return usersRepository.findByDisplayName(displayName);
+	}
 
 }

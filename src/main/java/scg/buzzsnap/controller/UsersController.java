@@ -42,29 +42,18 @@ public class UsersController {
 		}
 	}
 	
-	@GetMapping("/login/{email}/{password}")
-	public ResponseEntity<Users> login (@PathVariable String email, @PathVariable String password) {
+	@GetMapping("/find/{displayName}")
+	public ResponseEntity<Users> getBy(@PathVariable String displayName) {
 		try {
-			Users usr = userService.getUserByEmail(email);
-			String pass = Utils.sha1(password);
-			if(usr.getPassword().equals(pass)) {
-				return new ResponseEntity<Users>(usr, HttpStatus.OK);
-			} else throw new NoSuchElementException();
+			Users usr = userService.getUserByDisplayName(displayName);
+			return new ResponseEntity<Users>(usr, HttpStatus.OK);
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<Users>(HttpStatus.NOT_FOUND);
 		}
 	}
 	
-	
-	@PostMapping("")
-	public ResponseEntity<Integer> add(@RequestBody Users usr) {
-		usr.setPassword(Utils.sha1(usr.getPassword()));
-		Users cliNuevo = userService.saveUser(usr);
-		return new ResponseEntity<>(cliNuevo.getId(), HttpStatus.CREATED);
-	}
-	
-	@PutMapping("/changepass/{id}")
-	public ResponseEntity<Users> update (@PathVariable Integer id, @RequestBody String password) {
+	@PutMapping("/password/{id}")
+	public ResponseEntity<Users> update(@PathVariable Integer id, @RequestBody String password) {
 		try {
 			Users actualCli = userService.getUser(id);
 			if(actualCli.getPassword().equals(Utils.sha1(password))) {
@@ -80,25 +69,22 @@ public class UsersController {
 	}
 	
 	@PutMapping("/connection/{id}")
-	public ResponseEntity<Users> updateLastConnection (@PathVariable Integer id, @RequestBody Date newDate) {
-		try {
-			Users actualCli = userService.getUser(id);
-			actualCli.setLastLogin(newDate);
-			userService.saveUser(actualCli);
-			return new ResponseEntity<Users>(HttpStatus.OK);
-		} catch (NoSuchElementException e) {
-			return new ResponseEntity<Users>(HttpStatus.NOT_FOUND);
-		}
+	public ResponseEntity<Users> updateLastConnection(@PathVariable Integer id, @RequestBody(required = false) Date newDate) {
+	    try {
+	        Users actualCli = userService.getUser(id);
+	        actualCli.setLastLogin(newDate);
+	        userService.saveUser(actualCli);
+	        return new ResponseEntity<>(HttpStatus.OK);
+	    } catch (NoSuchElementException e) {
+	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	    }
 	}
 	
 	
-	@PutMapping("/changeprofile")
-	public ResponseEntity<Integer> update (@RequestBody Users usr) {
+	@PutMapping("/change")
+	public ResponseEntity<Users> update (@RequestBody Users usr) {
 		try {
 			Users actualUser = userService.getUser(usr.getId());
-			if(!actualUser.getPassword().equals(usr.getPassword())) {
-			throw new NoSuchElementException();
-			}
 			actualUser.setName(usr.getName());
 			actualUser.setEmail(usr.getEmail());
 			actualUser.setPassword(usr.getPassword());
@@ -106,7 +92,21 @@ public class UsersController {
 			actualUser.setDescription(usr.getDescription());
 			actualUser.setTheme(usr.getTheme());
 			userService.saveUser(actualUser);
-			return new ResponseEntity<>(HttpStatus.OK);
+			Users usrUpdated = userService.getUser(usr.getId());
+			return new ResponseEntity<Users>(usrUpdated, HttpStatus.OK);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+	
+	@PutMapping("/color/{userId}/{color}")
+	public ResponseEntity<Users> updateColor (@PathVariable Integer userId, @PathVariable String color ) {
+		try {
+			Users actualUser = userService.getUser(userId);
+			actualUser.setTheme(color);
+			userService.saveUser(actualUser);
+			Users usrUpdated = userService.getUser(userId);
+			return new ResponseEntity<Users>(usrUpdated, HttpStatus.OK);
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}

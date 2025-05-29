@@ -12,5 +12,8 @@ public interface GroupsRepository extends JpaRepository<Groups, Integer> {
 		
     @Query("SELECT g FROM Groups g WHERE g.creator.id = :createdBy")
     List<Groups> findByCreatedBy(@Param("createdBy") int createdBy);
+    
+    @Query("SELECT g FROM Groups g WHERE g.inviteCode = :inviteCode")
+    Groups getByInviteCode(@Param("inviteCode") String inviteCode);
 
 }

@@ -25,6 +25,7 @@ public class Users implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String name;
+	private String display_name;
 	private String email;
 	private String password;
 	private String avatar_url;
@@ -37,18 +38,20 @@ public class Users implements java.io.Serializable {
 	public Users() {
 	}
 
-	public Users(String name, String email, String password, Date lastLogin, Date createdAt) {
-		this.name = name;
-		this.email = email;
-		this.password = password;
-		this.last_login = lastLogin;
-		this.created_at = createdAt;
+	public Users(String name, String email, String displayName, String password, Date lastLogin, Date createdAt) {
+	    this.name = name;
+	    this.email = email;
+	    this.display_name = (displayName != null && !displayName.isEmpty()) ? displayName : name.toLowerCase();
+	    this.password = password;
+	    this.last_login = lastLogin;
+	    this.created_at = createdAt;
 	}
 
-	public Users(String name, String email, String password, String avatarUrl, String description, String theme,
+	public Users(String name, String email, String displayName, String password, String avatarUrl, String description, String theme,
 			Date lastLogin, Date createdAt, Boolean closed) {
 		this.name = name;
 		this.email = email;
+		this.display_name = displayName;
 		this.password = password;
 		this.avatar_url = avatarUrl;
 		this.description = description;
@@ -71,7 +74,7 @@ public class Users implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@Column(name = "name", nullable = false, length = 100)
+	@Column(name = "name", unique=true, nullable = false, length = 100)
 	public String getName() {
 		return this.name;
 	}
@@ -87,6 +90,15 @@ public class Users implements java.io.Serializable {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	@Column(name = "display_name", nullable = false)
+	public String getDisplayName() {
+		return this.display_name;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.display_name = displayName;
 	}
 
 	@Column(name = "password", nullable = false)
@@ -126,7 +138,7 @@ public class Users implements java.io.Serializable {
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "last_login", nullable = false, length = 19)
+	@Column(name = "last_login", nullable = true, length = 19)
 	public Date getLastLogin() {
 		return this.last_login;
 	}

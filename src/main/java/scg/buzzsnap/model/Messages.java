@@ -123,6 +123,4 @@ public class Messages implements java.io.Serializable {
 	public void setCreatedAt(Date createdAt) {
 		this.created_at = createdAt;
 	}
-	
-
 }

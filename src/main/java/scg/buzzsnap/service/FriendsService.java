@@ -1,6 +1,7 @@
 package scg.buzzsnap.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,9 @@ public class FriendsService {
 	@Autowired
 	private FriendsRepository friendsRepository;	
 
-	public FriendsService() {
-	}
+	public Optional<Friends> getFriendsBetweenUsers(String usersOrder) {
+        return friendsRepository.findByUsersOrder(usersOrder);
+    }
 	public List<Friends> listAllFriends() {
 		return friendsRepository.findAll();
 	}
@@ -31,6 +33,9 @@ public class FriendsService {
 	}
 	public List<Friends> getFriendsByUserId(Integer userId) {
 		return friendsRepository.findByUserId(userId);
+	}
+	public List<Friends> findByFriendIdPending(Integer friendId) {
+		return friendsRepository.findByFriendIdPending(friendId);
 	}
 
 }

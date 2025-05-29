@@ -31,15 +31,17 @@ public class Friends implements java.io.Serializable {
 	private Users friend;
 	private String status;
 	private Date created_at;
+    private String users_order; 
 
 	public Friends() {
 	}
 
-	public Friends(Users userId, Users friendId, String status, Date createdAt) {
+	public Friends(Users userId, Users friendId, String status, Date createdAt, String usersOrder) {
 		this.user = userId;
 		this.friend = friendId;
 		this.status = status;
 		this.created_at = createdAt;
+		this.users_order = usersOrder;
 	}
 
 	@Id
@@ -82,6 +84,14 @@ public class Friends implements java.io.Serializable {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+	
+	@Column(name = "users_order", nullable = false, length = 50)
+	 public String getUsersOrder() {
+	     return this.users_order;
+	 }
+
+	 public void setUsersOrder(String usersOrder) {
+	 }
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at", nullable = false, length = 19)

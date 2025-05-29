@@ -55,11 +55,11 @@ public class MessagesController {
 		return messagesService.getMessagesByGroup(groupId);	
 	}
 	
-	
 	@PostMapping("")
 	public ResponseEntity<Integer> add(@RequestBody Messages msg) {
-		Messages groupMemberNew = messagesService.saveMessage(msg);
-		return new ResponseEntity<>(groupMemberNew.getId(), HttpStatus.CREATED);
+		msg.setMessageType("text");
+		Messages messagesNew = messagesService.saveMessage(msg);
+		return new ResponseEntity<>(messagesNew.getId(), HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/send/{id}")

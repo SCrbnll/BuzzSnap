@@ -45,6 +45,10 @@ public class GroupsController {
 		return groupsService.getGroupsByCreator(userId);	
 	}
 	
+	@GetMapping("/invite_code/{inviteCode}")
+	public Groups getByInviteCode (@PathVariable String inviteCode) {
+		return groupsService.getByInviteCode(inviteCode);	
+	}
 	
 	@PostMapping("")
 	public ResponseEntity<Integer> add(@RequestBody Groups grp) {

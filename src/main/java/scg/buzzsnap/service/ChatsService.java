@@ -14,7 +14,10 @@ public class ChatsService {
 
     @Autowired
     private ChatsRepository chatsRepository;
-
+    
+    public Chats getChatById(int chatId) {
+        return chatsRepository.findById(chatId);
+    }
     public Optional<Chats> getChatBetweenUsers(String usersOrder) {
         return chatsRepository.findByUsersOrder(usersOrder);
     }
