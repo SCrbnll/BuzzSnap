@@ -34,7 +34,7 @@ const SettingsModal: React.FC<UserInfoModalProps> = ({
   const [userDescription, setUserDescription] = useState(
     decodedUser!.description || ""
   );
-  const [avatarUrl, setAvatarUrl] = useState(decodedUser!.avatar_url);
+  const [avatarUrl] = useState(decodedUser!.avatar_url);
   const apiCalls = new ApiManager();
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
