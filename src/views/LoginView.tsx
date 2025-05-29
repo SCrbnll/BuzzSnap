@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import logo from "/buzzsnap-logo.png";
-import background from "@/assets/images/background.jpg";
+import background from "/background.jpg";
 import { useNavigate } from "react-router-dom";
 import { useApiManager } from "@/layouts/ApiContext";
 import { notifyPromise } from "@/components/NotificationProvider";
+import LocalStorageCalls from "@/context/localStorageCalls";
+import TokenUtils from "@/utils/TokenUtils";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -15,16 +17,26 @@ const Login: React.FC = () => {
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
   
-    const user = await notifyPromise(
-      () => apiManager.loginUser(username, password),
+    const authData = await notifyPromise(
+      () => apiManager.login(username, password),
       {
         loading: "Iniciando sesión...",
-        success: (user) => `Bienvenido, ${user.name}!`,
+        success: (data: any) => {
+          const userData = TokenUtils.decodeToken(data.token);
+          const displayName = userData?.display_name || "usuario";
+          
+          // Guarda en localStorage
+          LocalStorageCalls.setStorageUser(data);
+
+          return `Bienvenido, ${displayName}!`;
+        },
         error: "Credenciales incorrectas o error en el servidor.",
       }
     );
-  
-    if (user) navigate("/home");
+
+    if (authData) {
+      navigate("/home");
+    }
   };
 
   return (

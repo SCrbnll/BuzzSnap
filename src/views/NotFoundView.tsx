@@ -1,6 +1,6 @@
 import React from 'react';
-import image404 from "@/assets/images/404.png";
-import background from "@/assets/images/background.jpg";
+import image404 from "/404.png";
+import background from "/background.jpg";
 
 const NotFound: React.FC = () => {
 

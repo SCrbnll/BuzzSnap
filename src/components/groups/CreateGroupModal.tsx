@@ -3,6 +3,7 @@ import { Modal, Button, Form, Row, Col, Card } from "react-bootstrap";
 import ApiManager from "@/context/apiCalls";
 import LocalStorageCalls from "@/context/localStorageCalls";
 import { notifyError, notifySuccess } from "../NotificationProvider";
+import TokenUtils from "@/utils/TokenUtils";
 
 interface Props {
   show: boolean;
@@ -12,7 +13,9 @@ interface Props {
 }
 
 const CreateOrJoinGroupModal: React.FC<Props> = ({ show, handleClose, onGroupCreated, onGroupJoined }) => {
-  const currentUser = JSON.parse(LocalStorageCalls.getStorageUser()!);
+  const storedUser = LocalStorageCalls.getStorageUser() ? JSON.parse(LocalStorageCalls.getStorageUser()!) : null;
+  const decodedUser = storedUser ? TokenUtils.decodeToken(storedUser.token) : null;
+  const user = decodedUser ? TokenUtils.mapJwtPayloadToUser(decodedUser) : null;
   const apiCalls = new ApiManager();
 
   const [groupName, setGroupName] = useState("");
@@ -32,7 +35,7 @@ const CreateOrJoinGroupModal: React.FC<Props> = ({ show, handleClose, onGroupCre
       name: groupName,
       description,
       inviteCode,
-      creator: currentUser,
+      creator: user!,
     };
 
     try {
@@ -42,7 +45,7 @@ const CreateOrJoinGroupModal: React.FC<Props> = ({ show, handleClose, onGroupCre
       const now = new Date().toISOString();
 
       await apiCalls.addGroupMember({
-        user: currentUser,
+        user: user!,
         group: group,
         role: "admin",
         joinedAt: now,
@@ -77,7 +80,7 @@ const CreateOrJoinGroupModal: React.FC<Props> = ({ show, handleClose, onGroupCre
       const now = new Date().toISOString();
 
       await apiCalls.addGroupMember({
-        user: currentUser,
+        user: user!,
         group,
         role: "member",
         joinedAt: now,

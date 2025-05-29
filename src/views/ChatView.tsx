@@ -9,6 +9,7 @@ import { AppDispatch, RootState, syncAllData } from "@/context/store";
 import { setCurrentChatUserId } from "@/context/store";
 import { notifyError } from "@/components/NotificationProvider";
 import SocketCalls from "@/context/socketCalls";
+import TokenUtils from "@/utils/TokenUtils";
 
 
 const ChatView: React.FC = () => {
@@ -19,7 +20,9 @@ const ChatView: React.FC = () => {
   const [isContentVisible, setIsContentVisible] = useState<boolean>(false);
 
   const apiManager = new ApiManager();
-  const currentUser = JSON.parse(LocalStorageCalls.getStorageUser() || "{}");
+  const storedUser = LocalStorageCalls.getStorageUser();
+  const data = storedUser ? TokenUtils.decodeToken(storedUser) : null;  
+  const currentUser = TokenUtils.mapJwtPayloadToUser(data!); 
 
   const dispatch = useDispatch<AppDispatch>();
   const currentChatUserId = useSelector((state: RootState) => state.app.currentChatUserId);
@@ -88,9 +91,11 @@ const ChatView: React.FC = () => {
   }, [lastSyncedAt]);
 
   useEffect(() => {
-    const userLocalStorage = LocalStorageCalls.getStorageUser();
-    if (userLocalStorage) {
-      const userId = JSON.parse(userLocalStorage).id;
+    const storedUser = LocalStorageCalls.getStorageUser();
+    const data = storedUser ? TokenUtils.decodeToken(storedUser) : null;  
+    const currentUser = TokenUtils.mapJwtPayloadToUser(data!); 
+    if (currentUser) {
+      const userId = currentUser.id;
       fetchChats(userId);
     }
   }, []);

@@ -7,57 +7,83 @@ axios.defaults.baseURL = SERVER;
 
 export default class UsersApi {
     async getUsers(): Promise<User[]> {
-        const response = await axios.get<User[]>(`${SERVER}/users`);
+        const token = LocalStorageCalls.getAccessToken();
+        const response = await axios.get<User[]>(`${SERVER}/users`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return response.data;
     }
 
     async getUser(id: number): Promise<User> {
-        const response = await axios.get<User>(`${SERVER}/users/${id}`);
+        const token = LocalStorageCalls.getAccessToken();
+        const response = await axios.get<User>(`${SERVER}/users/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return response.data;
     }
 
     async getUserByDisplayName(displayName: string): Promise<User> {
-        const response = await axios.get<User>(`${SERVER}/users/find/${displayName}`);
-        return response.data;
-    }
-
-    async loginUser(email: string, password: string): Promise<User> {
-        const response = await axios.get<User>(`${SERVER}/users/login/${email}/${password}`);
-        return response.data;
-    }
-
-    async addUser(user: User): Promise<User> {
-        const response = await axios.post<User>(`${SERVER}/users`, user);
+        const token = LocalStorageCalls.getAccessToken();
+        const response = await axios.get<User>(`${SERVER}/users/find/${displayName}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return response.data;
     }
 
     async changePassword(user : User, password: string): Promise<User> {
-        const response = await axios.put<User>(`${SERVER}/users/password/${user.id}`, {password});
+        const token = LocalStorageCalls.getAccessToken();
+        const response = await axios.put<User>(`${SERVER}/users/password/${user.id}`, {password}, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return response.data;
     }
 
     async updateLastConnection(user : User, newDate: Date): Promise<User> {
+        const token = LocalStorageCalls.getAccessToken();
         const formattedDate = newDate.toISOString();
-        const response = await axios.put<User>(`${SERVER}/users/connection/${user.id}`, {formattedDate});
+        const response = await axios.put<User>(`${SERVER}/users/connection/${user.id}`, {formattedDate}, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return response.data;
     }
 
     async updateUser(user: User): Promise<User> {
+        const token = LocalStorageCalls.getAccessToken();
         if (!user.id) throw new Error("El usuario debe tener un ID para ser modificado.");
-        const response = await axios.put<User>(`${SERVER}/users/change`, user);
+        const response = await axios.put<User>(`${SERVER}/users/change`, user, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+        });
         return response.data;
     }
 
     async updateColor(id: number, color: string): Promise<User> {
-        const response = await axios.put<User>(`${SERVER}/users/color/${id}/${color}`);
-        const userStr = LocalStorageCalls.getStorageUser();
-        const user = JSON.parse(userStr!);
-        user.theme = color;
-        LocalStorageCalls.setStorageUser(user);
+        const token = LocalStorageCalls.getAccessToken();
+        const response = await axios.put<User>(`${SERVER}/users/color/${id}/${color}`, {}, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return response.data;
     }
 
     async deleteUser(user: User): Promise<void> {
-        await axios.delete(`${SERVER}/users/unsubscribe/${user.id}`);
+        const token = LocalStorageCalls.getAccessToken();
+        await axios.delete(`${SERVER}/users/unsubscribe/${user.id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
     }
 }

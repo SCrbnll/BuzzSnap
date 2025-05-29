@@ -4,6 +4,7 @@ import FriendsApi from "@/services/api/friends.api";
 import GroupMembersApi from "@/services/api/groupsmember.api";
 import LocalStorageCalls from "./localStorageCalls";
 import { notifyError } from "@/components/NotificationProvider";
+import TokenUtils from "@/utils/TokenUtils";
 
 const friendsApi = new FriendsApi();
 const groupMembersApi = new GroupMembersApi();
@@ -60,9 +61,10 @@ export const store = configureStore({
 export const syncAllData = () => async (dispatch: any) => {
   try {
     console.log("🔄 Sincronizando datos...");
-    const userLocalStorage = LocalStorageCalls.getStorageUser();
-    if (userLocalStorage) {
-      const userId = JSON.parse(userLocalStorage).id;
+    const storedUser = LocalStorageCalls.getStorageUser() ? JSON.parse(LocalStorageCalls.getStorageUser()!) : null;
+    const decodeUser = storedUser ? TokenUtils.decodeToken(storedUser.token) : null;
+    if (decodeUser) {
+      const userId = decodeUser.id;
       const [friends, groupMembers] = await Promise.all([
         friendsApi.getFriendsByUserId(userId),
         groupMembersApi.getGroupMembersByUserId(userId),

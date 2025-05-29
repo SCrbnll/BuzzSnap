@@ -4,6 +4,7 @@ import SettingsModal from "@/components/settings/SettingsModal";
 import LocalStorageCalls from "@/context/localStorageCalls";
 import SocketCalls from "@/context/socketCalls";
 import { notifyErrorDescription, notifySuccessDescription } from "@/components/NotificationProvider";
+import TokenUtils from "@/utils/TokenUtils";
 
 const HomeView: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -19,9 +20,10 @@ const HomeView: React.FC = () => {
   } 
   
   const userData = () => {
-    const user = LocalStorageCalls.getStorageUser();
-    const parsedUser = JSON.parse(user || "{}");
-    return parsedUser
+    const storedUser = LocalStorageCalls.getStorageUser();
+    const data = storedUser ? TokenUtils.decodeToken(storedUser) : null;  
+    const currentUser = TokenUtils.mapJwtPayloadToUser(data!); 
+    return currentUser
   }
 
   const sendEmailChangeEmail = () => {
