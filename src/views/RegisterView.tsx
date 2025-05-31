@@ -2,17 +2,35 @@ import React, { useState } from "react";
 import logo from "/buzzsnap-logo.png";
 import background from "/background.jpg";
 import { useNavigate } from "react-router-dom";
+import ApiManager from "@/context/apiCalls";
+import { notifyPromise } from "@/components/NotificationProvider";
+import TokenUtils from "@/utils/TokenUtils";
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
+  const apiCalls = new ApiManager();
 
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (event: React.FormEvent) => {
+  const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
-    navigate("/home");
+    const authData = await notifyPromise(
+      () => apiCalls.register({ name, email, password }),
+      {
+        loading: "Registrando...",
+        success: (data: any) => {
+          const userData = TokenUtils.decodeToken(data.token);
+          const displayName = userData?.display_name || "usuario";
+          return `Bienvenido, ${displayName}!`;
+        },
+        error: "Error al registrar",
+      }
+    )
+    if (authData) {
+      navigate("/home");
+    }
   };
 
   const styles = {
@@ -43,8 +61,8 @@ const Register: React.FC = () => {
             id="username" 
             className="form-control input-login" 
             placeholder="Introduzca su usuario" 
-            value={username} 
-            onChange={(e) => setUsername(e.target.value)} 
+            value={name} 
+            onChange={(e) => setName(e.target.value)} 
             required />
         </div>
 

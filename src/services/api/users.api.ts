@@ -36,9 +36,9 @@ export default class UsersApi {
         return response.data;
     }
 
-    async changePassword(user : User, password: string): Promise<User> {
+    async changePassword(id: number, password: string): Promise<User> {
         const token = LocalStorageCalls.getAccessToken();
-        const response = await axios.put<User>(`${SERVER}/users/password/${user.id}`, {password}, {
+        const response = await axios.put<User>(`${SERVER}/users/password/${id}`, {password}, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
