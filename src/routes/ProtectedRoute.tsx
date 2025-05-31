@@ -15,7 +15,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }
   const userDecoded = TokenUtils.decodeToken(token);
   
-  const theme = userDecoded?.theme || "green";
+  const theme = userDecoded?.theme || "purple";
   document.body.setAttribute("data-theme", theme);
 
   return children;

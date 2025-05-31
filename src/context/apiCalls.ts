@@ -35,11 +35,13 @@ export default class ApiManager {
         return data;
     }
 
-    async register(user: User): Promise<{ token: string; refreshToken: string;} | {error: string; message:string}> {
+    async register(user: {name: string, email: string, password: string}): Promise<{ token: string; refreshToken: string;} | {error: string; message:string}> {
         const data = await this.authControler.register(user);
         if ("token" in data && "refreshToken" in data) {
+            console.log('dentro')
             LocalStorageCalls.setStorageUser(data);
         }
+        console.log('fuera')
         return data;
     }
 

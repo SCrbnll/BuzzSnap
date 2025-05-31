@@ -29,7 +29,7 @@ export default class AuthController {
     return response.data;
   }
 
-  async register(payload: User): Promise<JwtResponse | ErrorResponse> {
+  async register(payload: {name: string; email: string; password: string;}): Promise<JwtResponse | ErrorResponse> {
     const response = await axios.post<JwtResponse | ErrorResponse>('/auth/register', payload);
     return response.data;
   }
