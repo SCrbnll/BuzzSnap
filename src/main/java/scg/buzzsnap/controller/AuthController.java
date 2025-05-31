@@ -27,12 +27,6 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest login) {
         try {
-            authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                    login.email(), Utils.sha1(login.password())
-                )
-            );
-
             Users user = userService.getUserByEmail(login.email());
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
