@@ -8,8 +8,8 @@ const io = new Server({ path: "/socket" });
 const resend = new Resend(process.env.RESEND_KEY);
 const BACKGROUND_IMAGE = 'https://raw.githubusercontent.com/SCrbnll/BuzzSnap/refs/heads/main/src/assets/images/background.jpg';
 const LOGO_IMAGE = 'https://raw.githubusercontent.com/SCrbnll/BuzzSnap/refs/heads/main/public/buzzsnap-logo.png';
-const URL_EMAIL = 'https://github.com/SCrbnll/BuzzSnap';
-const URL_PASSWORD = 'https://github.com/SCrbnll/BuzzSnap';
+const URL_EMAIL = 'http://buzzsnap.samuelcg.com/change-email';
+const URL_PASSWORD = 'http://buzzsnap.samuelcg.com/change-password';
 
 let connectedUsers = [];
 
