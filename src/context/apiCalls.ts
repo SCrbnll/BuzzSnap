@@ -219,8 +219,8 @@ export default class ApiManager {
         return this.usersApi.getUserByDisplayName(displayName);
     }
 
-    async changePassword(user: User, password: string): Promise<User> {
-        return this.usersApi.changePassword(user, password);
+    async changePassword(id: number, password: string): Promise<User> {
+        return this.usersApi.changePassword(id, password);
     }
 
     async updateLastConnection(user: User, newDate: Date): Promise<User> {

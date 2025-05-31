@@ -9,6 +9,8 @@ import ChatView from '@/views/ChatView';
 import ContactView from '@/views/ContactView';
 import GroupView from '@/views/GroupView';
 import ProtectedRoute from './ProtectedRoute'; 
+import ChangeEmail from '@/views/ChangeEmail';
+import ChangePassword from '@/views/ChangePassword';
 
 const AppRouter: React.FC = () => {
   return (
@@ -20,6 +22,8 @@ const AppRouter: React.FC = () => {
         {/* Rutas públicas */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/change-email" element={<ChangeEmail />} />
+        <Route path="/change-password" element={<ChangePassword />} />
 
         {/* Rutas protegidas */}
         <Route
