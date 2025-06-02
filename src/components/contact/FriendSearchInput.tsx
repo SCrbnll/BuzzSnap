@@ -1,4 +1,5 @@
 type Props = {
+    isMobile: boolean;
     searchTerm: string;
     setSearchTerm: (val: string) => void;
     handleSearch: () => void;
@@ -6,11 +7,13 @@ type Props = {
   };
   
   const FriendSearchInput: React.FC<Props> = ({
+    isMobile,
     searchTerm,
     setSearchTerm,
     handleSearch,
     searchMessage,
   }) => {
+    
     const styles: { [key: string]: React.CSSProperties } = {
     button: {
       width: "100px",
@@ -22,22 +25,23 @@ type Props = {
       marginLeft: "auto",
     },
     input: {
-      width: "90%",
+      width: isMobile ? "70%" : "80%",
       padding: "10px",
       borderRadius: "5px",
       border: "1px solid #ccc",
       color: "white",
       backgroundColor: "transparent",
-      fontSize: "16px",
+      fontSize: isMobile ? "14px" : "16px",
       fontWeight: "bold",
     },
     confirmButton: {
-      width: "100px",
+      width: isMobile ? "80px" : "100px",
       padding: "10px",
       borderRadius: "5px",
       cursor: "pointer",
       color: "white",
       marginLeft: "10px",
+      fontSize: "16px",
       opacity: searchTerm.trim() ? 1 : 0.5,
       pointerEvents: searchTerm.trim() ? "auto" : "none",
     }

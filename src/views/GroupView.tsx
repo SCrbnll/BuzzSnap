@@ -16,6 +16,7 @@ import TokenUtils from "@/utils/TokenUtils";
 
 const GroupView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const [isMobile, setIsMobile] = useState(false);
   const [group, setGroup] = React.useState<Group | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -65,6 +66,13 @@ const GroupView: React.FC = () => {
       notifyError("Error al obtener los miembros del grupo");
     }
   };
+
+  useEffect(() => {
+    const checkScreenSize = () => setIsMobile(window.innerWidth <= 576);
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
+  }, []);
 
   useEffect(() => {
     const getGroupInfo = async () => {
@@ -174,6 +182,14 @@ const leftGroup = async (group: Group, currentUser: User) => {
 
 
   const styles: { [key: string]: React.CSSProperties } = {
+    nav: {
+      fontSize: "18px",
+      marginTop: isMobile ? "-65px" : "0",
+      marginLeft: isMobile ? "3rem" : "0",
+    },
+    separator: {
+      width: isMobile ? "90%" : "100%",
+    },
     aside: {
       width: "325px",
     },
@@ -182,7 +198,7 @@ const leftGroup = async (group: Group, currentUser: User) => {
       borderRadius: "50%",
     },
     chatList: {
-      padding: "10px 0px 0px 30px",
+      padding: isMobile ? "0" : "10px 0px 0px 30px",
       overflowY: "auto",
       marginBottom: "100px",
       scrollbarWidth: "none",
@@ -213,24 +229,26 @@ const leftGroup = async (group: Group, currentUser: User) => {
   return (
     <div>
       <nav style={styles.nav}>
-        <ul className="d-flex flex-row align-items-center gap-4">
+        <ul className="d-flex flex-row align-items-center gap-3">
           <p onClick={() => handleOpenModal()}> {group?.name} </p>
         </ul>
       </nav>
       <hr style={styles.separator} />
       <section>
         <div className="d-flex vh-100 gap-3">
-          <aside style={styles.aside} className="d-flex flex-column vh-100">
-            <div style={styles.chatList}>
-              <div style={styles.chat} className="mb-3 gap-3" onClick={() => handleOpenModalMembers()}>
-                <img src={logo} alt="Icono" style={styles.logo} />
-                <p style={styles.chatText}>Members</p>
-
+          {(window.innerWidth > 992) && (
+            <aside style={styles.aside} className="d-flex flex-column vh-100">
+              <div style={styles.chatList}>
+                <div style={styles.chat} className="mb-3 gap-3" onClick={() => handleOpenModalMembers()}>
+                  <img src={logo} alt="Icono" style={styles.logo} />
+                  <p style={styles.chatText}>Members</p>
+                </div>
               </div>
-            </div>
-          </aside>
-
+            </aside>
+            
+          )}
           <ChatBox
+            isMobile={isMobile}
             messages={messages}
             currentUserId={currentUser.id}
             chatId={null}

@@ -11,8 +11,8 @@ import { notifyError } from "@/components/NotificationProvider";
 import SocketCalls from "@/context/socketCalls";
 import TokenUtils from "@/utils/TokenUtils";
 
-
 const ChatView: React.FC = () => {
+  const [isMobile, setIsMobile] = useState(false);
   const [chats, setChats] = useState<Chats[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -21,12 +21,16 @@ const ChatView: React.FC = () => {
 
   const apiManager = new ApiManager();
   const storedUser = LocalStorageCalls.getStorageUser();
-  const data = storedUser ? TokenUtils.decodeToken(storedUser) : null;  
-  const currentUser = TokenUtils.mapJwtPayloadToUser(data!); 
+  const data = storedUser ? TokenUtils.decodeToken(storedUser) : null;
+  const currentUser = TokenUtils.mapJwtPayloadToUser(data!);
 
   const dispatch = useDispatch<AppDispatch>();
-  const currentChatUserId = useSelector((state: RootState) => state.app.currentChatUserId);
-  const lastSyncedAt = useSelector((state: RootState) => state.app.lastSyncedAt);
+  const currentChatUserId = useSelector(
+    (state: RootState) => state.app.currentChatUserId
+  );
+  const lastSyncedAt = useSelector(
+    (state: RootState) => state.app.lastSyncedAt
+  );
 
   const fetchChats = async (userId: number) => {
     try {
@@ -35,8 +39,10 @@ const ChatView: React.FC = () => {
       setLoading(false);
 
       if (currentChatUserId) {
-        const foundChat = chatsData.find((chat) =>
-        (chat.user1.id === currentChatUserId || chat.user2.id === currentChatUserId)
+        const foundChat = chatsData.find(
+          (chat) =>
+            chat.user1.id === currentChatUserId ||
+            chat.user2.id === currentChatUserId
         );
 
         if (foundChat) {
@@ -44,8 +50,8 @@ const ChatView: React.FC = () => {
           fetchMessages(foundChat.id);
           setIsContentVisible(true);
           LocalStorageCalls.setActiveChatId(foundChat.id.toString());
-        } 
-        dispatch(setCurrentChatUserId(null)); 
+        }
+        dispatch(setCurrentChatUserId(null));
       }
     } catch (error) {
       notifyError("Error al obtener los chats");
@@ -68,7 +74,6 @@ const ChatView: React.FC = () => {
     SocketCalls.joinChat(chatId);
     setIsContentVisible(true);
     LocalStorageCalls.setActiveChatId(chatId.toString());
-
   };
 
   const handleKeyPress = (event: KeyboardEvent) => {
@@ -80,20 +85,27 @@ const ChatView: React.FC = () => {
     }
   };
 
-   useEffect(() => {
-      dispatch(syncAllData());
-    }, [dispatch]);
+  useEffect(() => {
+    dispatch(syncAllData());
+  }, [dispatch]);
 
-    useEffect(() => {
+  useEffect(() => {
+    const checkScreenSize = () => setIsMobile(window.innerWidth <= 576);
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
+  }, []);
+
+  useEffect(() => {
     if (lastSyncedAt && chats.length > 0) {
-      fetchChats(currentUser.id); 
+      fetchChats(currentUser.id);
     }
   }, [lastSyncedAt]);
 
   useEffect(() => {
     const storedUser = LocalStorageCalls.getStorageUser();
-    const data = storedUser ? TokenUtils.decodeToken(storedUser) : null;  
-    const currentUser = TokenUtils.mapJwtPayloadToUser(data!); 
+    const data = storedUser ? TokenUtils.decodeToken(storedUser) : null;
+    const currentUser = TokenUtils.mapJwtPayloadToUser(data!);
     if (currentUser) {
       const userId = currentUser.id;
       fetchChats(userId);
@@ -116,10 +128,10 @@ const ChatView: React.FC = () => {
       try {
         const messageResponse = await apiManager.getMessage(newMessageId);
         const newMessage = messageResponse;
-    
+
         if (newMessage.chat?.id === activeChat) {
           setMessages((prevMessages) => [...prevMessages, newMessage]);
-        } 
+        }
       } catch (error) {
         console.error("Error al obtener el mensaje completo:", error);
       }
@@ -128,22 +140,26 @@ const ChatView: React.FC = () => {
       SocketCalls.off("new_private_message");
     };
   }, [activeChat, currentUser?.id]);
-  
+
   return (
     <div className="d-flex vh-100 gap-3">
-      <ChatSidebar
-        chats={chats}
-        currentUserId={currentUser.id}
-        activeChatId={activeChat}
-        onChatClick={handleChatClick}
-        loading={loading}
-      />
+      {(!isMobile || !isContentVisible) && (
+        <ChatSidebar
+          chats={chats}
+          currentUserId={currentUser.id}
+          activeChatId={activeChat}
+          onChatClick={handleChatClick}
+          loading={loading}
+        />
+      )}
+
       {isContentVisible && (
-        <ChatBox 
-          messages={messages} 
-          currentUserId={currentUser.id} 
-          chatId={activeChat} 
-          groupId={null} 
+        <ChatBox
+          isMobile={isMobile}
+          messages={messages}
+          currentUserId={currentUser.id}
+          chatId={activeChat}
+          groupId={null}
         />
       )}
     </div>
