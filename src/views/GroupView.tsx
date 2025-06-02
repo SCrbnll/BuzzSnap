@@ -188,7 +188,7 @@ const leftGroup = async (group: Group, currentUser: User) => {
       marginLeft: isMobile ? "3rem" : "0",
     },
     separator: {
-      width: isMobile ? "90%" : "100%",
+      width: "100%",
     },
     aside: {
       width: "325px",
