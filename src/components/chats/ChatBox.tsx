@@ -64,7 +64,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ isMobile, messages, currentUserId, ch
     messagesContainer: {
       flex: 1,
       overflowY: "auto",
-      padding: isMobile ? "10px" : "20px",
+      padding: isMobile ? "5px" : "20px",
       scrollbarWidth: "thin",
     },
     inputContainer: {

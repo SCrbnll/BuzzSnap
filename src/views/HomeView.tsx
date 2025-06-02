@@ -86,7 +86,7 @@ const HomeView: React.FC = () => {
     icon: {
       fontSize: "20px",
       cursor: "pointer",
-      marginLeft: isMobile ? "20px" : "auto",   
+      marginLeft: isMobile ? "10px" : "auto",   
       marginRight: isMobile ? "" : "1rem",  
     }
   };

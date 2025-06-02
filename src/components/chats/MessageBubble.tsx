@@ -48,7 +48,7 @@ const MessageBubble: React.FC<Props> = ({ message, currentUserId }) => {
       display: "flex",
       flexDirection: "column",
       alignItems: isSender ? "flex-end" : "flex-start",
-      maxWidth: "500px",
+      maxWidth: "200px",
     },
     displayName: {
       fontSize: "0.75rem",
