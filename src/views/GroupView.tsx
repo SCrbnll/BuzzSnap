@@ -217,13 +217,6 @@ const leftGroup = async (group: Group, currentUser: User) => {
       margin: 0,
       flex: 1,
     },
-    content: {
-      width: "80%",
-      marginTop: "10px",
-      borderRadius: "10px",
-      marginBottom: "100px",
-      backgroundColor: "#8A8A8A",
-    },
   };
 
   return (
