@@ -23,11 +23,20 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const groupMembers = useSelector(
     (state: RootState) => state.app.groupMembers
   );
+  const [isMobile, setIsMobile] = useState(false);
+  const [isSidebarVisible, setSidebarVisible] = useState(false);
   const [userInfo, setUserInfo] = useState<any>();
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    const checkScreenSize = () => setIsMobile(window.innerWidth <= 576);
+    checkScreenSize(); 
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
+  }, []);
 
   useEffect(() => {
     const storedUser = LocalStorageCalls.getStorageUser();
@@ -103,11 +112,23 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     },
     aside: {
       width: "90px",
-      display: "flex",
       flexDirection: "column",
       alignItems: "center",
       height: "100vh",
       padding: "10px",
+      zIndex: 1050,
+      ...(isMobile
+    ? {
+        position: "fixed",
+        top: 0,
+        left: isSidebarVisible ? 0 : "-160px", 
+        transition: "left 0.3s ease-in-out",
+        display: "flex",
+      }
+    : {
+        display: "flex",
+        position: "relative",
+      }),
     },
     title: {
       fontSize: "12px",
@@ -190,6 +211,10 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <>
+      <button className="d-block d-md-none btn btn-outline-light m-2" onClick={() => setSidebarVisible(!isSidebarVisible)}
+      style={{ width: "50px", height: "50px", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 2000 }}>
+        <i className="bi bi-list" style={{ fontSize: "1.5rem" }}></i>
+      </button>
       <div style={styles.container}>
         <aside style={styles.aside} className="aside-layout">
           <p style={styles.title}>BuzzSnap</p>
@@ -240,7 +265,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <span className="group-tooltip">Ver perfil</span>
             </div>
           ) : null}
-
+  
           <SettingsModal
             show={showSettingsModal}
             handleClose={handleCloseModal}
@@ -249,6 +274,15 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             onLogOut={() => handleLogout()}
           />
         </aside>
+        {isSidebarVisible && (
+          <div
+            onClick={() => setSidebarVisible(false)}
+            className="position-fixed top-0 start-0 w-100 h-100"
+            style={{
+              zIndex: 1000,
+            }}
+          />
+        )}
 
         <div style={styles.mainContent}>
           <main>{children}</main>

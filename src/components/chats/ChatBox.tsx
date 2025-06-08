@@ -5,13 +5,14 @@ import SocketCalls from "@/context/socketCalls";
 import ApiManager from "@/context/apiCalls";
 
 interface ChatBoxProps {
+  isMobile: boolean;
   messages: Message[];
   currentUserId: number;
   chatId: number | null;
   groupId: number | null;
 }
 
-const ChatBox: React.FC<ChatBoxProps> = ({ messages, currentUserId, chatId, groupId }) => {
+const ChatBox: React.FC<ChatBoxProps> = ({ isMobile, messages, currentUserId, chatId, groupId }) => {
   const [messageTerm, setMessageTerm] = useState<string>("");
   const containerRef = useRef<HTMLDivElement>(null);
   const apiCalls = new ApiManager();
@@ -53,7 +54,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ messages, currentUserId, chatId, grou
 
   const styles: { [key: string]: React.CSSProperties } = {
     wrapper: {
-      width: "80%",
+      width: isMobile ? "100%" : "80%",
       margin: "10px auto",
       display: "flex",
       flexDirection: "column",
@@ -63,16 +64,22 @@ const ChatBox: React.FC<ChatBoxProps> = ({ messages, currentUserId, chatId, grou
     messagesContainer: {
       flex: 1,
       overflowY: "auto",
-      padding: "20px",
+      padding: isMobile ? "5px" : "20px",
       scrollbarWidth: "thin",
     },
     inputContainer: {
       padding: "10px 20px",
       borderTop: "1px solid #ccc",
+      display: isMobile ? "flex" : "block",
+      alignItems: "center",
+      gap: "10px",
+
     },
     input: {
-      width: "100%",
+      width: isMobile ? "100%" : "100%",
+      flex: isMobile ? 1 : "unset", 
       padding: "10px 15px",
+      marginBottom: isMobile ? "10px" : "",
       borderRadius: "50px",
       border: "1px solid #ccc",
       fontSize: "16px",
@@ -113,6 +120,18 @@ const ChatBox: React.FC<ChatBoxProps> = ({ messages, currentUserId, chatId, grou
           style={styles.input}
           className="chat-box-input-text"
         />
+        <button
+          onClick={handleSend}
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            display : isMobile ? "block" : "none",
+            color: "blue",
+          }}
+        >
+          <i className="bi bi-send-fill" style={{ fontSize: "1.2em" }} />
+        </button>
       </div>
     </div>
   );

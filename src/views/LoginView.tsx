@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "/buzzsnap-logo.png";
 import background from "/background.jpg";
 import { useNavigate } from "react-router-dom";
@@ -10,9 +10,18 @@ import TokenUtils from "@/utils/TokenUtils";
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const apiManager = useApiManager();
+  const [isMobile, setIsMobile] = useState(false);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    const checkScreenSize = () => setIsMobile(window.innerWidth <= 576);
+
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
+  }, []);
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -25,7 +34,6 @@ const Login: React.FC = () => {
           const userData = TokenUtils.decodeToken(data.token);
           const displayName = userData?.display_name || "usuario";
           
-          // Guarda en localStorage
           LocalStorageCalls.setStorageUser(data);
 
           return `Bienvenido, ${displayName}!`;
@@ -40,13 +48,13 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="d-flex flex-column align-items-start justify-content-center vh-100" 
-      style={{ backgroundImage: `url(${background})`, backgroundSize: "cover", padding: "250px" }}
+    <div className="d-flex flex-column align-items-center align-items-sm-start justify-content-center vh-100"
+      style={{ backgroundImage: `url(${background})`, backgroundSize: "cover", padding: isMobile ? "6rem" : "230px", }}
     >
-      <img src={logo} alt="Buzzsnap Logo" style={{ width: "350px" }} className="mb-5" />
+      <img src={logo} alt="Buzzsnap Logo"   style={{ width: isMobile ? "200px" : "350px" }} className="mb-5" />
       <h1 className="mb-4">Inicio de sesión</h1>
 
-      <form style={{ width: "350px" }} onSubmit={handleLogin}>
+      <form style={{ width: isMobile ? "200px" : "350px" }} onSubmit={handleLogin}>
         <div className="mb-3">
           <label className="form-label">Usuario</label>
           <input 

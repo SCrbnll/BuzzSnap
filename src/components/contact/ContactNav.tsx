@@ -1,12 +1,12 @@
-import React from "react";
-
 type ContactNavProps = {
+  isMobile: boolean;
   activeFilter: string;
   handleFilterChange: (filter: string) => void;
   handleShowInput: () => void;
 };
 
 const ContactNav: React.FC<ContactNavProps> = ({
+  isMobile,
   activeFilter,
   handleFilterChange,
   handleShowInput,
@@ -18,10 +18,10 @@ const ContactNav: React.FC<ContactNavProps> = ({
       alignItems: "center",
       width: "100%",
       padding: "0 10px",
-      marginTop: "50px",
+      marginTop: isMobile ? "25px" : "50px",
     },
     button: {
-      width: "100px",
+      width: isMobile ? "60px" : "100px",
       borderRadius: "5px",
       border: "none",
       cursor: "pointer",
@@ -49,7 +49,7 @@ const ContactNav: React.FC<ContactNavProps> = ({
             style={styles.button}
             onClick={() => handleFilterChange("activos")}
           >
-            Activos
+            {isMobile ? "Activ." : "Activos"}
           </button>
           <button
             className={`button ${activeFilter === "todos" ? "button-active-filter" : ""}`}
@@ -63,7 +63,7 @@ const ContactNav: React.FC<ContactNavProps> = ({
             style={styles.button}
             onClick={() => handleFilterChange("solicitudes")}
           >
-            Solicitudes
+            {isMobile ? "Solic." : "Solicitudes"}
           </button>
         </div>
         <button
