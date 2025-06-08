@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
 import { Chats } from "@/services/api/types";
-import logo from "/SCrbnll.png";
 import UserInfoModal from "../users/UserInfoModal";
 
 type Props = {
@@ -93,7 +92,7 @@ const ChatListItem: React.FC<Props> = ({
         onClick={onClick}
         onContextMenu={handleContextMenu}
       >
-        <img src={logo} alt={otherUser.name} style={styles.logo} />
+        <img src={otherUser.avatarUrl} alt={otherUser.name} style={styles.logo} />
         <p style={styles.chatText}>{otherUser.name}</p>
       </div>
 

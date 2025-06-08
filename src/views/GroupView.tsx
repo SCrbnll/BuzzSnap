@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import logo from "/SCrbnll.png";
+import logo from "/buzzsnap-recorte.png";
 import { useNavigate, useParams } from "react-router-dom";
 import ApiManager from "@/context/apiCalls";
 import { Group, Message, User } from "@/services/api/types";
@@ -222,8 +222,9 @@ const leftGroup = async (group: Group, currentUser: User) => {
   return (
     <div>
       <nav style={styles.nav}>
-        <ul className="d-flex flex-row align-items-center gap-3">
-          <p onClick={() => handleOpenModal()}> {group?.name} </p>
+        <ul className="d-flex flex-row align-items-center gap-3 text-center">
+          <img src={group?.imageUrl} alt={group?.name} style={styles.logo} />
+          <p style={{display: "flex", alignItems: "center"}} onClick={() => handleOpenModal()}> {group?.name} </p>
         </ul>
       </nav>
       <hr style={styles.separator} />
@@ -233,7 +234,7 @@ const leftGroup = async (group: Group, currentUser: User) => {
             <aside style={styles.aside} className="d-flex flex-column vh-100">
               <div style={styles.chatList}>
                 <div style={styles.chat} className="mb-3 gap-3" onClick={() => handleOpenModalMembers()}>
-                  <img src={logo} alt="Icono" style={styles.logo} />
+                  <img src={logo} alt="Icono" style={{...styles.logo, backgroundColor: "#000000", padding: "5px"}} />
                   <p style={styles.chatText}>Members</p>
                 </div>
               </div>

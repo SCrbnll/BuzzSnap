@@ -22,35 +22,31 @@ const GroupSettingsModal: React.FC<GroupSettingsModalProps> = ({
   members,
   onGroupUpdated
 }) => {
+  const predefinedGroupImages: string[] = ['/groups/sith.png', '/groups/resistance.png'];
   const [name, setName] = useState(group.name);
   const [description, setDescription] = useState(group.description || "");
   const [creatorId, setCreatorId] = useState<number>(group.creator.id);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-
+  const [selectedImage, setSelectedImage] = useState<string>(group.imageUrl || predefinedGroupImages[0]);
   const apiCalls = new ApiManager();
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    setName(group.name);
-    setDescription(group.description || "");
-    setCreatorId(group.creator.id);
-    setImageFile(null);
-  }, [group]);
+  setName(group.name);
+  setDescription(group.description || "");
+  setCreatorId(group.creator.id);
+  setSelectedImage(group.imageUrl || predefinedGroupImages[0]);
+}, [group]);
+
 
   const handleSave = async () => {
     try {
       const selectedUser = members.find((member) => member.id === creatorId)
-      if (imageFile) {
-        // TODO: subir a S3 y setear la nueva imageUrl
-        console.log('a')
-      }
-
-      const updatedGroup: Group = {
+     const updatedGroup: Group = {
         ...group,
         name,
         description,
-        creator: selectedUser ? selectedUser : group.creator,
-        // imageUrl: ..., // cuando tengas S3
+        creator: selectedUser || group.creator,
+        imageUrl: selectedImage,
       };
       if(selectedUser) {
         const groupMembers = await apiCalls.getGroupMembersByGroupId(group!.id!);
@@ -69,15 +65,6 @@ const GroupSettingsModal: React.FC<GroupSettingsModalProps> = ({
     } catch (error) {
       console.error(error);
       notifyError("Error al actualizar el grupo");
-    }
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      console.log("Imagen seleccionada:", file);
-      setImageFile(file);
-      // TODO: subir a S3 y setear la nueva imageUrl
     }
   };
 
@@ -111,13 +98,32 @@ const GroupSettingsModal: React.FC<GroupSettingsModalProps> = ({
 
           <Form.Group className="mb-3">
             <Form.Label>Imagen del grupo</Form.Label>
-            <div className="d-flex align-items-center gap-3">
-              <img
-                src={group.imageUrl}
-                alt="Group"
-                style={{ width: "80px", height: "80px", borderRadius: "10px", objectFit: "cover" }}
-              />
-              <Form.Control type="file" accept="image/*" onChange={handleImageChange} />
+            <div className="d-flex flex-wrap gap-3">
+              {predefinedGroupImages.map((img) => (
+              <div
+                key={img}
+                onClick={() => setSelectedImage(img)}
+                style={{
+                  border: selectedImage === img ? "3px solid #0d6efd" : "2px solid transparent",
+                  borderRadius: "10px",
+                  padding: "5px",
+                  backgroundColor: selectedImage === img ? "#e9f2ff" : "#f8f9fa",
+                  transition: "all 0.2s ease-in-out",
+                  cursor: "pointer"
+                }}
+              >
+                <img
+                  src={img}
+                  alt="group"
+                  style={{
+                    width: "80px",
+                    height: "80px",
+                    objectFit: "cover",
+                    borderRadius: "6px"
+                  }}
+                />
+              </div>
+            ))}
             </div>
           </Form.Group>
 
