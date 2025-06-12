@@ -38,7 +38,7 @@ export default class ChatsApi {
 
     async createChat(user1Id: number, user2Id: number): Promise<Chats> {
         const token = LocalStorageCalls.getAccessToken();
-        const response = await axios.post<Chats>(`${SERVER}/chats/create/${user1Id}/${user2Id}`, {
+        const response = await axios.post<Chats>(`${SERVER}/chats/create/${user1Id}/${user2Id}`, {},  {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
