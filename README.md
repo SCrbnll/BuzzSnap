@@ -1,51 +1,64 @@
-# React + TypeScript + Vite
+# BuzzSnap
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**BuzzSnap** es una aplicación web de mensajería en tiempo real que permite a los usuarios comunicarse de forma fluida mediante WebSockets. Ofrece funcionalidades como registro, login, gestión de contactos y envío/recepción de mensajes instantáneos. Este proyecto ha sido desarrollado como parte de mi **Trabajo de Fin de Grado (TFG)** del ciclo superior de **Desarrollo de Aplicaciones Web**.
 
-Currently, two official plugins are available:
+Decidí utilizar **React** para el frontend y **Spring Boot** con **JPA (Hibernate)** en el backend, formando un stack moderno, robusto y escalable. Para la comunicación en tiempo real se integró un servidor **Socket.IO**, y todo el entorno se puede levantar fácilmente mediante contenedores **Docker** configurados en una instancia EC2 de **AWS**.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## Tecnologías Utilizadas
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **Frontend →** React + Vite
+- **Backend →** Spring Boot + Hibernate
+- **Base de datos →** MySQL
+- **Sockets →** Socket.IO
+- **Contenedores y despliegue →** Docker + AWS EC2
 
-- Configure the top-level `parserOptions` property like this:
+---
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Estructura de ramas del repositorio
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+- `main` → Contiene el código fuente final del frontend. Esta rama está conectada a un sistema de despliegue automático en una instancia EC2 de AWS.
+- `aws` → Configuración de contenedores Docker. Incluye Dockerfiles y docker-compose para levantar el backend, base de datos y servidor de sockets.
+- `bd-api` → Contiene tanto la API desarrollada en Spring Boot como los scripts SQL para la base de datos.
+- `desarrollo` → Rama de trabajo principal durante el desarrollo. Aquí se encuentran todos los commits intermedios.
+- `sockets` → Código fuente del servidor Socket.IO utilizado para la comunicación en tiempo real.
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+---
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
-a
+## Instalación y despliegue
+
+### Requisitos
+
+- Node.js
+- Docker & Docker Compose
+- Acceso al repositorio
+
+### Opción 1: Levantar todo con Docker (recomendado)
+
+1. Clonar el repositorio
+   ```bash
+   git checkout aws
+   ```
+2. Cambiar a la rama aws
+   ```bash
+   git checkout aws
+   ```
+3. Ejecutar Docker COmposepara levantar el backend, base de datos y servidor de sockets
+   ```bash
+   docker-compose up --build
+   ```
+4. En otra terminal, cambiar a la rama main para el frontend
+   ```bash
+   git checkout main
+   ```
+5. Instalar dependencias del front
+   ```bash
+    npm install
+   ```
+6. Iniciar el frontend
+    ```bash
+   npm run dev
+   ```
+   
+![BuzzSnap](buzzsnap.png)
