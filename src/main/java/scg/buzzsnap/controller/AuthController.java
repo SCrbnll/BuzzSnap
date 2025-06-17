@@ -34,6 +34,12 @@ public class AuthController {
                     "message", "El usuario no existe."
                 ));
             }
+	    if (!user.getPassword().equals(Utils.sha1(login.password))) {
+            	return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                    "error", "not_found",
+        	    "message", "Contraseña incorrecta."
+                ));
+            }
 
             String token = jwtService.generateToken(user);
             String refresh = jwtService.generateRefreshToken(user.getEmail());
