@@ -11,7 +11,11 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { useNavigate } from "react-router-dom";
 import LocalStorageCalls from "@/context/localStorageCalls";
 import SocketCalls from "@/context/socketCalls";
-import { notifyAction } from "@/components/NotificationProvider";
+import {
+  notifyAction,
+  notifyErrorDescription,
+  notifySuccessDescription,
+} from "@/components/NotificationProvider";
 import CreateGroupModal from "@/components/groups/CreateGroupModal";
 import TokenUtils from "@/utils/TokenUtils";
 
@@ -33,15 +37,15 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     const checkScreenSize = () => setIsMobile(window.innerWidth <= 576);
-    checkScreenSize(); 
+    checkScreenSize();
     window.addEventListener("resize", checkScreenSize);
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
   useEffect(() => {
     const storedUser = LocalStorageCalls.getStorageUser();
-    const data = storedUser ? TokenUtils.decodeToken(storedUser) : null;  
-    const user = TokenUtils.mapJwtPayloadToUser(data!);  
+    const data = storedUser ? TokenUtils.decodeToken(storedUser) : null;
+    const user = TokenUtils.mapJwtPayloadToUser(data!);
     if (!user) {
       navigate("/login");
     } else {
@@ -51,8 +55,13 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         const activeChatId = LocalStorageCalls.getActiveChatId();
         if (data.recipientId !== user.id) return;
         if (data.chatId === null) {
-          if (window.location.pathname.split("/")[2] !== data.groupId.toString()) {
-            notifyAction(`Nuevo mensaje de ${data.senderName}`, data.preview, "Abrir",
+          if (
+            window.location.pathname.split("/")[2] !== data.groupId.toString()
+          ) {
+            notifyAction(
+              `Nuevo mensaje de ${data.senderName}`,
+              data.preview,
+              "Abrir",
               () => {
                 dispatch(setCurrentChatUserId(data.recipientId));
                 navigate("/groups/" + data.groupId);
@@ -61,7 +70,10 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           }
         } else {
           if (activeChatId !== data.chatId.toString()) {
-            notifyAction(`Nuevo mensaje de ${data.senderName}`, data.preview, "Abrir",
+            notifyAction(
+              `Nuevo mensaje de ${data.senderName}`,
+              data.preview,
+              "Abrir",
               () => {
                 dispatch(setCurrentChatUserId(data.recipientId));
                 navigate("/home/chats");
@@ -95,10 +107,43 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   }, [dispatch]);
 
   const handleLogout = () => {
-      LocalStorageCalls.removeActiveChatId();
-      LocalStorageCalls.removeStorageUser();
-      navigate('/login')
-    }
+    LocalStorageCalls.removeActiveChatId();
+    LocalStorageCalls.removeStorageUser();
+    navigate("/login");
+  };
+
+  const userData = () => {
+    const storedUser = LocalStorageCalls.getStorageUser();
+    const data = storedUser ? TokenUtils.decodeToken(storedUser) : null;
+    const currentUser = TokenUtils.mapJwtPayloadToUser(data!);
+    return currentUser;
+  };
+
+  const sendEmailChangeEmail = () => {
+    const user = userData();
+    SocketCalls.sendEmailChange(user.email, user.displayName);
+    SocketCalls.on("email_change_sent", (data) => {
+      if (data.success)
+        notifySuccessDescription(
+          "📨 Email enviado correctamente",
+          "Revisa tu bandeja de entrada"
+        );
+      else notifyErrorDescription("❌ Error", data.error);
+    });
+  };
+
+  const sendPasswordChangeEmail = () => {
+    const user = userData();
+    SocketCalls.sendPasswordChange(user.email, user.displayName);
+    SocketCalls.on("password_reset_sent", (data) => {
+      if (data.success)
+        notifySuccessDescription(
+          "📨 Email enviado correctamente",
+          "Revisa tu bandeja de entrada"
+        );
+      else notifyErrorDescription("❌ Error", data.error);
+    });
+  };
 
   const handleOpenModal = () => setShowSettingsModal(true);
   const handleCloseModal = () => setShowSettingsModal(false);
@@ -118,17 +163,17 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       padding: "10px",
       zIndex: 1050,
       ...(isMobile
-    ? {
-        position: "fixed",
-        top: 0,
-        left: isSidebarVisible ? 0 : "-160px", 
-        transition: "left 0.3s ease-in-out",
-        display: "flex",
-      }
-    : {
-        display: "flex",
-        position: "relative",
-      }),
+        ? {
+            position: "fixed",
+            top: 0,
+            left: isSidebarVisible ? 0 : "-160px",
+            transition: "left 0.3s ease-in-out",
+            display: "flex",
+          }
+        : {
+            display: "flex",
+            position: "relative",
+          }),
     },
     title: {
       fontSize: "12px",
@@ -211,8 +256,18 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <>
-      <button className="d-block d-md-none btn btn-outline-light m-2" onClick={() => setSidebarVisible(!isSidebarVisible)}
-      style={{ width: "50px", height: "50px", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 2000 }}>
+      <button
+        className="d-block d-md-none btn btn-outline-light m-2"
+        onClick={() => setSidebarVisible(!isSidebarVisible)}
+        style={{
+          width: "50px",
+          height: "50px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 2000,
+        }}
+      >
         <i className="bi bi-list" style={{ fontSize: "1.5rem" }}></i>
       </button>
       <div style={styles.container}>
@@ -265,12 +320,12 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <span className="group-tooltip">Ver perfil</span>
             </div>
           ) : null}
-  
+
           <SettingsModal
             show={showSettingsModal}
             handleClose={handleCloseModal}
-            onChangeEmail={() => alert(`Cambiar email`)}
-            onChangePassword={() => alert(`Cambiar password`)}
+            onChangeEmail={() => sendEmailChangeEmail()}
+            onChangePassword={() => sendPasswordChangeEmail()}
             onLogOut={() => handleLogout()}
           />
         </aside>
