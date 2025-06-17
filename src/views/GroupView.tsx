@@ -126,6 +126,15 @@ const GroupView: React.FC = () => {
     }
   }, [lastSyncedAt]);
 
+  const inviteGroup = async () => {
+    try {
+      navigator.clipboard.writeText(group!.inviteCode || "");
+      notifySuccess("Código de invitación copiado al portapapeles");
+    } catch (error) {
+      notifyError("Error al copiar el código de invitación");
+    }
+  };
+
   const handleOpenModal = () => {
     setModalOpen(true);
   };
@@ -257,6 +266,7 @@ const leftGroup = async (group: Group, currentUser: User) => {
           group={group}
           onLeftGroup={() => leftGroup(group, currentUser)}
           onEditGroup={handleOpenEditModal}
+          onInviteGroup={inviteGroup}
           currentUserId={currentUser.id}        
         />
       )}

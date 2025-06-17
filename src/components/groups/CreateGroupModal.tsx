@@ -36,6 +36,7 @@ const CreateOrJoinGroupModal: React.FC<Props> = ({ show, handleClose, onGroupCre
       description,
       inviteCode,
       creator: user!,
+      imageUrl: "https://github.com/SCrbnll.png",
     };
 
     try {
