@@ -128,8 +128,13 @@ const GroupView: React.FC = () => {
 
   const inviteGroup = async () => {
     try {
-      navigator.clipboard.writeText(group!.inviteCode || "");
-      notifySuccess("Código de invitación copiado al portapapeles");
+      if (navigator.clipboard && group?.inviteCode) {
+        navigator.clipboard.writeText(group.inviteCode)
+          .then(() => notifySuccess("Código de invitación copiado al portapapeles"))
+          .catch(() => notifyError("Error al copiar el código de invitación"));
+      } else {
+        notifyError("Función de portapapeles no soportada o código de invitación no disponible");
+      }
     } catch (error) {
       notifyError("Error al copiar el código de invitación");
     }
